@@ -15,3 +15,7 @@ void Block::setMaterial(const Material &material) {
 Location Block::getLocation() const {
     return location_;
 }
+
+Block::Block(Material material, const Location& location) : material_(material), location_(location) {
+
+}

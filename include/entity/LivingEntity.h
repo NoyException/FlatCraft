@@ -6,11 +6,12 @@
 #define FLATCRAFT_LIVINGENTITY_H
 
 #include "common.h"
+#include "Entity.h"
 
-class LivingEntity : public Entity{
+class LivingEntity : public Entity {
+public:
 private:
     double health_;
-
 };
 
 

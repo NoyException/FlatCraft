@@ -7,26 +7,38 @@
 
 #include "common.h"
 
+class World;
+
 class Location {
 public:
-    Location(const std::shared_ptr<World>& world, double x, double y);
+    friend struct LocationHash;
+    Location(std::string world, double x, double y);
+    Location(const World &world, double x, double y);
     Location(const Location& location);
     bool operator==(const Location& another) const;
-    [[nodiscard]] std::shared_ptr<World> getWorld() const;
+    bool operator<(const Location& another) const;
+    [[nodiscard]] World* getWorld() const;
     [[nodiscard]] double getX() const;
     [[nodiscard]] double getY() const;
     [[nodiscard]] int getBlockX() const;
     [[nodiscard]] int getBlockY() const;
-    void setWorld(const std::shared_ptr<World>& world);
+    [[nodiscard]] Location toBlockLocation() const;
+    void setWorld(const World &world);
     void setX(double x);
     void setY(double y);
     void add(const Location& another);
     [[nodiscard]] double distanceSquared(const Location& another) const;
     [[nodiscard]] double distance(const Location& another) const;
 private:
-    std::shared_ptr<World> world_;
+    std::string world_;
     double x_,y_;
 };
 
+struct LocationHash {
+    size_t operator()(const Location& location) const {
+        return std::hash<std::string>()(location.world_) ^
+               std::hash<double>()(location.x_) ^ std::hash<double>()(location.y_);
+    }
+};
 
 #endif //FLATCRAFT_LOCATION_H

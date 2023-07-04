@@ -10,18 +10,11 @@
 #include <vector>
 #include <list>
 #include <map>
+#include <set>
 #include <unordered_map>
 #include <queue>
 #include <memory>
 #include <cmath>
-
-#include "Location.h"
-
-#include "entity/Entity.h"
-#include "entity/LivingEntity.h"
-
-#include "world/Material.h"
-#include "world/Block.h"
-#include "world/World.h"
+#include <utility>
 
 #endif //FLATCRAFT_COMMON_H

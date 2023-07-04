@@ -3,17 +3,31 @@
 //
 
 #include "Location.h"
+#include "world/World.h"
+#include "FlatCraft.h"
 
-Location::Location(const std::shared_ptr<World> &world, double x, double y) : world_(world), x_(x), y_(y){}
+Location::Location(std::string world, double x, double y) : world_(std::move(world)), x_(x), y_(y) {}
 
-Location::Location(const Location &location) : world_(location.world_), x_(location.x_), y_(location.y_) {}
+Location::Location(const World& world, double x, double y) : world_(world.getName()), x_(x), y_(y){}
+
+Location::Location(const Location &location) = default;
 
 bool Location::operator==(const Location &another) const {
     return world_==another.world_ && x_ == another.x_ && y_ == another.y_;
 }
 
-std::shared_ptr<World> Location::getWorld() const {
-    return world_;
+bool Location::operator<(const Location &another) const {
+    int res = world_.compare(another.world_);
+    if(res<0) return true;
+    else if(res==0){
+        if(x_<another.x_) return true;
+        else if(x_==another.x_) return y_<another.y_;
+    }
+    return false;
+}
+
+World* Location::getWorld() const {
+    return FlatCraft::getInstance()->getWorld(world_);
 }
 
 double Location::getX() const {
@@ -32,8 +46,8 @@ int Location::getBlockY() const {
     return (int) round(y_);
 }
 
-void Location::setWorld(const std::shared_ptr<World> &world) {
-    world_ = world;
+void Location::setWorld(const World &world) {
+    world_ = world.getName();
 }
 
 void Location::setX(double x) {
@@ -58,3 +72,8 @@ double Location::distanceSquared(const Location &another) const {
 double Location::distance(const Location &another) const {
     return sqrt(distanceSquared(another));
 }
+
+Location Location::toBlockLocation() const {
+    return {world_, (double)getBlockX(), (double)getBlockY()};
+}
+

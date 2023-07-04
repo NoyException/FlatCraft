@@ -3,3 +3,16 @@
 //
 
 #include "entity/Entity.h"
+#include "world/World.h"
+
+Location Entity::getLocation() const {
+    return location_;
+}
+
+void Entity::teleport(const Location &location) {
+    location_ = location;
+    location.getWorld()->notifyTeleported(*this);
+}
+
+Entity::Entity(const Location &spawnLocation) : location_(spawnLocation){}
+

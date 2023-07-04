@@ -1,7 +1,11 @@
 #include "common.h"
+#include "FlatCraft.h"
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    FlatCraft game;
+    std::cout << "Game starting" << std::endl;
+    game.start();
+    std::cout << "Game ended" << std::endl;
     return 0;
 }
 

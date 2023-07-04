@@ -7,9 +7,12 @@
 #define FLATCRAFT_BLOCK_H
 
 #include "common.h"
+#include "Material.h"
+#include "Location.h"
 
 class Block {
 public:
+    Block(Material material, const Location& location);
     [[nodiscard]] Material getMaterial() const;
     void setMaterial(const Material& material);
     [[nodiscard]] Location getLocation() const;
