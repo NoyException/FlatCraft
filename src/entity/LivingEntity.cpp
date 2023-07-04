@@ -3,3 +3,10 @@
 //
 
 #include "entity/LivingEntity.h"
+
+LivingEntity::LivingEntity(const Location &spawnLocation) : Entity(spawnLocation) {
+}
+
+bool LivingEntity::isDead() const {
+    return health_<=0;
+}

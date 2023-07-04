@@ -16,5 +16,6 @@
 #include <memory>
 #include <cmath>
 #include <utility>
+#include <functional>
 
 #endif //FLATCRAFT_COMMON_H

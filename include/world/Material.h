@@ -12,6 +12,7 @@ enum class Material {
     GRASS,
     STONE,
     BED_ROCK,
+    WATER,
 };
 
 

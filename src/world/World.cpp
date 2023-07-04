@@ -48,6 +48,9 @@ void World::init() {
     for(int i=-128;i<=128;i++){
         for(int j=0;j<256;j++){
             int hash = (i<<10)^j;
+            Material m;
+            if(j==0) m=Material::BED_ROCK;
+
             blocks_[hash] = std::make_unique<Block>(Material::AIR,Location(name_,i,j));
         }
     }

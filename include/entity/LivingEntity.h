@@ -10,6 +10,8 @@
 
 class LivingEntity : public Entity {
 public:
+    explicit LivingEntity(const Location& spawnLocation);
+    [[nodiscard]] bool isDead() const;
 private:
     double health_;
 };
