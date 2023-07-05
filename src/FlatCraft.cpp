@@ -10,6 +10,37 @@ FlatCraft::FlatCraft() : player_(Location("what",0,64)) {
 
 void FlatCraft::start() {
     createWorld("test");
+<<<<<<< HEAD
+=======
+    //static int cnt[4];
+    //scheduler_.runTaskTimer([]()->auto{
+    //    if (GetAsyncKeyState('W') & 0x8000) {
+    //        cnt[0]++;//std::cout << "W is pressed\n";
+    //    }
+
+    //    // Check the state of A key
+    //    if (GetAsyncKeyState('A') & 0x8000) {
+    //        cnt[1]++;//std::cout << "A is pressed\n";
+    //    }
+
+    //    // Check the state of S key
+    //    if (GetAsyncKeyState('S') & 0x8000) {
+    //        cnt[2]++;//std::cout << "S is pressed\n";
+    //    }
+
+    //    // Check the state of D key
+    //    if (GetAsyncKeyState('D') & 0x8000) {
+    //        cnt[3]++;//std::cout << "D is pressed\n";
+    //    }
+    //},0,0);
+    //scheduler_.runTaskLater([]()->auto{
+    //    std::cout << "A:" << cnt[0] << std::endl;
+    //    std::cout << "B:" << cnt[1] << std::endl;
+    //    std::cout << "C:" << cnt[2] << std::endl;
+    //    std::cout << "D:" << cnt[3] << std::endl;
+    //},200);
+    //scheduler_.start();
+>>>>>>> graph
 }
 
 void FlatCraft::createWorld(const std::string &name) {
