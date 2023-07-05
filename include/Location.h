@@ -18,6 +18,7 @@ public:
     bool operator==(const Location& another) const;
     bool operator<(const Location& another) const;
     [[nodiscard]] World* getWorld() const;
+    [[nodiscard]] std::string getRawWorld() const;
     [[nodiscard]] double getX() const;
     [[nodiscard]] double getY() const;
     [[nodiscard]] int getBlockX() const;

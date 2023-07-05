@@ -42,7 +42,7 @@ Scheduler::Scheduler() : running_(false) {
 void Scheduler::run(){
     std::lock_guard<std::mutex> lock(mtx_);
 
-    tasks_.remove_if([](Task &task)->auto{return task.isExpired();});
+    tasks_.remove_if([](Task &task){return task.isExpired();});
     for (auto &task: tasks_){
         task.run();
     }

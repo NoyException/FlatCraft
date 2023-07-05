@@ -77,3 +77,7 @@ Location Location::toBlockLocation() const {
     return {world_, (double)getBlockX(), (double)getBlockY()};
 }
 
+std::string Location::getRawWorld() const {
+    return world_;
+}
+

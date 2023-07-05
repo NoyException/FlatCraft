@@ -9,8 +9,35 @@ FlatCraft::FlatCraft() : player_(Location("what",0,64)) {
 }
 
 void FlatCraft::start() {
+    createWorld("test");
+}
+
+void FlatCraft::createWorld(const std::string &name) {
+    worlds_.emplace(name, std::make_unique<World>(name));
+}
+
+FlatCraft *FlatCraft::getInstance() {
+    return instance.get();
+}
+
+std::unique_ptr<FlatCraft> FlatCraft::instance = std::make_unique<FlatCraft>();
+
+World *FlatCraft::getWorld(const std::string &name) const {
+    return worlds_.find(name)->second.get();
+}
+
+Player *FlatCraft::getPlayer() {
+    return &player_;
+}
+
+void FlatCraft::loadSave(const std::string &name) {
+
+    save_ = name;
+    loadPlayer();
+    loadWorld(player_.getLocation().getRawWorld());
+
     static int cnt[4];
-    scheduler_.runTaskTimer([]()->auto{
+    scheduler_.runTaskTimer([](){
         if (GetAsyncKeyState('W') & 0x8000) {
             cnt[0]++;//std::cout << "W is pressed\n";
         }
@@ -30,7 +57,7 @@ void FlatCraft::start() {
             cnt[3]++;//std::cout << "D is pressed\n";
         }
     },0,0);
-    scheduler_.runTaskLater([]()->auto{
+    scheduler_.runTaskLater([](){
         std::cout << "A:" << cnt[0] << std::endl;
         std::cout << "B:" << cnt[1] << std::endl;
         std::cout << "C:" << cnt[2] << std::endl;
@@ -39,20 +66,27 @@ void FlatCraft::start() {
     scheduler_.start();
 }
 
-void FlatCraft::createWorld(const std::string &name) {
-    worlds_.emplace(name, std::make_unique<World>(name));
+void FlatCraft::loadPlayer() {
+
 }
 
-FlatCraft *FlatCraft::getInstance() {
-    return instance.get();
+void FlatCraft::loadWorld(const std::string &name) {
+
 }
 
-std::unique_ptr<FlatCraft> FlatCraft::instance = std::make_unique<FlatCraft>();
-
-World *FlatCraft::getWorld(const std::string &name) const {
-    return worlds_.find(name)->second.get();
+void FlatCraft::save() {
+    savePlayer();
+    saveWorlds();
 }
 
-Player *FlatCraft::getPlayer() {
-    return &player_;
+void FlatCraft::savePlayer() {
+
+}
+
+void FlatCraft::saveWorld(const std::string &name) {
+
+}
+
+void FlatCraft::saveWorlds() {
+
 }
