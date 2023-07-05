@@ -81,3 +81,19 @@ std::string Location::getRawWorld() const {
     return world_;
 }
 
+Location Location::deserialize(const nlohmann::json &json) {
+    return {
+        json.at("world").get<std::string>(),
+        json.at("x").get<double>(),
+        json.at("y").get<double>()
+    };
+}
+
+nlohmann::json Location::serialize() const {
+    return nlohmann::json{
+            {"world",world_},
+            {"x",x_},
+            {"y",y_}
+    };
+}
+

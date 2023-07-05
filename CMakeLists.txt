@@ -1,3 +1,4 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.24)
 
 project(FlatCraft)
 
@@ -10,6 +11,6 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 # 设置源文件目录
 #aux_source_directory(${PROJECT_SOURCE_DIR}/src SRC_LIST)
 # 设置编译文件
-file(GLOB_RECURSE SRC_LIST ${PROJECT_SOURCE_DIR}/include/*.h ${PROJECT_SOURCE_DIR}/src/*.cpp)
+file(GLOB_RECURSE SRC_LIST ${PROJECT_SOURCE_DIR}/include/*.h ${PROJECT_SOURCE_DIR}/include/*.hpp ${PROJECT_SOURCE_DIR}/src/*.cpp)
 # 指定生成目标
 add_executable(FlatCraft ${SRC_LIST} include/common.h "src/graphics/graph.cpp" "include/graphics/graph.h" "src/world/World.cpp")

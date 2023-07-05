@@ -15,6 +15,8 @@ public:
     Location(std::string world, double x, double y);
     Location(const World &world, double x, double y);
     Location(const Location& location);
+    static Location deserialize(const nlohmann::json& json);
+    nlohmann::json serialize() const;
     bool operator==(const Location& another) const;
     bool operator<(const Location& another) const;
     [[nodiscard]] World* getWorld() const;

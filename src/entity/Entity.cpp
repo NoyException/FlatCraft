@@ -16,3 +16,9 @@ void Entity::teleport(const Location &location) {
 
 Entity::Entity(const Location &spawnLocation) : location_(spawnLocation){}
 
+nlohmann::json Entity::serialize() const {
+    return nlohmann::json{
+            {"location",location_.serialize()}
+    };
+}
+

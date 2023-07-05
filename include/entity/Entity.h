@@ -13,8 +13,10 @@ public:
     explicit Entity(const Location& spawnLocation);
     [[nodiscard]] Location getLocation() const;
     void teleport(const Location& location);
-private:
+    [[nodiscard]] virtual nlohmann::json serialize() const;
+protected:
     Location location_;
+private:
 };
 
 

@@ -11,6 +11,8 @@
 class Player : public LivingEntity{
 public:
     explicit Player(const Location& spawnLocation);
+    [[nodiscard]] nlohmann::json serialize() const override;
+    static Player deserialize(const nlohmann::json& json);
 private:
 };
 
