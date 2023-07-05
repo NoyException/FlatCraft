@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <easyx.h>
+#include "graphics/easyx.h"
 
 
 
