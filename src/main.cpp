@@ -10,7 +10,7 @@ int main() {
     game.start();
     //std::this_thread::sleep_for(std::chrono::seconds(10));
     std::thread graphThread(graphMain, &game);
-    graphThread.join();
+    graphThread.detach();
     std::cout << "Game ended" << std::endl;
     return 0;
 }

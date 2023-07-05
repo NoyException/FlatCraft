@@ -9,7 +9,7 @@ void graphMain(FlatCraft* game);
 class BlockGraph {//search the image through material
 public:
 	BlockGraph();
-	inline IMAGE* getImage(Material material) { }
+	inline IMAGE* getImage(Material material) {return nullptr;}
 private:
 	std::vector<IMAGE> imgs;
 };
