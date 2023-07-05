@@ -7,7 +7,7 @@ int main() {
 //    std::ostream::sync_with_stdio(false);
     FlatCraft game;
     std::cout << "Game starting" << std::endl;
-    //game.start();
+    game.start();
     //std::this_thread::sleep_for(std::chrono::seconds(10));
     std::thread graphThread(graphMain, &game);
     graphThread.join();
