@@ -1,6 +1,6 @@
 #ifndef _GRAPHICS_H
 #define _GRAPHICS_H
-#include <graphics.h>
+#include "graphics/graphics.h"
 #include "FlatCraft.h"
 #include <unordered_map>
 extern class DestroyBlock destroyBlock;
