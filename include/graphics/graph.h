@@ -8,9 +8,10 @@ void graphMain(FlatCraft* game);
 
 class BlockGraph {//search the image through material
 public:
-
+	BlockGraph();
+	inline IMAGE* getImage(Material material) { }
 private:
-	std::unordered_map<Material, IMAGE> mapBlock;
+	std::vector<IMAGE> imgs;
 };
 
 class DestroyBlock {
@@ -33,6 +34,7 @@ class Graph {
 public:
 	Graph(FlatCraft* game) : game(game) {}
 	void display();//display the graph, including world and player
+	void drawMap(Location location);//draw the map as location as the center
 private:
 	FlatCraft* game;
 };

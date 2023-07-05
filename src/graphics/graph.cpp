@@ -13,6 +13,8 @@ void graphMain(FlatCraft *game) {
 }
 void Graph::display() {
 	//World* world = game->getPlayer()->getLocation().getWorld();
+	World* world = FlatCraft::getInstance()->getWorld("test");
+	
 	while (true) {
 		BeginBatchDraw();
 		cleardevice();
