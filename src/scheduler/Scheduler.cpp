@@ -62,7 +62,7 @@ void Scheduler::start(){
         }
     });
 
-    thread_->detach();
+    //thread_->detach();
 }
 
 void Scheduler::stop() {

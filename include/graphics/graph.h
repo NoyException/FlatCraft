@@ -16,7 +16,9 @@ public:
 		surfaces[Material::STONE] = pic;
 		surfaces[Material::DIRT] = IMG_Load("../../../../src/graphics/textures/block/rooted_dirt.png");
 		surfaces[Material::AIR] = IMG_Load("../../../../src/graphics/textures/block/white_stained_glass.png");
-		//surfaces[Material::GRASS] = 
+		surfaces[Material::GRASS] = IMG_Load("../../../../src/graphics/textures/block/azalea_top.png");
+		surfaces[Material::BED_ROCK] = IMG_Load("../../../../src/graphics/textures/block/bedrock.png");
+		surfaces[Material::WATER] = IMG_Load("../../../../src/graphics/textures/painting/water.png");
 	}
 	inline SDL_Surface* getSurface(Material material) {
 		if (surfaces.find(material) == surfaces.end())

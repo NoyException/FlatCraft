@@ -35,12 +35,59 @@ void Graph::draw(SDL_Renderer* renderer) {
 }
 
 void Graph::drawMap(Location location, SDL_Renderer* renderer) {
-	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, blockSurface.getSurface(Material::STONE));
+	SDL_Texture* texture;
 	SDL_Rect rect;
-	rect.x = 20;
-	rect.y = 20;
+	rect.x = windowWidth/2;
+	rect.y = windowHeight*3/4;
 	rect.w = rect.h = blockSize;
+	Location playerLocation = FlatCraft::getInstance()->getPlayer()->getLocation();
+	auto world = FlatCraft::getInstance()->getWorld("main_world");
+	Material material =  world->getBlock(playerLocation)->getMaterial();
+	texture = SDL_CreateTextureFromSurface(renderer, blockSurface.getSurface(material));
+	rect.x += (playerLocation.getX() - playerLocation.getBlockX())*blockSize;
+	rect.y += (playerLocation.getY() - playerLocation.getBlockY())*blockSize;
 	SDL_RenderCopy(renderer, texture, NULL, &rect);
-
+	int i, j;
+	int px, py;
+	px = playerLocation.getBlockX();
+	py = playerLocation.getBlockY();
+	SDL_Rect tempRect;
+	for (i = 0; rect.x + i * blockSize < windowWidth; i++) {
+		tempRect = rect;
+		tempRect.x += i * blockSize;
+		for (j = 0; rect.y + j * blockSize < windowHeight; j++, tempRect.y += blockSize) {
+			material = world->getBlock(px + i, py - j)->getMaterial();
+			texture = SDL_CreateTextureFromSurface(renderer, blockSurface.getSurface(material));
+			SDL_RenderCopy(renderer, texture, NULL, &tempRect);
+			SDL_DestroyTexture(texture);
+		}
+		tempRect = rect;
+		tempRect.x += i * blockSize;
+		for (j = -1; rect.y + j * blockSize > -blockSize; j--, tempRect.y -= blockSize) {
+			material = world->getBlock(px + i, py - j)->getMaterial();
+			texture = SDL_CreateTextureFromSurface(renderer, blockSurface.getSurface(material));
+			SDL_RenderCopy(renderer, texture, NULL, &tempRect);
+			SDL_DestroyTexture(texture);
+		}
+	}
+	for (i = -1; rect.x + i * blockSize > -blockSize; i--) {
+		tempRect = rect;
+		tempRect.x += i * blockSize;
+		for (j = 0; rect.y + j * blockSize < windowHeight; j++, tempRect.y += blockSize) {
+			material = world->getBlock(px + i, py - j)->getMaterial();
+			texture = SDL_CreateTextureFromSurface(renderer, blockSurface.getSurface(material));
+			SDL_RenderCopy(renderer, texture, NULL, &tempRect);
+			SDL_DestroyTexture(texture);
+		}
+		tempRect = rect;
+		tempRect.x += i * blockSize;
+		for (j = -1; rect.y + j * blockSize > -blockSize; j--, tempRect.y -= blockSize) {
+			material = world->getBlock(px + i, py - j)->getMaterial();
+			texture = SDL_CreateTextureFromSurface(renderer, blockSurface.getSurface(material));
+			SDL_RenderCopy(renderer, texture, NULL, &tempRect);
+			SDL_DestroyTexture(texture);
+		}
+	}
+	
 
 }
