@@ -19,8 +19,8 @@ public:
     [[nodiscard]] std::string getName() const;
     void getEntities(std::vector<Entity*>& entities) const;
     void getEntities(std::vector<Entity*>& entities, bool(*filter)(const Entity&)) const;
-    [[nodiscard]] Block* getBlock(int x, int y) const;
-    [[nodiscard]] Block* getBlock(const Location& location) const;
+    [[nodiscard]] Block* getBlock(int x, int y, bool front) const;
+    [[nodiscard]] Block* getBlock(const Location& location, bool front) const;
 private:
     void init();
     void notifyTeleported(Entity& entity);

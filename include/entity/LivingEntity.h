@@ -11,7 +11,8 @@
 class LivingEntity : public Entity {
 public:
     explicit LivingEntity(const Location& spawnLocation);
-    double getHealth() const;
+    ~LivingEntity() override = default;
+    [[nodiscard]] double getHealth() const;
     void setHealth(double health);
     [[nodiscard]] bool isDead() const;
     [[nodiscard]] nlohmann::json serialize() const override;

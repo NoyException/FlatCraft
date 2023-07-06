@@ -30,6 +30,12 @@ World* Location::getWorld() const {
     return FlatCraft::getInstance()->getWorld(world_);
 }
 
+Block *Location::getBlock(bool front) const {
+    auto world = getWorld();
+    if(world== nullptr) return nullptr;
+    return world->getBlock(getBlockX(),getBlockY(),front);
+}
+
 double Location::getX() const {
     return x_;
 }
@@ -56,6 +62,11 @@ void Location::setX(double x) {
 
 void Location::setY(double y) {
     y_ = y;
+}
+
+void Location::add(double x, double y) {
+    x_ += x;
+    y_ += y;
 }
 
 void Location::add(const Location &another) {
@@ -95,5 +106,9 @@ nlohmann::json Location::serialize() const {
             {"x",x_},
             {"y",y_}
     };
+}
+
+Vec2d Location::toVec2d() const {
+    return {x_,y_};
 }
 
