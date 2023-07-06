@@ -67,7 +67,7 @@ void Scheduler::start(){
 
 void Scheduler::stop() {
     running_ = false;
-    thread_->join();
+    if(thread_->joinable()) thread_->join();
 }
 
 void Scheduler::runTask(const RawTask& task) {

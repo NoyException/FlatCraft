@@ -11,9 +11,11 @@ int main(){
     game->createSave("testSave2");
     std::cout << "Game starting" << std::endl;
     game->start();
-    std::this_thread::sleep_for(std::chrono::seconds(10));
+    std::cout << "Game started" << std::endl;
+//    std::this_thread::sleep_for(std::chrono::seconds(10));
     game->save();
     std::cout << "Game ended" << std::endl;
+    game->stop();
 }
 
 extern "C"
