@@ -59,6 +59,8 @@ void Scheduler::start(){
             preciseSleepUntil(timestamp_);//std::this_thread::sleep_until(timestamp_);
             run();
             timestamp_+=std::chrono::milliseconds(50);
+            auto tmp = std::chrono::high_resolution_clock::now()+std::chrono::milliseconds(50);
+            if(timestamp_<tmp) timestamp_=tmp;
         }
     });
 

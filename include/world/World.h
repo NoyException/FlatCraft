@@ -14,6 +14,8 @@ class World {
 public:
     friend class Entity;
     explicit World(std::string name);
+    [[nodiscard]] nlohmann::json serialize() const;
+    static World deserialize(const nlohmann::json& json);
     [[nodiscard]] std::string getName() const;
     void getEntities(std::vector<Entity*>& entities) const;
     void getEntities(std::vector<Entity*>& entities, bool(*filter)(const Entity&)) const;

@@ -8,7 +8,7 @@
 #include "world/World.h"
 
 World::World(std::string name) : name_(std::move(name)) {
-
+    init();
 }
 
 std::string World::getName() const {
@@ -26,7 +26,7 @@ Block* World::getBlock(const Location &location) const {
 }
 
 void World::notifyTeleported(Entity &entity) {
-    if(entity.getLocation().getWorld()==this)
+    if(entity.getLocation().getRawWorld()==name_)
         entities_.insert(&entity);
     else
         entities_.erase(&entity);
@@ -49,9 +49,42 @@ void World::init() {
         for(int j=0;j<256;j++){
             int hash = (i<<10)^j;
             Material m;
-            if(j==0) m=Material::BED_ROCK;
-
-            blocks_[hash] = std::make_unique<Block>(Material::AIR,Location(name_,i,j));
+            if(j==0) m = Material::BED_ROCK;
+            else if(j<48) m = Material::STONE;
+            else if(j<64) m = Material::DIRT;
+            else if(j==64) m = Material::GRASS;
+            else m = Material::AIR;
+            blocks_[hash] = std::make_unique<Block>(m,Location(name_,i,j));
         }
     }
+}
+
+nlohmann::json World::serialize() const {
+    nlohmann::json json({{"name",name_}});
+    nlohmann::json blocks;
+    for(int i=-128;i<=128;i++) {
+        for (int j = 0; j < 256; j++) {
+            std::stringstream ss;
+            ss<<i<<"_"<<j;
+            blocks.emplace(ss.str(), getBlock(i,j)->serialize());
+        }
+    }
+    json.emplace("blocks",std::move(blocks));
+    return std::move(json);
+}
+
+World World::deserialize(const nlohmann::json &json) {
+    World world(json.at("name").get<std::string>());
+    auto blocks = json.at("blocks");
+    for(int i=-128;i<=128;i++) {
+        for (int j = 0; j < 256; j++) {
+            std::stringstream ss;
+            ss<<i<<"_"<<j;
+            Block block = Block::deserialize(Location(world.name_,i,j),
+                                               blocks.at(ss.str()));
+            int hash = (i<<10)^j;
+            world.blocks_[hash] = std::make_unique<Block>(block);
+        }
+    }
+    return std::move(world);
 }

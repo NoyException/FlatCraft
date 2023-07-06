@@ -12,24 +12,30 @@
 
 class FlatCraft {
 public:
-    FlatCraft();
     void start();
     void createWorld(const std::string& name);
     void loadSave(const std::string& name);
     void save();
+    [[nodiscard]] bool existsSave(const std::string &name) const;
+    void createSave(const std::string &name);
     [[nodiscard]] World* getWorld(const std::string& name) const;
     Player* getPlayer();
     static FlatCraft* getInstance();
+    friend std::unique_ptr<FlatCraft> std::make_unique<FlatCraft>(void);
 private:
+    FlatCraft();
     void loadPlayer();
     void savePlayer();
+
     void loadWorld(const std::string& name);
+    void loadWorlds();
     void saveWorld(const std::string& name);
     void saveWorlds();
     //name->World
     std::map<std::string,std::unique_ptr<World>> worlds_;
-    Player player_;
+    std::unique_ptr<Player> player_;
     Scheduler scheduler_;
+    long long ticks_;
     std::string save_;
     static std::unique_ptr<FlatCraft> instance;
 };

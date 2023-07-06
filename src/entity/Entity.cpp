@@ -10,15 +10,15 @@ Location Entity::getLocation() const {
 }
 
 void Entity::teleport(const Location &location) {
+    World* oldWorld = location.getWorld();
     location_ = location;
+    if(oldWorld != nullptr) oldWorld->notifyTeleported(*this);
     location.getWorld()->notifyTeleported(*this);
 }
 
 Entity::Entity(const Location &spawnLocation) : location_(spawnLocation){}
 
 nlohmann::json Entity::serialize() const {
-    return nlohmann::json{
-            {"location",location_.serialize()}
-    };
+    return {{"location",location_.serialize()}};
 }
 

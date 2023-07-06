@@ -6,7 +6,14 @@
 
 #undef main
 int main(){
-    SDL_main(0,{});
+//    SDL_main(0,{});
+    FlatCraft* game = FlatCraft::getInstance();
+    game->createSave("testSave2");
+    std::cout << "Game starting" << std::endl;
+    game->start();
+    std::this_thread::sleep_for(std::chrono::seconds(10));
+    game->save();
+    std::cout << "Game ended" << std::endl;
 }
 
 extern "C"
@@ -59,13 +66,8 @@ int SDL_main(int argc, char* argv[]) {
     SDL_Quit ();
 
 //    std::ostream::sync_with_stdio(false);
-    FlatCraft game;
-    std::cout << "Game starting" << std::endl;
-    game.start();
-    //std::this_thread::sleep_for(std::chrono::seconds(10));
 //    std::thread graphThread(graphMain, &game);
 //    graphThread.detach();
-    std::cout << "Game ended" << std::endl;
     return 0;
 }
 

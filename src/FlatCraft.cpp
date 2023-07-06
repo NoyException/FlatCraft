@@ -6,15 +6,18 @@
 //#include <windows.h>
 #include <filesystem>
 
-FlatCraft::FlatCraft() : player_(Location("what",0,64)) {
+FlatCraft::FlatCraft() : ticks_(0) {
 }
 
 void FlatCraft::start() {
-    createWorld("test");
-//    save_="test";
-//    loadPlayer();
-//    savePlayer();
-//    loadPlayer();
+    ticks_=0;
+    scheduler_.runTaskTimer([&](){
+        ticks_++;
+    },0,0);
+    scheduler_.runTaskLater([&](){
+        std::cout<<"ticks:"<<ticks_<<std::endl;
+    },199);
+    scheduler_.start();
 }
 
 void FlatCraft::createWorld(const std::string &name) {
@@ -28,47 +31,20 @@ FlatCraft *FlatCraft::getInstance() {
 std::unique_ptr<FlatCraft> FlatCraft::instance = std::make_unique<FlatCraft>();
 
 World *FlatCraft::getWorld(const std::string &name) const {
-    return worlds_.find(name)->second.get();
+    auto it = worlds_.find(name);
+    if(it==worlds_.end()) return nullptr;
+    return it->second.get();
 }
 
 Player *FlatCraft::getPlayer() {
-    return &player_;
+    return player_.get();
 }
 
 void FlatCraft::loadSave(const std::string &name) {
-
+    if(!existsSave(name)) return;
     save_ = name;
+    loadWorlds();
     loadPlayer();
-    loadWorld(player_.getLocation().getRawWorld());
-
-    static int cnt[4];
-    scheduler_.runTaskTimer([](){
-//        if (GetAsyncKeyState('W') & 0x8000) {
-//            cnt[0]++;//std::cout << "W is pressed\n";
-//        }
-//
-//        // Check the state of A key
-//        if (GetAsyncKeyState('A') & 0x8000) {
-//            cnt[1]++;//std::cout << "A is pressed\n";
-//        }
-//
-//        // Check the state of S key
-//        if (GetAsyncKeyState('S') & 0x8000) {
-//            cnt[2]++;//std::cout << "S is pressed\n";
-//        }
-//
-//        // Check the state of D key
-//        if (GetAsyncKeyState('D') & 0x8000) {
-//            cnt[3]++;//std::cout << "D is pressed\n";
-//        }
-    },0,0);
-    scheduler_.runTaskLater([](){
-        std::cout << "A:" << cnt[0] << std::endl;
-        std::cout << "B:" << cnt[1] << std::endl;
-        std::cout << "C:" << cnt[2] << std::endl;
-        std::cout << "D:" << cnt[3] << std::endl;
-    },200);
-    scheduler_.start();
 }
 
 void FlatCraft::loadPlayer() {
@@ -77,36 +53,79 @@ void FlatCraft::loadPlayer() {
         std::string s((std::istreambuf_iterator<char> (in)), (std::istreambuf_iterator<char> ()));
         in.close();
         if(!s.empty()){
-            player_ = Player::deserialize(nlohmann::json::parse(s));
-            std::cout<<"loaded"<<std::endl<<player_.getLocation().serialize().dump();
+            player_ = std::make_unique<Player>(Player::deserialize(nlohmann::json::parse(s)));
+            player_->teleport(player_->getLocation());
             return;
         }
     }
-    player_ = Player{Location{"main_world",0,64}};
+    player_ = std::make_unique<Player>(Location{"",0,64});
 }
 
 void FlatCraft::loadWorld(const std::string &name) {
+    std::ifstream in(save_+"/world/"+name+".dat");
+    if(in.is_open()){
+        std::cout<<"loading world "<<name<<"..."<<std::endl;
+        std::string s((std::istreambuf_iterator<char> (in)), (std::istreambuf_iterator<char> ()));
+        in.close();
+        if(!s.empty()){
+            World world = World::deserialize(nlohmann::json::parse(s));
+            worlds_.emplace(name,std::make_unique<World>(std::move(world)));
+            std::cout<<"done"<<std::endl;
+            return;
+        }
+        std::cout<<"failed"<<std::endl;
+    }
+    createWorld(name);
+}
 
+void FlatCraft::loadWorlds() {
+    for(const auto& it : std::filesystem::directory_iterator(save_+"/world")){
+        auto name = it.path().filename();
+        if(name.extension()==".dat"){
+            loadWorld(name.u8string());
+        }
+    }
+}
+
+void FlatCraft::saveWorld(const std::string &name) {
+    World* world = getWorld(name);
+    if(world!= nullptr){
+        std::ofstream out(save_+"/world/"+name+".dat");
+        out<<world->serialize().dump();
+        out.close();
+    }
+}
+
+void FlatCraft::saveWorlds() {
+    for (const auto &item: worlds_){
+        saveWorld(item.first);
+    }
 }
 
 void FlatCraft::save() {
     std::filesystem::create_directories(save_);
+    std::filesystem::create_directories(save_+"/world");
     savePlayer();
     saveWorlds();
+}
+
+bool FlatCraft::existsSave(const std::string &name) const {
+    return std::filesystem::exists(name);
+}
+
+void FlatCraft::createSave(const std::string &name) {
+    save_=name;
+    std::filesystem::create_directories(save_);
+    std::filesystem::create_directories(save_+"/world");
+    createWorld("main_world");
+    loadPlayer();
+    player_->teleport(Location("main_world",0,64));
 }
 
 void FlatCraft::savePlayer() {
     std::ofstream out(save_+"/player.dat");
     if(out.is_open()){
-        out<<player_.serialize().dump();
+        out<<player_->serialize().dump();
         out.close();
     }
-}
-
-void FlatCraft::saveWorld(const std::string &name) {
-
-}
-
-void FlatCraft::saveWorlds() {
-
 }

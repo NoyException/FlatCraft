@@ -3,3 +3,11 @@
 //
 
 #include "world/BlockData.h"
+
+nlohmann::json BlockData::serialize() const {
+    return {};
+}
+
+BlockData BlockData::deserialize(const nlohmann::json &json) {
+    return {};
+}

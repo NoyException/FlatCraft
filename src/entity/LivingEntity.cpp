@@ -4,7 +4,7 @@
 
 #include "entity/LivingEntity.h"
 
-LivingEntity::LivingEntity(const Location &spawnLocation) : Entity(spawnLocation) {
+LivingEntity::LivingEntity(const Location &spawnLocation) : Entity(spawnLocation), health_(20) {
 }
 
 bool LivingEntity::isDead() const {
@@ -12,9 +12,9 @@ bool LivingEntity::isDead() const {
 }
 
 nlohmann::json LivingEntity::serialize() const {
-    nlohmann::json &&j = Entity::serialize();
+    nlohmann::json j = Entity::serialize();
     j.merge_patch(nlohmann::json{{"health",health_}});
-    return j;
+    return std::move(j);
 }
 
 double LivingEntity::getHealth() const {
