@@ -2,6 +2,8 @@
 #define _GRAPHICS_H
 #include "FlatCraft.h"
 #include <unordered_map>
+#include "SDL.h"
+#include "SDL_image.h"
 extern class DestroyBlock destroyBlock;
 void graphMain(FlatCraft* game);
 

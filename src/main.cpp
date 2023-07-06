@@ -6,7 +6,15 @@
 
 #undef main
 int main(){
-    SDL_main(0,{});
+    //SDL_main(0,{});
+    FlatCraft game;
+    std::cout << "Game starting" << std::endl;
+    game.start();
+    //std::this_thread::sleep_for(std::chrono::seconds(10));
+    std::thread graphThread(graphMain, &game);
+    graphThread.detach();
+    getchar();
+    std::cout << "Game ended" << std::endl;
 }
 
 extern "C"
