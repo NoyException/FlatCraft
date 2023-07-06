@@ -12,6 +12,7 @@ class Entity {
 public:
     explicit Entity(const Location& spawnLocation);
     [[nodiscard]] Location getLocation() const;
+    [[nodiscard]] World* getWorld() const;
     void teleport(const Location& location);
     [[nodiscard]] virtual nlohmann::json serialize() const;
 protected:

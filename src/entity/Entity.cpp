@@ -9,6 +9,10 @@ Location Entity::getLocation() const {
     return location_;
 }
 
+World *Entity::getWorld() const {
+    return location_.getWorld();
+}
+
 void Entity::teleport(const Location &location) {
     World* oldWorld = location.getWorld();
     location_ = location;
