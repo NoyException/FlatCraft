@@ -14,7 +14,9 @@ public:
 		SDL_Surface* pic = nullptr;
 		pic = IMG_Load("../../../../src/graphics/textures/block/stone.png");
 		surfaces[Material::STONE] = pic;
-
+		surfaces[Material::DIRT] = IMG_Load("../../../../src/graphics/textures/block/rooted_dirt.png");
+		surfaces[Material::AIR] = IMG_Load("../../../../src/graphics/textures/block/white_stained_glass.png");
+		//surfaces[Material::GRASS] = 
 	}
 	inline SDL_Surface* getSurface(Material material) {
 		if (surfaces.find(material) == surfaces.end())

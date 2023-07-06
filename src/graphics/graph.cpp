@@ -42,4 +42,5 @@ void Graph::drawMap(Location location, SDL_Renderer* renderer) {
 	rect.w = rect.h = blockSize;
 	SDL_RenderCopy(renderer, texture, NULL, &rect);
 
+
 }
