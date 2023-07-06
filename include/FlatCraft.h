@@ -13,6 +13,7 @@
 class FlatCraft {
 public:
     void start();
+    void stop();
     void createWorld(const std::string& name);
     void loadSave(const std::string& name);
     void save();

@@ -20,6 +20,10 @@ void FlatCraft::start() {
     scheduler_.start();
 }
 
+void FlatCraft::stop() {
+    scheduler_.stop();
+}
+
 void FlatCraft::createWorld(const std::string &name) {
     worlds_.emplace(name, std::make_unique<World>(name));
 }
