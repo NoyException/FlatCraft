@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include "SDL.h"
 #include "SDL_image.h"
+#include <Windows.h>
 extern class DestroyBlock destroyBlock;
 extern class BlockSurface blockSurface;
 void graphMain(FlatCraft* game);
@@ -19,6 +20,11 @@ public:
 		surfaces[Material::GRASS] = IMG_Load("../../../../src/graphics/textures/block/azalea_top.png");
 		surfaces[Material::BED_ROCK] = IMG_Load("../../../../src/graphics/textures/block/bedrock.png");
 		surfaces[Material::WATER] = IMG_Load("../../../../src/graphics/textures/painting/water.png");
+	}
+	~BlockSurface() {
+		for (auto it : surfaces) {
+			SDL_FreeSurface(it.second);
+		}
 	}
 	inline SDL_Surface* getSurface(Material material) {
 		if (surfaces.find(material) == surfaces.end())
@@ -50,12 +56,14 @@ class Graph {
 public:
 	Graph(FlatCraft* game) : game(game), windowWidth(1280), windowHeight(768), blockSize(32) {}
 	void display();//display the graph, including world and player
-	void drawMap(Location location, SDL_Renderer* renderer);//draw the map as location as the center
-	void draw(SDL_Renderer* renderer);//draw the graph on the renderer
+	void drawMap();//draw the map as location as the center
+	void draw();//draw the graph on the renderer
+	void drawPlayer();
 private:
 	FlatCraft* game;
 	int windowWidth, windowHeight;//pixel
 	int blockSize;//pixel
+	SDL_Renderer* renderer;
 };
 
 #endif
