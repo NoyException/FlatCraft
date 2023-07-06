@@ -46,8 +46,6 @@ void Scheduler::run(){
     for (auto &task: tasks_){
         task.run();
     }
-
-    lock.~lock_guard();
 }
 
 void Scheduler::start(){
@@ -86,5 +84,4 @@ void Scheduler::runTaskTimer(const RawTask& task, int delay, int interval) {
 void Scheduler::runTaskFiniteTimer(const RawTask &task, int delay, int interval, int times) {
     std::lock_guard<std::mutex> lock(mtx_);
     tasks_.emplace_back(task,delay,interval,times);
-    lock.~lock_guard();
 }
