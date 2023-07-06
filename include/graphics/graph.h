@@ -1,6 +1,5 @@
 #ifndef _GRAPHICS_H
 #define _GRAPHICS_H
-#include "graphics/graphics.h"
 #include "FlatCraft.h"
 #include <unordered_map>
 extern class DestroyBlock destroyBlock;
@@ -9,9 +8,9 @@ void graphMain(FlatCraft* game);
 class BlockGraph {//search the image through material
 public:
 	BlockGraph();
-	inline IMAGE* getImage(Material material) {return nullptr;}
+//	inline IMAGE* getImage(Material material) {return nullptr;}
 private:
-	std::vector<IMAGE> imgs;
+//	std::vector<IMAGE> imgs;
 };
 
 class DestroyBlock {
