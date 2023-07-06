@@ -28,6 +28,7 @@ private:
     bool running_;
     std::mutex mtx_;
     std::list<Task> tasks_;
+    std::unique_ptr<std::thread> thread_;
     decltype(std::chrono::high_resolution_clock::now()) timestamp_;
 };
 
