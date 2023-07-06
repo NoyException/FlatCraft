@@ -46,15 +46,13 @@ void Scheduler::run(){
     for (auto &task: tasks_){
         task.run();
     }
-
-    lock.~lock_guard();
 }
 
 void Scheduler::start(){
     running_ = true;
     timestamp_ = std::chrono::high_resolution_clock::now();
 
-    std::thread t([this]() {
+    thread_ = std::make_unique<std::thread>([this]() {
         while (running_) {
             preciseSleepUntil(timestamp_);//std::this_thread::sleep_until(timestamp_);
             run();
@@ -64,11 +62,12 @@ void Scheduler::start(){
         }
     });
 
-    t.detach();
+    thread_->detach();
 }
 
 void Scheduler::stop() {
     running_ = false;
+    thread_->join();
 }
 
 void Scheduler::runTask(const RawTask& task) {
@@ -86,5 +85,4 @@ void Scheduler::runTaskTimer(const RawTask& task, int delay, int interval) {
 void Scheduler::runTaskFiniteTimer(const RawTask &task, int delay, int interval, int times) {
     std::lock_guard<std::mutex> lock(mtx_);
     tasks_.emplace_back(task,delay,interval,times);
-    lock.~lock_guard();
 }
