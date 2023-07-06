@@ -18,6 +18,7 @@
 #include <cmath>
 #include <utility>
 #include <functional>
+#include <optional>
 
 #include "util/json.hpp"
 

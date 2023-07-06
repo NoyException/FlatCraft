@@ -5,9 +5,12 @@
 #ifndef FLATCRAFT_BLOCKDATA_H
 #define FLATCRAFT_BLOCKDATA_H
 
+#include "common.h"
 
 class BlockData {
-
+public:
+    [[nodiscard]] nlohmann::json serialize() const;
+    static BlockData deserialize(const nlohmann::json& json);
 };
 
 
