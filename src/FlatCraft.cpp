@@ -48,6 +48,10 @@ Scheduler *FlatCraft::getScheduler() {
     return &scheduler_;
 }
 
+EventManager *FlatCraft::getEventManager() {
+    return &eventManager_;
+}
+
 void FlatCraft::loadSave(const std::string &name) {
     if(!existsSave(name)) return;
     save_ = name;

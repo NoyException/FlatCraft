@@ -9,6 +9,7 @@
 #include "world/World.h"
 #include "entity/player/Player.h"
 #include "scheduler/Scheduler.h"
+#include "event/EventManager.h"
 
 class FlatCraft {
 public:
@@ -22,6 +23,7 @@ public:
     [[nodiscard]] World* getWorld(const std::string& name) const;
     Player* getPlayer();
     Scheduler* getScheduler();
+    EventManager* getEventManager();
     static FlatCraft* getInstance();
     friend std::unique_ptr<FlatCraft> std::make_unique<FlatCraft>(void);
 private:
@@ -38,6 +40,7 @@ private:
     std::unique_ptr<Player> player_;
     Scheduler scheduler_;
     long long ticks_;
+    EventManager eventManager_;
     std::string save_;
     static std::unique_ptr<FlatCraft> instance;
 };

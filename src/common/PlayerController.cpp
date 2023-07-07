@@ -2,7 +2,9 @@
 // Created by Noy on 2023/7/6.
 //
 
-#include "entity/player/PlayerController.h"
+#include "PlayerController.h"
+
+PlayerController PlayerController::instance_;
 
 void PlayerController::up() {
     if(locked_) return;

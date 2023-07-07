@@ -5,8 +5,6 @@
 #ifndef FLATCRAFT_PLAYERCONTROLLER_H
 #define FLATCRAFT_PLAYERCONTROLLER_H
 
-#include "common.h"
-
 class PlayerController {
 public:
     void up();
@@ -19,6 +17,7 @@ public:
     void leftClick();
     void rightClick();
     void reset();
+    static PlayerController instance_;
     friend class Player;
 private:
     bool up_;

@@ -10,9 +10,13 @@
 
 class EventManager {
 public:
-    Event BASE_EVENT;
+    EventManager();
+    ~EventManager();
+    static Event* BASE_EVENT;
+    static Event* ENTITY_EVENT;
+    static Event* ENTITY_TELEPORT_EVENT;
     static void callEvent(EventInstance& event) ;
-    static void registerListener(Event& event, EventPriority priority, const std::function<void(EventInstance*)>& listener) ;
+    static void registerListener(Event* event, EventPriority priority, const std::function<void(EventInstance*)>& listener) ;
 private:
 };
 

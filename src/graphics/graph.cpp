@@ -3,7 +3,6 @@
 #include <chrono>
 DestroyBlock destroyBlock;
 BlockSurface blockSurface;
-BlockTexture* blockTexture;
 void graphMain(FlatCraft *game) {
 	Graph graph(game);
 	graph.display();
@@ -17,7 +16,7 @@ void Graph::display() {
 	SDL_Surface* pic = nullptr, *screen = nullptr;
 	SDL_Window *window = SDL_CreateWindow("FlatCraft", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_SHOWN);//create window
 	renderer = SDL_CreateRenderer(window, -1, 0);
-	blockTexture = &BlockTexture(renderer);
+	blockTexture = new BlockTexture(renderer);
 	PlayerController* playerController = FlatCraft::getInstance()->getPlayer()->getController();
 	SDL_Event my_event;
 	int quit = 0;
@@ -30,7 +29,6 @@ void Graph::display() {
 				
 			}
 		}
-
 		 //clear before image in renderer
 		SDL_RenderClear(renderer);
 		draw();
@@ -62,7 +60,7 @@ void Graph::drawPlayer() {
 	auto world = FlatCraft::getInstance()->getWorld("main_world");
 	SDL_Rect rect;
 	rect.x = windowWidth / 2;
-	rect.y = windowHeight * 3 / 4;
+	rect.y = 14*blockSize;
 	rect.w = rect.h = blockSize * 1.5;
 	//rect.x += (playerLocation.getX() - (int) playerLocation.getX()) * blockSize;
 	//rect.y += (playerLocation.getY() - playerLocation.getBlockY()) * blockSize;
@@ -75,12 +73,12 @@ void Graph::drawMap() {
 	SDL_Texture* texture;
 	SDL_Rect rect;
 	rect.x = windowWidth/2;
-	rect.y = windowHeight*3/4;
+	rect.y = 14*blockSize;
 	rect.w = rect.h = blockSize;
 	Vec2d leftUpPosition_;
 	Vec2d cameraPosition_;
 	Vec2d tempVec;
-	Material materials_[26][42][2];
+	Material materials_[42][26][2];
 	{
 		std::lock_guard<std::mutex> lock(WorldModel::instance_.mtx_);
 		memcpy(materials_, WorldModel::instance_.materials_, sizeof(int)*26*42*2);
@@ -95,16 +93,15 @@ void Graph::drawMap() {
 	cj = tempVec.getY();
 	SDL_Rect leftUpRect = rect;
 	leftUpRect.x = rect.x - blockSize * ci;
-	leftUpRect.y = rect.y - blockSize * (26 - cj) ;
+	leftUpRect.y = rect.y - blockSize * (cj) ;
 	int i, j;
 	SDL_Rect tempRect = leftUpRect;
 	for (i = 0; i < 42; i++) {
 		tempRect.y = leftUpRect.y;
 		for (j = 0; j < 26; j++) {
-			material = materials_[j][41 - i][0];
-			texture = SDL_CreateTextureFromSurface(renderer, blockSurface.getSurface(material));
+			material = materials_[i][25-j][0];
+			texture = blockTexture->getTexture(material);
 			SDL_RenderCopy(renderer, texture, NULL, &tempRect);
-			SDL_DestroyTexture(texture);
 			tempRect.y += blockSize;
 		}
 		tempRect.x += blockSize;

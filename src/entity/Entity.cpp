@@ -5,6 +5,7 @@
 #include "entity/Entity.h"
 #include "world/World.h"
 #include "FlatCraft.h"
+#include "event/instance/EntityTeleportEvent.h"
 
 Entity::Entity(const Location &spawnLocation) : location_(spawnLocation), velocity_(){
     physicsTask_ = FlatCraft::getInstance()->getScheduler()->runTaskTimer([&]() {
@@ -28,10 +29,16 @@ World *Entity::getWorld() const {
 }
 
 void Entity::teleport(const Location &location) {
-    World* oldWorld = location.getWorld();
-    location_ = location;
-    if(oldWorld != nullptr) oldWorld->notifyTeleported(*this);
-    location.getWorld()->notifyTeleported(*this);
+    EntityTeleportEvent event(this, location);
+    EventManager::callEvent(event);
+    if(event.isCanceled()) return;
+    Location targetLocation = event.getTargetLocation();
+    World* oldWorld = targetLocation.getWorld();
+    location_ = targetLocation;
+    if(targetLocation.getWorld()!=oldWorld){
+        if(oldWorld != nullptr) oldWorld->notifyTeleported(*this);
+        targetLocation.getWorld()->notifyTeleported(*this);
+    }
 }
 
 void Entity::move() {

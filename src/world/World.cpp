@@ -94,3 +94,16 @@ World World::deserialize(const nlohmann::json &json) {
     }
     return std::move(world);
 }
+
+std::unique_ptr<RayTraceResult> World::rayTrace(const Location &location, const Vec2d &direction,
+                                                double maxDistance, double raySize,
+                                                const std::function<bool(Material)>& blockFilter,
+                                                const std::function<bool(Entity *)>& entityFilter) const {
+    for (auto &item: entities_){
+        if(entityFilter(item)){
+
+        }
+    }
+    return nullptr;
+}
+
