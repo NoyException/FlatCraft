@@ -3,10 +3,17 @@
 //
 
 #include "util/Vec2d.h"
+#include <cmath>
 
 Vec2d::Vec2d() : x_(0), y_(0) {}
 
 Vec2d::Vec2d(double x, double y) : x_(x), y_(y) {}
+
+Vec2d &Vec2d::operator=(const Vec2d &another) {
+    x_ = another.x_;
+    y_ = another.y_;
+    return *this;
+}
 
 double Vec2d::getX() const {
     return x_;
@@ -27,6 +34,16 @@ void Vec2d::setY(double y) {
 void Vec2d::add(double x, double y) {
     x_ += x;
     y_ += y;
+}
+
+void Vec2d::add(const Vec2d &another) {
+    x_ += another.x_;
+    y_ += another.y_;
+}
+
+void Vec2d::subtract(const Vec2d &another) {
+    x_ -= another.x_;
+    y_ -= another.y_;
 }
 
 void Vec2d::multiply(double m) {

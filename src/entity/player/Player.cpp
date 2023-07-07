@@ -45,6 +45,8 @@ Player::Player(const Location &spawnLocation) : LivingEntity(spawnLocation), con
             location_.add(dx,0);
         }
         controller_.reset();
+
+        updateModel();
     },0,0);
 }
 
@@ -64,6 +66,25 @@ std::unique_ptr<Player> Player::deserialize(const nlohmann::json &json) {
 
 PlayerController *Player::getController() {
     return &controller_;
+}
+
+void Player::updateModel() {
+    auto world = location_.getWorld();
+    if(world == nullptr) return;
+    std::lock_guard<std::mutex> lock(WorldModel::instance_.mtx_);
+
+    WorldModel::instance_.cameraPosition_ = location_.toVec2d();
+    auto loc = location_.toBlockLocation().toVec2d();
+    loc.add(-(int)(WorldModel::MAX_COLUMN/2),-(int)(WorldModel::MAX_ROW*0.618));
+    WorldModel::instance_.leftUpPosition_ = loc;
+    for(int i=0;i<WorldModel::MAX_ROW;i++){
+        for(int j=0;j<WorldModel::MAX_COLUMN;j++){
+            for(int k=0;k<=1;k++){
+                WorldModel::instance_.materials_[i][j][k] =
+                        world->getBlock((int)loc.getX()+i,(int)loc.getY()+j,k)->getMaterial();
+            }
+        }
+    }
 }
 
 void Player::jump() {

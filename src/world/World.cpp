@@ -7,7 +7,7 @@
 
 #include "world/World.h"
 
-World::World(std::string name) : name_(std::move(name)) {
+World::World(const std::string& name) : name_(std::move(name)) {
     init();
 }
 

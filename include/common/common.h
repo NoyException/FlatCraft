@@ -20,8 +20,11 @@
 #include <utility>
 #include <functional>
 #include <optional>
+#include <thread>
+#include <mutex>
 
 #include "util/json.hpp"
 #include "util/Vec2d.h"
+#include "WorldModel.h"
 
 #endif //FLATCRAFT_COMMON_H
