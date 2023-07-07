@@ -5,7 +5,7 @@
 #ifndef FLATCRAFT_WORLD_H
 #define FLATCRAFT_WORLD_H
 
-#include <common.h>
+#include "common/common.h"
 #include "Block.h"
 #include "entity/Entity.h"
 #include "Location.h"
@@ -13,7 +13,7 @@
 class World {
 public:
     friend class Entity;
-    explicit World(std::string name);
+    explicit World(const std::string& name);
     [[nodiscard]] nlohmann::json serialize() const;
     static World deserialize(const nlohmann::json& json);
     [[nodiscard]] std::string getName() const;

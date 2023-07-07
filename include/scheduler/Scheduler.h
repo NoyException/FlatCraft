@@ -7,8 +7,6 @@
 
 #include "common.h"
 #include <chrono>
-#include <thread>
-#include <mutex>
 
 #include "scheduler/Task.h"
 

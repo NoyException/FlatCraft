@@ -18,6 +18,7 @@ public:
     static std::unique_ptr<Player> deserialize(const nlohmann::json& json);
     [[nodiscard]] PlayerController* getController();
 private:
+    void updateModel();
     void jump();
     PlayerController controller_;
     Task* task_;
