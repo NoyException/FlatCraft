@@ -9,6 +9,12 @@
 #include "Block.h"
 #include "entity/Entity.h"
 #include "Location.h"
+#include "util/RayTraceResult.h"
+
+enum class RayTraceFlag : int{
+    HIT_ENTITY = 1,
+    HIT_LIQUID = 1<<1,
+};
 
 class World {
 public:
@@ -21,6 +27,10 @@ public:
     void getEntities(std::vector<Entity*>& entities, bool(*filter)(const Entity&)) const;
     [[nodiscard]] Block* getBlock(int x, int y, bool front) const;
     [[nodiscard]] Block* getBlock(const Location& location, bool front) const;
+    std::unique_ptr<RayTraceResult> rayTrace(const Location& location, const Vec2d& direction,
+                                             double maxDistance, double raySize,
+                                             const std::function<bool(Material)>& blockFilter,
+                                             const std::function<bool(Entity*)>& entityFilter) const;
 private:
     void init();
     void notifyTeleported(Entity& entity);

@@ -12,9 +12,10 @@
  */
 class EventInstance{
 public:
-    explicit EventInstance(const Event* event);
     virtual ~EventInstance() = default;
     [[nodiscard]] const Event* getEvent() const;
+protected:
+    explicit EventInstance(const Event* event);
 private:
     const Event *event_;
 };
