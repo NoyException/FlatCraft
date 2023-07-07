@@ -25,38 +25,38 @@ void Graph::display() {
 				quit = 1;
 			}
 			if (my_event.type == SDL_KEYDOWN) {
-				switch (my_event.key.keysym.sym) {
-				case 'w':
-				{
-					Location location = FlatCraft::getInstance()->getPlayer()->getLocation();
-					location.setY(location.getY() + 0.2);
-					FlatCraft::getInstance()->getPlayer()->teleport(location);
-					//std::cout << "h";
-					//playerController->up();
-					break;
-				}
-				case 's':
-				{
-					Location location = FlatCraft::getInstance()->getPlayer()->getLocation();
-					location.setY(location.getY() - 0.2);
-					FlatCraft::getInstance()->getPlayer()->teleport(location);
-					break;
-				}
-				case 'd':
-				{
-					Location location = FlatCraft::getInstance()->getPlayer()->getLocation();
-					location.setX(location.getX() + 0.2);
-					FlatCraft::getInstance()->getPlayer()->teleport(location);
-					//playerController->left();
-					break;
-				}
-				case 'a':
-				{
-					Location location = FlatCraft::getInstance()->getPlayer()->getLocation();
-					location.setX(location.getX() - 0.2);
-					FlatCraft::getInstance()->getPlayer()->teleport(location);
-					break;
-				}
+				//switch (my_event.key.keysym.sym) {
+				//case 'w':
+				//{
+				//	Location location = FlatCraft::getInstance()->getPlayer()->getLocation();
+				//	location.setY(location.getY() + 0.2);
+				//	FlatCraft::getInstance()->getPlayer()->teleport(location);
+				//	//std::cout << "h";
+				//	//playerController->up();
+				//	break;
+				//}
+				//case 's':
+				//{
+				//	Location location = FlatCraft::getInstance()->getPlayer()->getLocation();
+				//	location.setY(location.getY() - 0.2);
+				//	FlatCraft::getInstance()->getPlayer()->teleport(location);
+				//	break;
+				//}
+				//case 'd':
+				//{
+				//	Location location = FlatCraft::getInstance()->getPlayer()->getLocation();
+				//	location.setX(location.getX() + 0.2);
+				//	FlatCraft::getInstance()->getPlayer()->teleport(location);
+				//	//playerController->left();
+				//	break;
+				//}
+				//case 'a':
+				//{
+				//	Location location = FlatCraft::getInstance()->getPlayer()->getLocation();
+				//	location.setX(location.getX() - 0.2);
+				//	FlatCraft::getInstance()->getPlayer()->teleport(location);
+				//	break;
+				//}
 				}
 			}
 		}
