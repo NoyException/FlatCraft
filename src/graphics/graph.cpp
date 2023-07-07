@@ -15,9 +15,8 @@ void Graph::display() {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	SDL_Surface* pic = nullptr, *screen = nullptr;
 	SDL_Window *window = SDL_CreateWindow("FlatCraft", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_SHOWN);//create window
-	//pic = SDL_LoadBMP(path);
 	renderer = SDL_CreateRenderer(window, -1, 0);
-
+	PlayerController* playerController = FlatCraft::getInstance()->getPlayer()->getController();
 	SDL_Event my_event;
 	int quit = 0;
 	while (!quit) {
@@ -32,6 +31,8 @@ void Graph::display() {
 					Location location = FlatCraft::getInstance()->getPlayer()->getLocation();
 					location.setY(location.getY() + 0.2);
 					FlatCraft::getInstance()->getPlayer()->teleport(location);
+					//std::cout << "h";
+					//playerController->up();
 					break;
 				}
 				case 's':
@@ -46,6 +47,7 @@ void Graph::display() {
 					Location location = FlatCraft::getInstance()->getPlayer()->getLocation();
 					location.setX(location.getX() + 0.2);
 					FlatCraft::getInstance()->getPlayer()->teleport(location);
+					//playerController->left();
 					break;
 				}
 				case 'a':
@@ -61,6 +63,7 @@ void Graph::display() {
 		SDL_RenderClear(renderer); //clear before image in renderer
 		draw();
 		SDL_RenderPresent(renderer); //output image
+		
 	}
 	
 	//while (true) {
@@ -96,7 +99,7 @@ void Graph::drawPlayer() {
 	SDL_DestroyTexture(texture);
 }
 
-void Graph::drawMap() {//之后会更改实现方式来修复边界的bug, 2022.7.6
+void Graph::drawMap() {
 	SDL_Texture* texture;
 	SDL_Rect rect;
 	rect.x = windowWidth/2;
@@ -105,10 +108,6 @@ void Graph::drawMap() {//之后会更改实现方式来修复边界的bug, 2022.
 	Location playerLocation = FlatCraft::getInstance()->getPlayer()->getLocation();
 	auto world = FlatCraft::getInstance()->getWorld("main_world");
 	Material material;
-	
-	
-	
-	
 	rect.x += (playerLocation.getX() - playerLocation.getBlockX())*blockSize;
 	rect.y += (playerLocation.getY() - playerLocation.getBlockY())*blockSize;
 	int i, j;
@@ -117,31 +116,41 @@ void Graph::drawMap() {//之后会更改实现方式来修复边界的bug, 2022.
 	py = playerLocation.getBlockY();
 	SDL_Rect tempRect;
 	for (i = 0; rect.x + i * blockSize < windowWidth; i++) {
+		if (px + i >= 128 || px + i < -127)
+			break;
 		tempRect = rect;
 		tempRect.x += i * blockSize;
 		for (j = 0; rect.y + j * blockSize < windowHeight; j++, tempRect.y += blockSize) {
-			material = world->getBlock(px + i, py - j)->getMaterial();
+			if (py - j > 255 || py - j < 0)
+				break;
+			material = world->getBlock(px + i, py - j, true)->getMaterial();
 			texture = SDL_CreateTextureFromSurface(renderer, blockSurface.getSurface(material));
 			SDL_RenderCopy(renderer, texture, NULL, &tempRect);
 			SDL_DestroyTexture(texture);
-//			SDL_RenderPresent(renderer);
+			//SDL_RenderPresent(renderer);
 		}
 		tempRect = rect;
 		tempRect.x += i * blockSize;
 		tempRect.y -= blockSize;
-		for (j = -2; rect.y + j * blockSize > -blockSize*2; j--, tempRect.y -= blockSize) {
-			material = world->getBlock(px + i, py - j)->getMaterial();
+		for (j = -1; rect.y + j * blockSize > -blockSize*2; j--, tempRect.y -= blockSize) {
+			if (py - j > 255 || py - j < 0)
+				break;
+			material = world->getBlock(px + i, py - j, true)->getMaterial();
 			texture = SDL_CreateTextureFromSurface(renderer, blockSurface.getSurface(material));
 			SDL_RenderCopy(renderer, texture, NULL, &tempRect);
 			SDL_DestroyTexture(texture);
-//			SDL_RenderPresent(renderer);
+			//SDL_RenderPresent(renderer);
 		}
 	}
 	for (i = -1; rect.x + i * blockSize > -blockSize; i--) {
+		if (px + i >= 128 || px + i < -127)
+			break;
 		tempRect = rect;
 		tempRect.x += i * blockSize;
 		for (j = 0; rect.y + j * blockSize < windowHeight; j++, tempRect.y += blockSize) {
-			material = world->getBlock(px + i, py - j)->getMaterial();
+			if (py - j > 255 || py - j < 0)
+				break;
+			material = world->getBlock(px + i, py - j, true)->getMaterial();
 			texture = SDL_CreateTextureFromSurface(renderer, blockSurface.getSurface(material));
 			SDL_RenderCopy(renderer, texture, NULL, &tempRect);
 			SDL_DestroyTexture(texture);
@@ -151,8 +160,10 @@ void Graph::drawMap() {//之后会更改实现方式来修复边界的bug, 2022.
 		tempRect = rect;
 		tempRect.x += i * blockSize;
 		tempRect.y -= blockSize;
-		for (j = -2; rect.y + j * blockSize > -blockSize * 2; j--, tempRect.y -= blockSize) {
-			material = world->getBlock(px + i, py - j)->getMaterial();
+		for (j = -1; rect.y + j * blockSize > -blockSize * 2; j--, tempRect.y -= blockSize) {
+			if (py - j > 255 || py - j < 0)
+				break;
+			material = world->getBlock(px + i, py - j, true)->getMaterial();
 			texture = SDL_CreateTextureFromSurface(renderer, blockSurface.getSurface(material));
 			SDL_RenderCopy(renderer, texture, NULL, &tempRect);
 			SDL_DestroyTexture(texture);
