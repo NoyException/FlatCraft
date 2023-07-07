@@ -3,6 +3,7 @@
 #include <chrono>
 DestroyBlock destroyBlock;
 BlockSurface blockSurface;
+BlockTexture* blockTexture;
 void graphMain(FlatCraft *game) {
 	Graph graph(game);
 	graph.display();
@@ -16,6 +17,7 @@ void Graph::display() {
 	SDL_Surface* pic = nullptr, *screen = nullptr;
 	SDL_Window *window = SDL_CreateWindow("FlatCraft", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_SHOWN);//create window
 	renderer = SDL_CreateRenderer(window, -1, 0);
+	blockTexture = &BlockTexture(renderer);
 	PlayerController* playerController = FlatCraft::getInstance()->getPlayer()->getController();
 	SDL_Event my_event;
 	int quit = 0;
@@ -25,42 +27,12 @@ void Graph::display() {
 				quit = 1;
 			}
 			if (my_event.type == SDL_KEYDOWN) {
-				//switch (my_event.key.keysym.sym) {
-				//case 'w':
-				//{
-				//	Location location = FlatCraft::getInstance()->getPlayer()->getLocation();
-				//	location.setY(location.getY() + 0.2);
-				//	FlatCraft::getInstance()->getPlayer()->teleport(location);
-				//	//std::cout << "h";
-				//	//playerController->up();
-				//	break;
-				//}
-				//case 's':
-				//{
-				//	Location location = FlatCraft::getInstance()->getPlayer()->getLocation();
-				//	location.setY(location.getY() - 0.2);
-				//	FlatCraft::getInstance()->getPlayer()->teleport(location);
-				//	break;
-				//}
-				//case 'd':
-				//{
-				//	Location location = FlatCraft::getInstance()->getPlayer()->getLocation();
-				//	location.setX(location.getX() + 0.2);
-				//	FlatCraft::getInstance()->getPlayer()->teleport(location);
-				//	//playerController->left();
-				//	break;
-				//}
-				//case 'a':
-				//{
-				//	Location location = FlatCraft::getInstance()->getPlayer()->getLocation();
-				//	location.setX(location.getX() - 0.2);
-				//	FlatCraft::getInstance()->getPlayer()->teleport(location);
-				//	break;
-				//}
+				
 			}
 		}
 
-		SDL_RenderClear(renderer); //clear before image in renderer
+		 //clear before image in renderer
+		SDL_RenderClear(renderer);
 		draw();
 		SDL_RenderPresent(renderer); //output image
 	}
@@ -105,71 +77,174 @@ void Graph::drawMap() {
 	rect.x = windowWidth/2;
 	rect.y = windowHeight*3/4;
 	rect.w = rect.h = blockSize;
-	Location playerLocation = FlatCraft::getInstance()->getPlayer()->getLocation();
-	auto world = FlatCraft::getInstance()->getWorld("main_world");
+	Vec2d leftUpPosition_;
+	Vec2d cameraPosition_;
+	Vec2d tempVec;
+	Material materials_[26][42][2];
+	{
+		std::lock_guard<std::mutex> lock(WorldModel::instance_.mtx_);
+		memcpy(materials_, WorldModel::instance_.materials_, sizeof(int)*26*42*2);
+		leftUpPosition_ = WorldModel::instance_.leftUpPosition_;
+		cameraPosition_ = WorldModel::instance_.cameraPosition_;
+	}
+	tempVec = cameraPosition_;
+	tempVec.subtract(leftUpPosition_);
 	Material material;
-	rect.x += (playerLocation.getX() - playerLocation.getBlockX())*blockSize;
-	rect.y += (playerLocation.getY() - playerLocation.getBlockY())*blockSize;
+	int ci, cj;
+	ci = tempVec.getX();
+	cj = tempVec.getY();
+	SDL_Rect leftUpRect = rect;
+	leftUpRect.x = rect.x - blockSize * ci;
+	leftUpRect.y = rect.y - blockSize * (26 - cj) ;
 	int i, j;
-	int px, py;
-	px = playerLocation.getBlockX();
-	py = playerLocation.getBlockY();
-	SDL_Rect tempRect;
-	for (i = 0; rect.x + i * blockSize < windowWidth; i++) {
-		if (px + i >= 128 || px + i < -127)
-			break;
-		tempRect = rect;
-		tempRect.x += i * blockSize;
-		for (j = 0; rect.y + j * blockSize < windowHeight; j++, tempRect.y += blockSize) {
-			if (py - j > 255 || py - j < 0)
-				break;
-			material = world->getBlock(px + i, py - j, true)->getMaterial();
+	SDL_Rect tempRect = leftUpRect;
+	for (i = 0; i < 42; i++) {
+		tempRect.y = leftUpRect.y;
+		for (j = 0; j < 26; j++) {
+			material = materials_[j][41 - i][0];
 			texture = SDL_CreateTextureFromSurface(renderer, blockSurface.getSurface(material));
 			SDL_RenderCopy(renderer, texture, NULL, &tempRect);
 			SDL_DestroyTexture(texture);
-			//SDL_RenderPresent(renderer);
+			tempRect.y += blockSize;
 		}
-		tempRect = rect;
-		tempRect.x += i * blockSize;
-		tempRect.y -= blockSize;
-		for (j = -1; rect.y + j * blockSize > -blockSize*2; j--, tempRect.y -= blockSize) {
-			if (py - j > 255 || py - j < 0)
-				break;
-			material = world->getBlock(px + i, py - j, true)->getMaterial();
-			texture = SDL_CreateTextureFromSurface(renderer, blockSurface.getSurface(material));
-			SDL_RenderCopy(renderer, texture, NULL, &tempRect);
-			SDL_DestroyTexture(texture);
-			//SDL_RenderPresent(renderer);
-		}
+		tempRect.x += blockSize;
 	}
-	for (i = -1; rect.x + i * blockSize > -blockSize; i--) {
-		if (px + i >= 128 || px + i < -127)
-			break;
-		tempRect = rect;
-		tempRect.x += i * blockSize;
-		for (j = 0; rect.y + j * blockSize < windowHeight; j++, tempRect.y += blockSize) {
-			if (py - j > 255 || py - j < 0)
-				break;
-			material = world->getBlock(px + i, py - j, true)->getMaterial();
-			texture = SDL_CreateTextureFromSurface(renderer, blockSurface.getSurface(material));
-			SDL_RenderCopy(renderer, texture, NULL, &tempRect);
-			SDL_DestroyTexture(texture);
-			//			SDL_RenderPresent(renderer);
+	//		texture = SDL_CreateTextureFromSurface(renderer, blockSurface.getSurface(material));
+	//		SDL_RenderCopy(renderer, texture, NULL, &tempRect);
 
-		}
-		tempRect = rect;
-		tempRect.x += i * blockSize;
-		tempRect.y -= blockSize;
-		for (j = -1; rect.y + j * blockSize > -blockSize * 2; j--, tempRect.y -= blockSize) {
-			if (py - j > 255 || py - j < 0)
-				break;
-			material = world->getBlock(px + i, py - j, true)->getMaterial();
-			texture = SDL_CreateTextureFromSurface(renderer, blockSurface.getSurface(material));
-			SDL_RenderCopy(renderer, texture, NULL, &tempRect);
-			SDL_DestroyTexture(texture);
-			//			SDL_RenderPresent(renderer);
-		}
-	}
-	
-
+	//rect.x += (playerLocation.getX() - playerLocation.getBlockX())*blockSize;
+	//rect.y += (playerLocation.getY() - playerLocation.getBlockY())*blockSize;
+	//int i, j;
+	//int px, py;
+	//px = playerLocation.getBlockX();
+	//py = playerLocation.getBlockY();
+	//SDL_Rect tempRect;
+	//for (i = 0; rect.x + i * blockSize < windowWidth; i++) {
+	//	if (px + i >= 128 || px + i < -127)
+	//		break;
+	//	tempRect = rect;
+	//	tempRect.x += i * blockSize;
+	//	for (j = 0; rect.y + j * blockSize < windowHeight; j++, tempRect.y += blockSize) {
+	//		if (py - j > 255 || py - j < 0)
+	//			break;
+	//		material = world->getBlock(px + i, py - j, true)->getMaterial();
+	//		texture = SDL_CreateTextureFromSurface(renderer, blockSurface.getSurface(material));
+	//		SDL_RenderCopy(renderer, texture, NULL, &tempRect);
+	//		//SDL_DestroyTexture(texture);
+	//		//SDL_RenderPresent(renderer);
+	//	}
+	//	tempRect = rect;
+	//	tempRect.x += i * blockSize;
+	//	tempRect.y -= blockSize;
+	//	for (j = -1; rect.y + j * blockSize > -blockSize*2; j--, tempRect.y -= blockSize) {
+	//		if (py - j > 255 || py - j < 0)
+	//			break;
+	//		material = world->getBlock(px + i, py - j, true)->getMaterial();
+	//		texture = SDL_CreateTextureFromSurface(renderer, blockSurface.getSurface(material));
+	//		SDL_RenderCopy(renderer, texture, NULL, &tempRect);
+	//		SDL_DestroyTexture(texture);
+	//		//SDL_RenderPresent(renderer);
+	//	}
+	//}
+	//for (i = -1; rect.x + i * blockSize > -blockSize; i--) {
+	//	if (px + i >= 128 || px + i < -127)
+	//		break;
+	//	tempRect = rect;
+	//	tempRect.x += i * blockSize;
+	//	for (j = 0; rect.y + j * blockSize < windowHeight; j++, tempRect.y += blockSize) {
+	//		if (py - j > 255 || py - j < 0)
+	//			break;
+	//		material = world->getBlock(px + i, py - j, true)->getMaterial();
+	//		texture = SDL_CreateTextureFromSurface(renderer, blockSurface.getSurface(material));
+	//		SDL_RenderCopy(renderer, texture, NULL, &tempRect);
+	//		SDL_DestroyTexture(texture);
+	//		//			SDL_RenderPresent(renderer);
+	//
+	//	}
+	//	tempRect = rect;
+	//	tempRect.x += i * blockSize;
+	//	tempRect.y -= blockSize;
+	//	for (j = -1; rect.y + j * blockSize > -blockSize * 2; j--, tempRect.y -= blockSize) {
+	//		if (py - j > 255 || py - j < 0)
+	//			break;
+	//		material = world->getBlock(px + i, py - j, true)->getMaterial();
+	//		texture = SDL_CreateTextureFromSurface(renderer, blockSurface.getSurface(material));
+	//		SDL_RenderCopy(renderer, texture, NULL, &tempRect);
+	//		SDL_DestroyTexture(texture);
+	//		//			SDL_RenderPresent(renderer);
+	//	}
+	//}
 }
+
+//void Graph::drawMap() {
+//	SDL_Texture* texture;
+//	SDL_Rect rect;
+//	rect.x = windowWidth/2;
+//	rect.y = windowHeight*3/4;
+//	rect.w = rect.h = blockSize;
+//	Location playerLocation = FlatCraft::getInstance()->getPlayer()->getLocation();
+//	auto world = FlatCraft::getInstance()->getWorld("main_world");
+//	Material material;
+//	rect.x += (playerLocation.getX() - playerLocation.getBlockX())*blockSize;
+//	rect.y += (playerLocation.getY() - playerLocation.getBlockY())*blockSize;
+//	int i, j;
+//	int px, py;
+//	px = playerLocation.getBlockX();
+//	py = playerLocation.getBlockY();
+//	SDL_Rect tempRect;
+//	for (i = 0; rect.x + i * blockSize < windowWidth; i++) {
+//		if (px + i >= 128 || px + i < -127)
+//			break;
+//		tempRect = rect;
+//		tempRect.x += i * blockSize;
+//		for (j = 0; rect.y + j * blockSize < windowHeight; j++, tempRect.y += blockSize) {
+//			if (py - j > 255 || py - j < 0)
+//				break;
+//			material = world->getBlock(px + i, py - j, true)->getMaterial();
+//			texture = SDL_CreateTextureFromSurface(renderer, blockSurface.getSurface(material));
+//			SDL_RenderCopy(renderer, texture, NULL, &tempRect);
+//			//SDL_DestroyTexture(texture);
+//			//SDL_RenderPresent(renderer);
+//		}
+//		tempRect = rect;
+//		tempRect.x += i * blockSize;
+//		tempRect.y -= blockSize;
+//		for (j = -1; rect.y + j * blockSize > -blockSize*2; j--, tempRect.y -= blockSize) {
+//			if (py - j > 255 || py - j < 0)
+//				break;
+//			material = world->getBlock(px + i, py - j, true)->getMaterial();
+//			texture = SDL_CreateTextureFromSurface(renderer, blockSurface.getSurface(material));
+//			SDL_RenderCopy(renderer, texture, NULL, &tempRect);
+//			SDL_DestroyTexture(texture);
+//			//SDL_RenderPresent(renderer);
+//		}
+//	}
+//	for (i = -1; rect.x + i * blockSize > -blockSize; i--) {
+//		if (px + i >= 128 || px + i < -127)
+//			break;
+//		tempRect = rect;
+//		tempRect.x += i * blockSize;
+//		for (j = 0; rect.y + j * blockSize < windowHeight; j++, tempRect.y += blockSize) {
+//			if (py - j > 255 || py - j < 0)
+//				break;
+//			material = world->getBlock(px + i, py - j, true)->getMaterial();
+//			texture = SDL_CreateTextureFromSurface(renderer, blockSurface.getSurface(material));
+//			SDL_RenderCopy(renderer, texture, NULL, &tempRect);
+//			SDL_DestroyTexture(texture);
+//			//			SDL_RenderPresent(renderer);
+//
+//		}
+//		tempRect = rect;
+//		tempRect.x += i * blockSize;
+//		tempRect.y -= blockSize;
+//		for (j = -1; rect.y + j * blockSize > -blockSize * 2; j--, tempRect.y -= blockSize) {
+//			if (py - j > 255 || py - j < 0)
+//				break;
+//			material = world->getBlock(px + i, py - j, true)->getMaterial();
+//			texture = SDL_CreateTextureFromSurface(renderer, blockSurface.getSurface(material));
+//			SDL_RenderCopy(renderer, texture, NULL, &tempRect);
+//			SDL_DestroyTexture(texture);
+//			//			SDL_RenderPresent(renderer);
+//		}
+//	}
+//}
