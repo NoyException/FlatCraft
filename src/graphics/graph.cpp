@@ -57,14 +57,14 @@ void Graph::display() {
 				//	FlatCraft::getInstance()->getPlayer()->teleport(location);
 				//	break;
 				//}
-				}
 			}
 		}
+
 		SDL_RenderClear(renderer); //clear before image in renderer
 		draw();
 		SDL_RenderPresent(renderer); //output image
-		
 	}
+}
 	
 	//while (true) {
 	//	std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
@@ -78,7 +78,7 @@ void Graph::display() {
 	//	//SDL_RenderCopy(renderer, texture, NULL, &rect); 
 	//	SDL_RenderPresent(renderer); //output image
 	//}
-}
+
 void Graph::draw() {
 	drawMap();
 	drawPlayer();

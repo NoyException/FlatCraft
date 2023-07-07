@@ -9,6 +9,7 @@ extern class DestroyBlock destroyBlock;
 extern class BlockSurface blockSurface;
 void graphMain(FlatCraft* game);
 
+//may be abondoned
 class BlockSurface {//store all of the texture
 public:
 	BlockSurface() {
@@ -34,6 +35,39 @@ public:
 private:
 	std::unordered_map<Material, SDL_Surface*> surfaces;
 };
+
+//class BlockTexture {//store the texutre of some blocks to save time
+//public:
+//	BlockTexture(SDL_Renderer* renderer) : renderer(renderer) {
+//		SDL_Surface* pic = nullptr;
+//		pic = IMG_Load("../../../../src/graphics/textures/block/stone.png");
+//		textures[Material::STONE] = SDL_CreateTextureFromSurface(renderer, pic);
+//		SDL_FreeSurface(pic);
+//		pic = IMG_Load("../../../../src/graphics/textures/block/rooted_dirt.png");
+//		textures[Material::DIRT] = SDL_CreateTextureFromSurface(renderer, pic);
+//		SDL_FreeSurface(pic);
+//		pic = IMG_Load("../../../../src/graphics/textures/block/white_stained_glass.png");
+//		textures[Material::AIR] = SDL_CreateTextureFromSurface(renderer, pic);
+//		SDL_FreeSurface(pic);
+//		pic = IMG_Load("../../../../src/graphics/textures/block/azalea_top.png");
+//		textures[Material::GRASS] = SDL_CreateTextureFromSurface(renderer, pic);
+//		SDL_FreeSurface(pic);
+//		pic = IMG_Load("../../../../src/graphics/textures/block/bedrock.png");
+//		textures[Material::BED_ROCK] = SDL_CreateTextureFromSurface(renderer, pic);
+//		SDL_FreeSurface(pic);
+//		pic = IMG_Load("../../../../src/graphics/textures/painting/water.png");
+//		textures[Material::WATER] = SDL_CreateTextureFromSurface(renderer, pic);
+//		SDL_FreeSurface(pic);
+//	}
+//	inline SDL_Texture* getTexture(Material material) {
+//		if (textures.find(material) == surfaces.end())
+//			return surfaces[Material::STONE];
+//		return surfaces[material];
+//	}
+//private:
+//	std::unordered_map<Material, SDL_Texture*> textures;
+//	SDL_Renderer* renderer;
+//};
 
 class DestroyBlock {
 public:

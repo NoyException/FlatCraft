@@ -13,13 +13,13 @@ int main(){
     game->start();
     std::cout << "Game started" << std::endl;
 //    std::this_thread::sleep_for(std::chrono::seconds(10));
+    std::thread graphThread(graphMain, game);
+    graphThread.detach();
+    getchar();
     game->save();
     std::cout << "Game ended" << std::endl;
     game->stop();
     std::cout << "Game stopped" << std::endl;
-    std::thread graphThread(graphMain, game);
-    graphThread.detach();
-    getchar();
 }
 
 extern "C"
