@@ -5,13 +5,33 @@
 #ifndef FLATCRAFT_EVENT_H
 #define FLATCRAFT_EVENT_H
 
-/**
- * 代表了一个事件
- *
- */
-class Event {
+#include "common.h"
 
+enum class EventPriority : int{
+    LOWEST,
+    LOW,
+    NORMAL,
+    HIGH,
+    HIGHEST,
+    MONITOR,
 };
 
+class EventInstance;
+
+/**
+ * 单例模式，代表了一个抽象事件类型
+ */
+class Event {
+public:
+    virtual ~Event() = default;
+    /**
+     * 子类必须调用父类的call
+     * @param eventInstance 事件实例
+     */
+    virtual void call(EventInstance* eventInstance) const;
+    friend class EventManager;
+private:
+    std::list<std::function<void(EventInstance*)>> listeners_[6];
+};
 
 #endif //FLATCRAFT_EVENT_H

@@ -5,9 +5,23 @@
 #include "entity/player/Player.h"
 #include "entity/player/PlayerController.h"
 #include "FlatCraft.h"
+#include "windows.h"
 
 Player::Player(const Location &spawnLocation) : LivingEntity(spawnLocation), controller_() {
     task_ = FlatCraft::getInstance()->getScheduler()->runTaskTimer([&](){
+        if(GetAsyncKeyState('W')&0x8000){
+            controller_.up();
+        }
+        if(GetAsyncKeyState('A')&0x8000){
+            controller_.left();
+        }
+        if(GetAsyncKeyState('S')&0x8000){
+            controller_.down();
+        }
+        if(GetAsyncKeyState('D')&0x8000){
+            controller_.right();
+        }
+
         controller_.locked_ = true;
         bool onGround = isOnGround();
         if(controller_.ctrl_){

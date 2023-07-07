@@ -3,3 +3,11 @@
 //
 
 #include "event/Event.h"
+
+void Event::call(EventInstance *eventInstance) const{
+    for (auto &listenerList : listeners_) {
+        for (const auto &listener: listenerList){
+            listener(eventInstance);
+        }
+    }
+}
