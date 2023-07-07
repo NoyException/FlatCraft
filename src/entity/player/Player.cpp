@@ -77,8 +77,8 @@ void Player::updateModel() {
     auto loc = location_.toBlockLocation().toVec2d();
     loc.add(-(int)(WorldModel::MAX_COLUMN/2),-(int)(WorldModel::MAX_ROW*0.618));
     WorldModel::instance_.leftUpPosition_ = loc;
-    for(int i=0;i<WorldModel::MAX_ROW;i++){
-        for(int j=0;j<WorldModel::MAX_COLUMN;j++){
+    for(int i=0;i<WorldModel::MAX_COLUMN;i++){
+        for(int j=0;j<WorldModel::MAX_ROW;j++){
             for(int k=0;k<=1;k++){
                 WorldModel::instance_.materials_[i][j][k] =
                         world->getBlock((int)loc.getX()+i,(int)loc.getY()+j,k)->getMaterial();

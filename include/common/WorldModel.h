@@ -13,7 +13,7 @@ class WorldModel {
 public:
     static const int MAX_ROW = 26;
     static const int MAX_COLUMN = 42;
-    Material materials_[MAX_ROW][MAX_COLUMN][2];
+    Material materials_[MAX_COLUMN][MAX_ROW][2];
     Vec2d leftUpPosition_;
     Vec2d cameraPosition_;
     //读取数据前使用std::lock_guard<std::mutex> lock(WorldModel::instance_.mtx_);

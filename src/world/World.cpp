@@ -104,5 +104,6 @@ std::unique_ptr<RayTraceResult> World::rayTrace(const Location &location, const 
 
         }
     }
+    return nullptr;
 }
 
