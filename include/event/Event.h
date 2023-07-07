@@ -19,18 +19,20 @@ enum class EventPriority : int{
 class EventInstance;
 
 /**
- * 单例模式，代表了一个抽象事件类型
+ * 享元模式，代表了一个抽象事件类型
  */
 class Event {
 public:
-    virtual ~Event() = default;
+    Event() = delete;
+    explicit Event(Event* parent);
     /**
-     * 子类必须调用父类的call
+     * 子Event必须调用父Event的call
      * @param eventInstance 事件实例
      */
-    virtual void call(EventInstance* eventInstance) const;
+    void call(EventInstance* eventInstance) const;
     friend class EventManager;
 private:
+    Event *parent_;
     std::list<std::function<void(EventInstance*)>> listeners_[6];
 };
 

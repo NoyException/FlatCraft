@@ -7,7 +7,7 @@
 
 #include "common.h"
 #include "entity/LivingEntity.h"
-#include "entity/player/PlayerController.h"
+#include "common/PlayerController.h"
 
 class Player : public LivingEntity{
 public:
@@ -20,7 +20,7 @@ public:
 private:
     void updateModel();
     void jump();
-    PlayerController controller_;
+    PlayerController* controller_;
     Task* task_;
     bool sprinting_;
     bool sneaking_;

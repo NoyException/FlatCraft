@@ -3,48 +3,48 @@
 //
 
 #include "entity/player/Player.h"
-#include "entity/player/PlayerController.h"
+#include "common/PlayerController.h"
 #include "FlatCraft.h"
 #include "windows.h"
 
-Player::Player(const Location &spawnLocation) : LivingEntity(spawnLocation), controller_() {
+Player::Player(const Location &spawnLocation) : LivingEntity(spawnLocation), controller_(&PlayerController::instance_) {
     task_ = FlatCraft::getInstance()->getScheduler()->runTaskTimer([&](){
         if(GetAsyncKeyState('W')&0x8000){
-            controller_.up();
+            controller_->up();
         }
         if(GetAsyncKeyState('A')&0x8000){
-            controller_.left();
+            controller_->left();
         }
         if(GetAsyncKeyState('S')&0x8000){
-            controller_.down();
+            controller_->down();
         }
         if(GetAsyncKeyState('D')&0x8000){
-            controller_.right();
+            controller_->right();
         }
 
-        controller_.locked_ = true;
+        controller_->locked_ = true;
         bool onGround = isOnGround();
-        if(controller_.ctrl_){
+        if(controller_->ctrl_){
             sprinting_ = true;
         }
-        if(controller_.shift_){
+        if(controller_->shift_){
             sprinting_ = false;
             sneaking_ = true;
         }
         else sneaking_ = false;
-        if(controller_.up_){
+        if(controller_->up_){
             if(onGround) jump();
         }
         double dx = onGround ? 0.2 : 0.05;
         if(sprinting_) dx*=1.3;
         if(sneaking_) dx*=0.3;
-        if(controller_.left_){
+        if(controller_->left_){
             location_.add(-dx,0);
         }
-        if(controller_.right_){
+        if(controller_->right_){
             location_.add(dx,0);
         }
-        controller_.reset();
+        controller_->reset();
 
         updateModel();
     },0,0);
@@ -65,7 +65,7 @@ std::unique_ptr<Player> Player::deserialize(const nlohmann::json &json) {
 }
 
 PlayerController *Player::getController() {
-    return &controller_;
+    return controller_;
 }
 
 void Player::updateModel() {

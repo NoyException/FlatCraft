@@ -12,6 +12,8 @@ Location::Location(const World& world, double x, double y) : world_(world.getNam
 
 Location::Location(const Location &location) = default;
 
+Location &Location::operator=(const Location &another) = default;
+
 bool Location::operator==(const Location &another) const {
     return world_==another.world_ && x_ == another.x_ && y_ == another.y_;
 }

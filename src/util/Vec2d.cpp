@@ -9,11 +9,7 @@ Vec2d::Vec2d() : x_(0), y_(0) {}
 
 Vec2d::Vec2d(double x, double y) : x_(x), y_(y) {}
 
-Vec2d &Vec2d::operator=(const Vec2d &another) {
-    x_ = another.x_;
-    y_ = another.y_;
-    return *this;
-}
+Vec2d &Vec2d::operator=(const Vec2d &another) = default;
 
 double Vec2d::getX() const {
     return x_;

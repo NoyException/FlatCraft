@@ -18,6 +18,7 @@ public:
     Location(const Location& location);
     static Location deserialize(const nlohmann::json& json);
     [[nodiscard]] nlohmann::json serialize() const;
+    Location& operator=(const Location& another);
     bool operator==(const Location& another) const;
     bool operator<(const Location& another) const;
     [[nodiscard]] Vec2d toVec2d() const;

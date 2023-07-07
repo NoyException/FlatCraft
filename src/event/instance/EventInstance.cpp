@@ -2,9 +2,10 @@
 // Created by Noy on 2023/7/7.
 //
 
-#include "event/EventInstance.h"
+#include "event/instance/EventInstance.h"
 
-EventInstance::EventInstance(const Event &event) : event_(&event) {
+EventInstance::EventInstance(const Event *event) : event_(event) {
+
 }
 
 const Event *EventInstance::getEvent() const {
