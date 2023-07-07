@@ -22,5 +22,6 @@
 #include <optional>
 
 #include "util/json.hpp"
+#include "util/Vec2d.h"
 
 #endif //FLATCRAFT_COMMON_H

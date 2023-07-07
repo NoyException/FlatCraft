@@ -19,10 +19,10 @@ public:
     Scheduler();
     void start();
     void stop();
-    void runTask(const RawTask& task);
-    void runTaskLater(const RawTask& task, int delay);
-    void runTaskTimer(const RawTask& task, int delay, int interval);
-    void runTaskFiniteTimer(const RawTask& task, int delay, int interval, int times);
+    Task* runTask(const RawTask& task);
+    Task* runTaskLater(const RawTask& task, int delay);
+    Task* runTaskTimer(const RawTask& task, int delay, int interval);
+    Task* runTaskFiniteTimer(const RawTask& task, int delay, int interval, int times);
 private:
     void run();
     bool running_;

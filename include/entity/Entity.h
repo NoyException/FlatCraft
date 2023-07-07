@@ -7,17 +7,25 @@
 
 #include "common.h"
 #include "Location.h"
+#include "scheduler/Task.h"
 
 class Entity {
 public:
     explicit Entity(const Location& spawnLocation);
+    virtual ~Entity();
+    [[nodiscard]] virtual nlohmann::json serialize() const;
     [[nodiscard]] Location getLocation() const;
     [[nodiscard]] World* getWorld() const;
     void teleport(const Location& location);
-    [[nodiscard]] virtual nlohmann::json serialize() const;
+    void move();
+    void move(const Vec2d& dv);
+    [[nodiscard]] bool isOnGround() const;
+    [[nodiscard]] Vec2d getVelocity() const;
 protected:
     Location location_;
+    Vec2d velocity_;
 private:
+    Task* physicsTask_;
 };
 
 

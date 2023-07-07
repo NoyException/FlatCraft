@@ -13,15 +13,17 @@
 
 class Block {
 public:
-    Block(Material material, const Location& location);
+    Block(Material material, const Location& location, bool front);
     [[nodiscard]] nlohmann::json serialize() const;
-    static Block deserialize(Location&& location, const nlohmann::json& json);
+    static Block deserialize(Location&& location, bool front, const nlohmann::json& json);
     [[nodiscard]] Material getMaterial() const;
     void setMaterial(const Material& material);
     [[nodiscard]] Location getLocation() const;
+    [[nodiscard]] bool isFront() const;
 private:
     Material material_;
     Location location_;
+    bool front_;
     std::optional<BlockData> data_;
 };
 

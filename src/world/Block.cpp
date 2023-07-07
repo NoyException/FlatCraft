@@ -4,6 +4,11 @@
 
 #include "world/Block.h"
 
+Block::Block(Material material, const Location& location, bool front) :
+        material_(material), location_(location), front_(front) {
+
+}
+
 Material Block::getMaterial() const {
     return material_;
 }
@@ -16,10 +21,6 @@ Location Block::getLocation() const {
     return location_;
 }
 
-Block::Block(Material material, const Location& location) : material_(material), location_(location) {
-
-}
-
 nlohmann::json Block::serialize() const {
     nlohmann::json json({{"material", static_cast<int>(material_)}});
     if(data_.has_value())
@@ -27,9 +28,13 @@ nlohmann::json Block::serialize() const {
     return std::move(json);
 }
 
-Block Block::deserialize(Location&& location, const nlohmann::json &json) {
-    Block block(static_cast<Material>(json.at("material").get<int>()),location);
+Block Block::deserialize(Location&& location, bool front, const nlohmann::json &json) {
+    Block block(static_cast<Material>(json.at("material").get<int>()),location,front);
     if(json.contains("data"))
         block.data_ = BlockData::deserialize(json.at("data"));
     return std::move(block);
+}
+
+bool Block::isFront() const {
+    return front_;
 }

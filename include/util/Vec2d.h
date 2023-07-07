@@ -1,0 +1,35 @@
+//
+// Created by Noy on 2023/7/6.
+//
+
+#ifndef FLATCRAFT_VEC2D_H
+#define FLATCRAFT_VEC2D_H
+
+#include "common.h"
+
+class Vec2d {
+public:
+    Vec2d();
+    Vec2d(const Vec2d& another) = default;
+    Vec2d(double x, double y);
+    [[nodiscard]] double getX() const;
+    [[nodiscard]] double getY() const;
+    void setX(double x);
+    void setY(double y);
+    void add(double x, double y);
+    void multiply(double m);
+    void multiply(const Vec2d& another);
+    void divide(const Vec2d& another);
+    void normalize();
+    [[nodiscard]] double dot(const Vec2d& another) const;
+    [[nodiscard]] double crossProduct(const Vec2d& another) const;
+    [[nodiscard]] Vec2d midPoint(const Vec2d& another) const;
+    [[nodiscard]] double lengthSquared() const;
+    [[nodiscard]] double length() const;
+private:
+    double x_;
+    double y_;
+};
+
+
+#endif //FLATCRAFT_VEC2D_H

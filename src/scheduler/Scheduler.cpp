@@ -61,8 +61,7 @@ void Scheduler::start(){
             if(timestamp_<tmp) timestamp_=tmp;
         }
     });
-
-    //thread_->detach();
+//    thread_->detach();
 }
 
 void Scheduler::stop() {
@@ -70,19 +69,20 @@ void Scheduler::stop() {
     if(thread_->joinable()) thread_->join();
 }
 
-void Scheduler::runTask(const RawTask& task) {
-    runTaskFiniteTimer(task, 1, 0, 1);
+Task* Scheduler::runTask(const RawTask& task) {
+    return runTaskFiniteTimer(task, 1, 0, 1);
 }
 
-void Scheduler::runTaskLater(const RawTask& task, int delay) {
-    runTaskFiniteTimer(task, delay, 0, 1);
+Task* Scheduler::runTaskLater(const RawTask& task, int delay) {
+    return runTaskFiniteTimer(task, delay, 0, 1);
 }
 
-void Scheduler::runTaskTimer(const RawTask& task, int delay, int interval) {
-    runTaskFiniteTimer(task, delay, interval, Task::INFINITY_TIMES);
+Task* Scheduler::runTaskTimer(const RawTask& task, int delay, int interval) {
+    return runTaskFiniteTimer(task, delay, interval, Task::INFINITY_TIMES);
 }
 
-void Scheduler::runTaskFiniteTimer(const RawTask &task, int delay, int interval, int times) {
+Task* Scheduler::runTaskFiniteTimer(const RawTask &task, int delay, int interval, int times) {
     std::lock_guard<std::mutex> lock(mtx_);
     tasks_.emplace_back(task,delay,interval,times);
+    return &tasks_.back();
 }

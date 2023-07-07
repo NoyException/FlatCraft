@@ -21,6 +21,7 @@ public:
     void createSave(const std::string &name);
     [[nodiscard]] World* getWorld(const std::string& name) const;
     Player* getPlayer();
+    Scheduler* getScheduler();
     static FlatCraft* getInstance();
     friend std::unique_ptr<FlatCraft> std::make_unique<FlatCraft>(void);
 private:

@@ -5,8 +5,7 @@
 #ifndef FLATCRAFT_MATERIAL_H
 #define FLATCRAFT_MATERIAL_H
 
-
-enum class Material {
+enum class Material : int {
     AIR,
     DIRT,
     GRASS,
@@ -15,5 +14,10 @@ enum class Material {
     WATER,
 };
 
+namespace MaterialHelper{
+    bool isOccluded(Material material);
+    bool isSolid(Material material);
+    bool isAir(Material material);
+}
 
 #endif //FLATCRAFT_MATERIAL_H

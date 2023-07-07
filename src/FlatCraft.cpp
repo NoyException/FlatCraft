@@ -44,6 +44,10 @@ Player *FlatCraft::getPlayer() {
     return player_.get();
 }
 
+Scheduler *FlatCraft::getScheduler() {
+    return &scheduler_;
+}
+
 void FlatCraft::loadSave(const std::string &name) {
     if(!existsSave(name)) return;
     save_ = name;
@@ -57,7 +61,7 @@ void FlatCraft::loadPlayer() {
         std::string s((std::istreambuf_iterator<char> (in)), (std::istreambuf_iterator<char> ()));
         in.close();
         if(!s.empty()){
-            player_ = std::make_unique<Player>(Player::deserialize(nlohmann::json::parse(s)));
+            player_ = Player::deserialize(nlohmann::json::parse(s));
             player_->teleport(player_->getLocation());
             return;
         }
