@@ -3,8 +3,8 @@
 #include <chrono>
 
 DestroyBlock destroyBlock;
-void graphMain(FlatCraft *game) {
-	Graph graph(game);
+void graphMain() {
+	Graph graph;
 	graph.display();
 }
 
@@ -19,7 +19,7 @@ void Graph::display() {
 	blockTexture = new BlockTexture(renderer);
 	backgroundTexture = new BackgroundTexture(renderer);
 	environmentTexture = new EnvironmentTexture(renderer);
-	PlayerController* playerController = FlatCraft::getInstance()->getPlayer()->getController();
+	PlayerController* playerController = &PlayerController::instance_;
 	SDL_Event my_event;
 	KeyState keyState;
 	int quit = 0;
@@ -28,29 +28,57 @@ void Graph::display() {
 			if (my_event.type == SDL_QUIT) {
 				quit = 1;
 			}
-			if (my_event.type == SDL_KEYDOWN || my_event.type == SDL_KEYUP) {
+			else if (my_event.type == SDL_KEYDOWN || my_event.type == SDL_KEYUP) {
 				if (my_event.type == SDL_KEYDOWN)
 					keyState = KeyState::DOWN;
 				else
 					keyState = KeyState::UP;
 				switch (my_event.key.keysym.sym) {
-					case 'w': {
+					case SDLK_w: {
 						playerController->setKeyState(Key::UP, keyState); 
 						break;
 					}
-					case 's': {
+					case SDLK_s: {
 						playerController->setKeyState(Key::DOWN, keyState);
 						break;
 					}
-					case 'a': {
+					case SDLK_a: {
 						playerController->setKeyState(Key::LEFT, keyState);
 						break;
 					}
-					case 'd': {
+					case SDLK_d: {
 						playerController->setKeyState(Key::RIGHT, keyState);
 						break;
 					}
+					case SDLK_SPACE: {
+						playerController->setKeyState(Key::SPACE, keyState);
+						break;
+					}
+					case SDLK_LSHIFT:
+					case SDLK_RSHIFT: {
+						playerController->setKeyState(Key::SHIFT, keyState);
+						break;
+					}
+					case SDLK_LCTRL:
+					case SDLK_RCTRL: {
+						playerController->setKeyState(Key::CTRL, keyState);
+						break;
+					}
+								   
 				}
+			}
+			else if (my_event.type == SDL_MOUSEBUTTONDOWN || my_event.type == SDL_MOUSEBUTTONUP) {
+				if (my_event.type == SDL_MOUSEBUTTONDOWN)
+					keyState = KeyState::DOWN;
+				else
+					keyState = KeyState::UP;
+				if (SDL_BUTTON_LEFT == my_event.button.button) {
+					playerController->setKeyState(Key::LEFT_CLICK, keyState);
+				}
+				else if (SDL_BUTTON_RIGHT == my_event.button.button) {
+					playerController->setKeyState(Key::RIGHT_CLICK, keyState);
+				}
+				
 			}
 		}
 		 //clear before image in renderer
@@ -120,8 +148,6 @@ void Graph::drawBackground() {
 
 void Graph::drawPlayer() {
 	SDL_Texture* texture;
-	Location playerLocation = FlatCraft::getInstance()->getPlayer()->getLocation();
-	auto world = FlatCraft::getInstance()->getWorld("main_world");
 	SDL_Rect rect;
 	rect.x = windowWidth / 2 - blockSize*0.75;
 	rect.y = 0.618*windowHeight - blockSize*1.5;

@@ -27,7 +27,7 @@ int main(){
 //        location.add(0,10);
 //        player->teleport(location);
 //    });
-    std::thread graphThread(graphMain, game);
+    std::thread graphThread(graphMain);
     std::this_thread::sleep_for(std::chrono::seconds(100));
     game->save();
     std::cout << "Game ended" << std::endl;
