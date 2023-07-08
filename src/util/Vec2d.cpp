@@ -83,3 +83,30 @@ double Vec2d::length() const {
     return sqrt(x_*x_+y_*y_);
 }
 
+void Vec2d::rotate(double angle) {
+    double x0=x_;
+    double y0=y_;
+    x_=x0* cos(angle)- y0* sin(angle);
+    y_=x0* sin(angle)+ y0* cos(angle);
+}
+
+bool Vec2d::operator==(const Vec2d &another) const {
+    return x_ - another.x_ <= epsilon && x_ - another.x_ >= - epsilon && y_ - another.y_<= epsilon && y_ -another.y_ >= -epsilon;
+}
+
+std::ostream &operator<<(std::ostream &out, const Vec2d &vec2D) {
+    return out << "(" << vec2D.x_ << "," <<vec2D.y_ << ")";
+}
+
+void Vec2d::rotate(double angle, const Vec2d &center) {
+    double x0=x_-center.x_;
+    double y0=y_-center.y_;
+    x_=x0* cos(angle)- y0* sin(angle)+center.x_;
+    y_=x0* sin(angle)+ y0* cos(angle)+center.y_;
+}
+
+const double Vec2d::epsilon = 0.000001;
+
+
+
+
