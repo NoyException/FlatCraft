@@ -1,4 +1,5 @@
 add_subdirectory(SDL)
-
+add_subdirectory(SDL_image-SDL2)
 add_library(third_party INTERFACE)
 target_link_libraries(third_party INTERFACE SDL2::SDL2)
+target_link_libraries(third_party INTERFACE SDL2_image)

@@ -64,3 +64,32 @@ bool BoundingBox::contains(double x, double y) const {
 bool BoundingBox::contains(const Vec2d &v) const {
     return contains(v.getX(),v.getY());
 }
+
+bool BoundingBox::contains(const BoundingBox &another) const {
+    return minX_<=another.minX_ && minY_<=another.minY_ && maxX_>=another.maxX_ && maxY_>=another.maxY_;
+}
+
+bool BoundingBox::overlaps(const BoundingBox &another) const {
+    return minX_<another.maxX_ && maxX_>another.minX_ && minY_<another.maxY_ && maxY_>another.minY_;
+}
+
+void BoundingBox::shift(double x, double y) {
+    maxX_+=x;
+    maxY_+=y;
+    minX_+=x;
+    minY_+=y;
+}
+
+void BoundingBox::union_(const BoundingBox &another) {
+    maxX_= max(another.maxX_,maxX_);
+    maxY_= max(another.maxY_,maxY_);
+    minX_= min(another.minX_,minX_);
+    minY_= min(another.minY_,minY_);
+}
+
+void BoundingBox::intersection(const BoundingBox &another) {
+    maxX_= min(maxX_,another.maxX_);
+    minX_= max(minX_,another.minX_);
+    maxY_= min(maxY_,another.maxY_);
+    minY_= max(minY_,another.minY_);
+}
