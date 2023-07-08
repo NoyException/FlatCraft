@@ -6,60 +6,20 @@
 
 PlayerController PlayerController::instance_;
 
-void PlayerController::up() {
-    if(locked_) return;
-    up_ = true;
+PlayerController::PlayerController() : states_() {
+    reset();
 }
 
-void PlayerController::down() {
-    if(locked_) return;
-    down_ = true;
+void PlayerController::setKeyState(Key key, KeyState state) {
+    states_[static_cast<int>(key)] = state;
 }
 
-void PlayerController::left() {
-    if(locked_) return;
-    left_ = true;
-}
-
-void PlayerController::right() {
-    if(locked_) return;
-    right_ = true;
-}
-
-void PlayerController::space() {
-    if(locked_) return;
-    space_ = true;
-}
-
-void PlayerController::shift() {
-    if(locked_) return;
-    shift_ = true;
-}
-
-void PlayerController::ctrl() {
-    if(locked_) return;
-    ctrl_ = true;
-}
-
-void PlayerController::leftClick() {
-    if(locked_) return;
-    leftClick_ = true;
-}
-
-void PlayerController::rightClick() {
-    if(locked_) return;
-    rightClick_ = true;
+KeyState PlayerController::getKeyState(Key key) const{
+    return states_[static_cast<int>(key)];
 }
 
 void PlayerController::reset() {
-    up_ = false;
-    down_ = false;
-    left_ = false;
-    right_ = false;
-    space_ = false;
-    shift_ = false;
-    ctrl_ = false;
-    leftClick_ = false;
-    rightClick_ = false;
-    locked_ = false;
+    for (auto &item: states_){
+        item = KeyState::UP;
+    }
 }
