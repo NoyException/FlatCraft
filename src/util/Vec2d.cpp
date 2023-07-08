@@ -11,6 +11,22 @@ Vec2d::Vec2d(double x, double y) : x_(x), y_(y) {}
 
 Vec2d &Vec2d::operator=(const Vec2d &another) = default;
 
+Vec2d Vec2d::operator+(const Vec2d &another) const {
+    return {x_+another.x_,y_+another.y_};
+}
+
+Vec2d Vec2d::operator-(const Vec2d &another) const {
+    return {x_-another.x_,y_-another.y_};
+}
+
+Vec2d Vec2d::operator*(double a) const {
+    return {x_*a,y_*a};
+}
+
+Vec2d Vec2d::operator/(double a) const {
+    return {x_/a,y_/a};
+}
+
 double Vec2d::getX() const {
     return x_;
 }
@@ -106,6 +122,10 @@ void Vec2d::rotate(double angle, const Vec2d &center) {
 }
 
 const double Vec2d::epsilon = 0.000001;
+
+
+
+
 
 
 

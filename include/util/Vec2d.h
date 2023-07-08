@@ -13,6 +13,10 @@ public:
     Vec2d(const Vec2d& another) = default;
     Vec2d(double x, double y);
     Vec2d& operator=(const Vec2d& another);
+    Vec2d operator+(const Vec2d& another) const;
+    Vec2d operator-(const Vec2d& another) const;
+    Vec2d operator*(double a) const;
+    Vec2d operator/(double a) const;
     [[nodiscard]] double getX() const;
     [[nodiscard]] double getY() const;
     void setX(double x);
@@ -33,6 +37,7 @@ public:
     void rotate(double angle ,const Vec2d& center);
     bool operator==(const Vec2d& another) const;
     friend std::ostream& operator<<(std::ostream& out, const Vec2d& vec2D);
+    friend class BoundingBox;
     static const double epsilon;
 private:
     double x_;
