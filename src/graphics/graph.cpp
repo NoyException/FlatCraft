@@ -2,8 +2,10 @@
 #include "graphics/graph.h"
 #include <chrono>
 
+bool graphFinish = false;
 DestroyBlock destroyBlock;
 void graphMain() {
+	graphFinish = false;
 	Graph graph;
 	graph.display();
 }
@@ -22,11 +24,10 @@ void Graph::display() {
 	PlayerController* playerController = &PlayerController::instance_;
 	SDL_Event my_event;
 	KeyState keyState;
-	int quit = 0;
-	while (!quit) {
+	while (!graphFinish) {
 		while (SDL_PollEvent(&my_event) != 0) {
 			if (my_event.type == SDL_QUIT) {
-				quit = 1;
+				graphFinish = true;
 			}
 			else if (my_event.type == SDL_KEYDOWN || my_event.type == SDL_KEYUP) {
 				if (my_event.type == SDL_KEYDOWN)
