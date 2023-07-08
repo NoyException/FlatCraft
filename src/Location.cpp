@@ -28,6 +28,10 @@ bool Location::operator<(const Location &another) const {
     return false;
 }
 
+std::ostream& operator<<(std::ostream& out, const Location& location){
+    return out << "[" << location.world_ << ":(" << location.x_ << ", " << location.y_ << ")]";
+}
+
 World* Location::getWorld() const {
     return FlatCraft::getInstance()->getWorld(world_);
 }
