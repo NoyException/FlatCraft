@@ -39,6 +39,7 @@ public:
     void add(const Location& another);
     [[nodiscard]] double distanceSquared(const Location& another) const;
     [[nodiscard]] double distance(const Location& another) const;
+    void adjust();
 private:
     std::string world_;
     double x_,y_;

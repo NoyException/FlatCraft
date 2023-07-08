@@ -17,6 +17,7 @@ public:
     [[nodiscard]] nlohmann::json serialize() const override;
     static std::unique_ptr<Player> deserialize(const nlohmann::json& json);
     [[nodiscard]] PlayerController* getController();
+    [[nodiscard]] BoundingBox getBoundingBox() const;
 private:
     void updateModel();
     void jump();

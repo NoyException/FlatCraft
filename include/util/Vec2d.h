@@ -27,6 +27,7 @@ public:
     void multiply(double m);
     void multiply(const Vec2d& another);
     void divide(const Vec2d& another);
+    [[nodiscard]] bool isValid() const;
     void normalize();
     [[nodiscard]] double dot(const Vec2d& another) const;
     [[nodiscard]] double crossProduct(const Vec2d& another) const;
@@ -35,6 +36,7 @@ public:
     [[nodiscard]] double length() const;
     void rotate(double angle);
     void rotate(double angle ,const Vec2d& center);
+    void adjust();
     bool operator==(const Vec2d& another) const;
     friend std::ostream& operator<<(std::ostream& out, const Vec2d& vec2D);
     friend class BoundingBox;

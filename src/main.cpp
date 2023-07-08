@@ -20,17 +20,20 @@ int main(){
         });
     });
 
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::thread graphThread(graphMain);
+
+//    std::this_thread::sleep_for(std::chrono::seconds(3));
 //    FlatCraft::getInstance()->getScheduler()->runTask([](){
 //        auto player = FlatCraft::getInstance()->getPlayer();
-//        auto location = player->getLocation();
-//        location.add(0,10);
-//        player->teleport(location);
+//        player->teleport(Location(*player->getWorld(),-66.58,65.08));
+//        player->setVelocity(Vec2d(0,-0.28));
+////        player->teleport(Location(*player->getWorld(),-66.58,64.9));
+////        player->setVelocity(Vec2d(0,-0.2));
 //    });
 
-    std::thread graphThread(graphMain);
-  
-    std::this_thread::sleep_for(std::chrono::seconds(100));
+    while(!graphFinish){
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
     game->save();
     std::cout << "Game ended" << std::endl;
     game->stop();

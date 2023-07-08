@@ -18,14 +18,18 @@ public:
     [[nodiscard]] World* getWorld() const;
     void teleport(const Location& location);
     void move();
-    void move(const Vec2d& dv);
+    void move(const Vec2d& v);
+    [[nodiscard]] bool hasFriction() const;
+    [[nodiscard]] bool hasGravity() const;
     [[nodiscard]] bool isOnGround() const;
     [[nodiscard]] Vec2d getVelocity() const;
-    [[nodiscard]] BoundingBox getBoundingBox() const;
+    void setVelocity(const Vec2d &velocity);
+    [[nodiscard]] virtual BoundingBox getBoundingBox() const;
 protected:
     Location location_;
     Vec2d velocity_;
-    BoundingBox boundingBox_;
+    bool friction_;
+    bool gravity_;
 private:
     Task* physicsTask_;
 };
