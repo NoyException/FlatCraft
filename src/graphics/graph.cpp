@@ -1,8 +1,8 @@
 ﻿#include <conio.h>
 #include "graphics/graph.h"
 #include <chrono>
+
 DestroyBlock destroyBlock;
-BlockSurface blockSurface;
 void graphMain(FlatCraft *game) {
 	std::thread controllerThread(control);
 	Graph graph(game);
@@ -82,12 +82,11 @@ void Graph::drawPlayer() {
 	Location playerLocation = FlatCraft::getInstance()->getPlayer()->getLocation();
 	auto world = FlatCraft::getInstance()->getWorld("main_world");
 	SDL_Rect rect;
-	rect.x = windowWidth / 2;
-	rect.y = 0.618*windowHeight;
+	rect.x = windowWidth / 2 - blockSize*0.75;
+	rect.y = 0.618*windowHeight - blockSize*1.5;
 	rect.w = rect.h = blockSize * 1.5;
-	texture = SDL_CreateTextureFromSurface(renderer, blockSurface.getSurface(Material::BED_ROCK));
+	texture = blockTexture->getTexture(Material::BED_ROCK);
 	SDL_RenderCopy(renderer, texture, NULL, &rect);
-	SDL_DestroyTexture(texture);
 }
 
 void Graph::drawMap() {
@@ -109,7 +108,7 @@ void Graph::drawMap() {
 	tempVec = cameraPosition_;
 	tempVec.subtract(leftUpPosition_);
 	Material material;
-	int ci, cj;
+	double ci, cj;
 	ci = tempVec.getX();
 	cj = tempVec.getY();
 	SDL_Rect leftUpRect = rect;

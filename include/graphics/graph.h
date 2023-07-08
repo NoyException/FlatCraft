@@ -6,60 +6,45 @@
 #include "SDL_image.h"
 #include <Windows.h>
 #include "WorldModel.h"
+const std::string TEXTURES_PATH = "../resources/textures/";
 extern class DestroyBlock destroyBlock;
-extern class BlockSurface blockSurface;
 void graphMain(FlatCraft* game);
 void control();
 
-
-//may be abondoned
-class BlockSurface {//store all of the texture
-public:
-	BlockSurface() {
-		SDL_Surface* pic = nullptr;
-		pic = IMG_Load("../../../../src/graphics/textures/block/stone.png");
-		surfaces[Material::STONE] = pic;
-		surfaces[Material::DIRT] = IMG_Load("../../../../src/graphics/textures/block/rooted_dirt.png");
-		surfaces[Material::AIR] = IMG_Load("../../../../src/graphics/textures/block/white_stained_glass.png");
-		surfaces[Material::GRASS] = IMG_Load("../../../../src/graphics/textures/block/azalea_top.png");
-		surfaces[Material::BED_ROCK] = IMG_Load("../../../../src/graphics/textures/block/bedrock.png");
-		surfaces[Material::WATER] = IMG_Load("../../../../src/graphics/textures/painting/water.png");
-	}
-	~BlockSurface() {
-		for (auto it : surfaces) {
-			SDL_FreeSurface(it.second);
-		}
-	}
-	inline SDL_Surface* getSurface(Material material) {
-		if (surfaces.find(material) == surfaces.end())
-			return surfaces[Material::STONE];
-		return surfaces[material];
-	}
-private:
-	std::unordered_map<Material, SDL_Surface*> surfaces;
-};
 
 
 class BlockTexture {//store the texutre of some blocks to save time
 public:
 	BlockTexture(SDL_Renderer* renderer) : renderer(renderer) {
+		std::string tempString = TEXTURES_PATH;
+		tempString.append("block/stone.png");
 		SDL_Surface* pic = nullptr;
-		pic = IMG_Load("../../../../src/graphics/textures/block/stone.png");
+		pic = IMG_Load(tempString.c_str());
 		textures[Material::STONE] = SDL_CreateTextureFromSurface(renderer, pic);
 		SDL_FreeSurface(pic);
-		pic = IMG_Load("../../../../src/graphics/textures/block/rooted_dirt.png");
+		tempString = TEXTURES_PATH;
+		tempString.append("block/rooted_dirt.png");
+		pic = IMG_Load(tempString.c_str());
 		textures[Material::DIRT] = SDL_CreateTextureFromSurface(renderer, pic);
 		SDL_FreeSurface(pic);
-		pic = IMG_Load("../../../../src/graphics/textures/block/white_stained_glass.png");
-		textures[Material::AIR] = SDL_CreateTextureFromSurface(renderer, pic);
+		tempString = TEXTURES_PATH;
+		tempString.append("block/white_stained_glass.png");
+		pic = IMG_Load(tempString.c_str());
+		textures[Material::AIR] = SDL_CreateTextureFromSurface(renderer, pic);  
 		SDL_FreeSurface(pic);
-		pic = IMG_Load("../../../../src/graphics/textures/block/azalea_top.png");
+		tempString = TEXTURES_PATH;
+		tempString.append("block/azalea_top.png");
+		pic = IMG_Load(tempString.c_str());
 		textures[Material::GRASS] = SDL_CreateTextureFromSurface(renderer, pic);
 		SDL_FreeSurface(pic);
-		pic = IMG_Load("../../../../src/graphics/textures/block/bedrock.png");
+		tempString = TEXTURES_PATH;
+		tempString.append("block/bedrock.png");
+		pic = IMG_Load(tempString.c_str());
 		textures[Material::BED_ROCK] = SDL_CreateTextureFromSurface(renderer, pic);
 		SDL_FreeSurface(pic);
-		pic = IMG_Load("../../../../src/graphics/textures/painting/water.png");
+		tempString = TEXTURES_PATH;
+		tempString.append("painting/water.png");
+		pic = IMG_Load(tempString.c_str());
 		textures[Material::WATER] = SDL_CreateTextureFromSurface(renderer, pic);
 		SDL_FreeSurface(pic);
 	}
@@ -76,25 +61,38 @@ private:
 class BackgroundTexture {//store the texutre of some background blocks to save time
 public:
 	BackgroundTexture(SDL_Renderer* renderer) : renderer(renderer) {
+		std::string tempString = TEXTURES_PATH;
+		tempString.append("block/cracked_stone_bricks.png");
 		SDL_Surface* pic = nullptr;
-		pic = IMG_Load("../../../../src/graphics/textures/block/cracked_stone_bricks.png.png");
+		pic = IMG_Load(tempString.c_str());
 		textures[Material::STONE] = SDL_CreateTextureFromSurface(renderer, pic);
 		SDL_FreeSurface(pic);
-		pic = IMG_Load("../../../../src/graphics/textures/block/coarse_dirt.png");
+		tempString = TEXTURES_PATH;
+		tempString.append("block/coarse_dirt.png");
+		pic = IMG_Load(tempString.c_str());
 		textures[Material::DIRT] = SDL_CreateTextureFromSurface(renderer, pic);
 		SDL_FreeSurface(pic);
-		pic = IMG_Load("../../../../src/graphics/textures/block/white_stained_glass.png");
+		tempString = TEXTURES_PATH;
+		tempString.append("block/white_stained_glass.png");
+		pic = IMG_Load(tempString.c_str());
 		textures[Material::AIR] = SDL_CreateTextureFromSurface(renderer, pic);
 		SDL_FreeSurface(pic);
-		pic = IMG_Load("../../../../src/graphics/textures/block/grass_block_side.png");
+		tempString = TEXTURES_PATH;
+		tempString.append("block/grass_block_side.png");
+		pic = IMG_Load(tempString.c_str());
 		textures[Material::GRASS] = SDL_CreateTextureFromSurface(renderer, pic);
 		SDL_FreeSurface(pic);
-		pic = IMG_Load("../../../../src/graphics/textures/block/bedrock.png");
+		tempString = TEXTURES_PATH;
+		tempString.append("block/bedrock.png");
+		pic = IMG_Load(tempString.c_str());
 		textures[Material::BED_ROCK] = SDL_CreateTextureFromSurface(renderer, pic);
 		SDL_FreeSurface(pic);
-		pic = IMG_Load("../../../../src/graphics/textures/painting/blue_wool.png");
+		tempString = TEXTURES_PATH;
+		tempString.append("painting/blue_wool.png");
+		pic = IMG_Load(tempString.c_str());
 		textures[Material::WATER] = SDL_CreateTextureFromSurface(renderer, pic);
 		SDL_FreeSurface(pic);
+
 	}
 	inline SDL_Texture* getTexture(Material material) {
 		if (textures.find(material) == textures.end())
