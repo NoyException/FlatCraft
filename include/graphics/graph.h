@@ -9,6 +9,8 @@
 extern class DestroyBlock destroyBlock;
 extern class BlockSurface blockSurface;
 void graphMain(FlatCraft* game);
+void control();
+
 
 //may be abondoned
 class BlockSurface {//store all of the texture
@@ -37,6 +39,7 @@ private:
 	std::unordered_map<Material, SDL_Surface*> surfaces;
 };
 
+
 class BlockTexture {//store the texutre of some blocks to save time
 public:
 	BlockTexture(SDL_Renderer* renderer) : renderer(renderer) {
@@ -57,6 +60,39 @@ public:
 		textures[Material::BED_ROCK] = SDL_CreateTextureFromSurface(renderer, pic);
 		SDL_FreeSurface(pic);
 		pic = IMG_Load("../../../../src/graphics/textures/painting/water.png");
+		textures[Material::WATER] = SDL_CreateTextureFromSurface(renderer, pic);
+		SDL_FreeSurface(pic);
+	}
+	inline SDL_Texture* getTexture(Material material) {
+		if (textures.find(material) == textures.end())
+			return textures[Material::STONE];
+		return textures[material];
+	}
+private:
+	std::unordered_map<Material, SDL_Texture*> textures;
+	SDL_Renderer* renderer;
+};
+
+class BackgroundTexture {//store the texutre of some background blocks to save time
+public:
+	BackgroundTexture(SDL_Renderer* renderer) : renderer(renderer) {
+		SDL_Surface* pic = nullptr;
+		pic = IMG_Load("../../../../src/graphics/textures/block/cracked_stone_bricks.png.png");
+		textures[Material::STONE] = SDL_CreateTextureFromSurface(renderer, pic);
+		SDL_FreeSurface(pic);
+		pic = IMG_Load("../../../../src/graphics/textures/block/coarse_dirt.png");
+		textures[Material::DIRT] = SDL_CreateTextureFromSurface(renderer, pic);
+		SDL_FreeSurface(pic);
+		pic = IMG_Load("../../../../src/graphics/textures/block/white_stained_glass.png");
+		textures[Material::AIR] = SDL_CreateTextureFromSurface(renderer, pic);
+		SDL_FreeSurface(pic);
+		pic = IMG_Load("../../../../src/graphics/textures/block/grass_block_side.png");
+		textures[Material::GRASS] = SDL_CreateTextureFromSurface(renderer, pic);
+		SDL_FreeSurface(pic);
+		pic = IMG_Load("../../../../src/graphics/textures/block/bedrock.png");
+		textures[Material::BED_ROCK] = SDL_CreateTextureFromSurface(renderer, pic);
+		SDL_FreeSurface(pic);
+		pic = IMG_Load("../../../../src/graphics/textures/painting/blue_wool.png");
 		textures[Material::WATER] = SDL_CreateTextureFromSurface(renderer, pic);
 		SDL_FreeSurface(pic);
 	}
@@ -100,6 +136,7 @@ private:
 	int blockSize;//pixel
 	SDL_Renderer* renderer;
 	BlockTexture* blockTexture;
+	BackgroundTexture* backgroundTexture;
 };
 
 #endif
