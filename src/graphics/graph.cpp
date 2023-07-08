@@ -4,31 +4,10 @@
 
 DestroyBlock destroyBlock;
 void graphMain(FlatCraft *game) {
-	std::thread controllerThread(control);
 	Graph graph(game);
 	graph.display();
-	
-	
 }
 
-void control() {
-	PlayerController* controller = & PlayerController::instance_;
-	int ch;
-	while (1) {
-		if (GetAsyncKeyState('A') & 0x8000) {
-			controller->left();
-		}
-		if (GetAsyncKeyState('S') & 0x8000) {
-			controller->down();
-		}
-		if (GetAsyncKeyState('D') & 0x8000) {
-			controller->right();
-		}
-		if (GetAsyncKeyState('W') & 0x8000) {
-			controller->up();
-		}
-	}
-}
 void Graph::display() {
 	//World* world = game->getPlayer()->getLocation().getWorld();
 	//World* world = FlatCraft::getInstance()->getWorld("test");
@@ -41,15 +20,37 @@ void Graph::display() {
 	backgroundTexture = new BackgroundTexture(renderer);
 	PlayerController* playerController = FlatCraft::getInstance()->getPlayer()->getController();
 	SDL_Event my_event;
+	KeyState keyState;
 	int quit = 0;
 	while (!quit) {
 		while (SDL_PollEvent(&my_event) != 0) {
 			if (my_event.type == SDL_QUIT) {
 				quit = 1;
 			}
-			if (my_event.type == SDL_KEYDOWN) {
-				if (my_event.key.keysym.sym == 'a')
-					playerController->left();
+			if (my_event.type == SDL_KEYDOWN || my_event.type == SDL_KEYUP) {
+				if (my_event.type == SDL_KEYDOWN)
+					keyState = KeyState::DOWN;
+				else
+					keyState = KeyState::UP;
+				std::cout << (keyState == KeyState::DOWN) ? "down" : "up";
+				switch (my_event.key.keysym.sym) {
+					case 'w': {
+						playerController->setKeyState(Key::UP, keyState); 
+						break;
+					}
+					case 's': {
+						playerController->setKeyState(Key::DOWN, keyState);
+						break;
+					}
+					case 'a': {
+						playerController->setKeyState(Key::LEFT, keyState);
+						break;
+					}
+					case 'd': {
+						playerController->setKeyState(Key::RIGHT, keyState);
+						break;
+					}
+				}
 			}
 		}
 		 //clear before image in renderer
@@ -71,11 +72,10 @@ void Graph::display() {
 	//	//SDL_RenderCopy(renderer, texture, NULL, &rect); 
 	//	SDL_RenderPresent(renderer); //output image
 	//}
-
 void Graph::draw() {
 	drawMap();
 	drawPlayer();
-
+	drawRain();
 }
 void Graph::drawPlayer() {
 	SDL_Texture* texture;
@@ -93,7 +93,7 @@ void Graph::drawMap() {
 	SDL_Texture* texture;
 	SDL_Rect rect;
 	rect.x = windowWidth/2;
-	rect.y = 14*blockSize;
+	rect.y = 0.618*windowHeight;
 	rect.w = rect.h = blockSize;
 	Vec2d leftUpPosition_;
 	Vec2d cameraPosition_;
@@ -113,21 +113,25 @@ void Graph::drawMap() {
 	cj = tempVec.getY();
 	SDL_Rect leftUpRect = rect;
 	leftUpRect.x = rect.x - blockSize * ci;
-	leftUpRect.y = rect.y - blockSize * (cj) ;
+	leftUpRect.y = rect.y + blockSize * (cj) ;
 	int i, j;
 	SDL_Rect tempRect = leftUpRect;
 	for (i = 0; i < 42; i++) {
 		tempRect.y = leftUpRect.y;
 		for (j = 0; j < 26; j++) {
-			material = materials_[i][25 - j][1];
+			material = materials_[i][j][1];
 			texture = backgroundTexture->getTexture(material);
 			SDL_RenderCopy(renderer, texture, NULL, &tempRect);
-			material = materials_[i][25 - j][0];
+			material = materials_[i][j][0];
 			texture = blockTexture->getTexture(material);
 			SDL_RenderCopy(renderer, texture, NULL, &tempRect);
 			tempRect.y += blockSize;
 		}
 		tempRect.x += blockSize;
 	}
+}
+
+void Graph::drawRain() {
+
 }
 

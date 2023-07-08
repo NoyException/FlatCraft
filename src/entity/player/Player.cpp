@@ -43,7 +43,7 @@ Player::Player(const Location &spawnLocation) : LivingEntity(spawnLocation), con
         if(controller_->getKeyState(Key::RIGHT)==KeyState::DOWN){
             location_.add(dx,0);
         }
-        controller_->reset();
+        //controller_->reset();
 
 //        std::cout<<location_<<std::endl;
 
