@@ -123,11 +123,12 @@ private:
 
 class Graph {
 public:
-	Graph(FlatCraft* game) : game(game), windowWidth(1280), windowHeight(768), blockSize(32), renderer(nullptr), blockTexture(nullptr) {}
+	Graph(FlatCraft* game) : game(game), windowWidth(1280), windowHeight(768), blockSize(32), renderer(nullptr), blockTexture(nullptr), backgroundTexture(nullptr) {}
 	void display();//display the graph, including world and player
 	void drawMap();//draw the map as location as the center
 	void draw();//draw the graph on the renderer
 	void drawPlayer();
+	void drawRain();
 private:
 	FlatCraft* game;
 	int windowWidth, windowHeight;//pixel

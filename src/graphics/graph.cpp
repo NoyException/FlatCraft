@@ -71,11 +71,10 @@ void Graph::display() {
 	//	//SDL_RenderCopy(renderer, texture, NULL, &rect); 
 	//	SDL_RenderPresent(renderer); //output image
 	//}
-
 void Graph::draw() {
 	drawMap();
 	drawPlayer();
-
+	drawRain();
 }
 void Graph::drawPlayer() {
 	SDL_Texture* texture;
@@ -129,5 +128,9 @@ void Graph::drawMap() {
 		}
 		tempRect.x += blockSize;
 	}
+}
+
+void Graph::drawRain() {
+
 }
 
