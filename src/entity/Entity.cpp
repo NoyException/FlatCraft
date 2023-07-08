@@ -7,7 +7,7 @@
 #include "FlatCraft.h"
 #include "event/instance/EntityTeleportEvent.h"
 
-Entity::Entity(const Location &spawnLocation) : location_(spawnLocation), velocity_(){
+Entity::Entity(const Location &spawnLocation) : location_(spawnLocation), velocity_(), boundingBox_(0,0,0,0){
     physicsTask_ = FlatCraft::getInstance()->getScheduler()->runTaskTimer([&]() {
         if (!isOnGround()) {
             velocity_.add(0, -0.02);
@@ -46,7 +46,8 @@ void Entity::move() {
 }
 
 void Entity::move(const Vec2d &dv) {
-
+//    getWorld()->rayTrace(location_,dv,256,)
+    location_.add(dv);
 }
 
 nlohmann::json Entity::serialize() const {
@@ -56,10 +57,14 @@ nlohmann::json Entity::serialize() const {
 bool Entity::isOnGround() const {
     Block* block = location_.getBlock(true);
     if(block == nullptr) return false;
-    return MaterialHelper::isOccluded(block->getMaterial()) && (location_.getY()-location_.getBlockX())==0.0;
+    return MaterialHelper::isOccluded(block->getMaterial()) && (location_.getY()-location_.getBlockY())==0.0;
 }
 
 Vec2d Entity::getVelocity() const {
     return velocity_;
+}
+
+BoundingBox Entity::getBoundingBox() const {
+    return boundingBox_;
 }
 

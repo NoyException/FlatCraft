@@ -6,13 +6,13 @@
 #define FLATCRAFT_BOUNDINGBOX_H
 
 #include "Vec2d.h"
-#include "RayTraceResult.h"
+#include <optional>
 
 class BoundingBox {
 public:
     BoundingBox(double minX, double minY, double maxX, double maxY);
     BoundingBox(const Vec2d& a, const Vec2d& b);
-
+    BoundingBox(const BoundingBox& another);
     [[nodiscard]] double getMinX() const;
     void setMinX(double minX);
     [[nodiscard]] double getMinY() const;
@@ -31,7 +31,9 @@ public:
     void shift(double x,double y);
     void union_(const BoundingBox& another);
     void intersection(const BoundingBox& another);
-//    std::unique_ptr<RayTraceResult> rayTrace(const Location& startPoint, const Vec2d& direction, );
+    [[nodiscard]] std::optional<Vec2d> rayTrace(const Vec2d& startPoint, const Vec2d& direction,
+                                             double maxDistance, double raySize) const;
+    friend std::ostream& operator<<(std::ostream& out, const BoundingBox& aabb);
 private:
     double minX_;
     double minY_;

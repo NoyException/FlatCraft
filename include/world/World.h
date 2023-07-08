@@ -22,6 +22,10 @@ public:
     explicit World(const std::string& name);
     [[nodiscard]] nlohmann::json serialize() const;
     static World deserialize(const nlohmann::json& json);
+    void run();
+    void stop();
+    [[nodiscard]] bool isRunning() const;
+    [[nodiscard]] long long getTicks() const;
     [[nodiscard]] std::string getName() const;
     void getEntities(std::vector<Entity*>& entities) const;
     void getEntities(std::vector<Entity*>& entities, bool(*filter)(const Entity&)) const;
@@ -34,6 +38,8 @@ public:
 private:
     void init();
     void notifyTeleported(Entity& entity);
+    Task* task_ = nullptr;
+    long long ticks_;
     std::string name_;
     std::set<Entity*> entities_;
     std::unordered_map<int, std::unique_ptr<Block>> blocks_;

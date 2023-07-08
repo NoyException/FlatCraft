@@ -75,6 +75,11 @@ void Location::add(double x, double y) {
     y_ += y;
 }
 
+void Location::add(const Vec2d &v) {
+    x_ += v.getX();
+    y_ += v.getY();
+}
+
 void Location::add(const Location &another) {
     x_ += another.x_;
     y_ += another.y_;
@@ -117,4 +122,5 @@ nlohmann::json Location::serialize() const {
 Vec2d Location::toVec2d() const {
     return {x_,y_};
 }
+
 

@@ -2,7 +2,7 @@
 // Created by Noy on 2023/7/6.
 //
 
-#include "world/Material.h"
+#include "util/Material.h"
 
 namespace MaterialHelper{
     bool isOccluded(Material material){
