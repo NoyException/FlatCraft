@@ -21,12 +21,12 @@ int main(){
     });
 
     std::this_thread::sleep_for(std::chrono::seconds(1));
-    FlatCraft::getInstance()->getScheduler()->runTask([](){
-        auto player = FlatCraft::getInstance()->getPlayer();
-        auto location = player->getLocation();
-        location.add(0,10);
-        player->teleport(location);
-    });
+//    FlatCraft::getInstance()->getScheduler()->runTask([](){
+//        auto player = FlatCraft::getInstance()->getPlayer();
+//        auto location = player->getLocation();
+//        location.add(0,10);
+//        player->teleport(location);
+//    });
     std::thread graphThread(graphMain, game);
     std::this_thread::sleep_for(std::chrono::seconds(100));
     game->save();
