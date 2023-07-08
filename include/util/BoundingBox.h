@@ -31,7 +31,7 @@ public:
     void shift(double x,double y);
     void union_(const BoundingBox& another);
     void intersection(const BoundingBox& another);
-    std::unique_ptr<RayTraceResult> rayTrace(const Location& startPoint, const Vec2d& direction, );
+//    std::unique_ptr<RayTraceResult> rayTrace(const Location& startPoint, const Vec2d& direction, );
 private:
     double minX_;
     double minY_;
