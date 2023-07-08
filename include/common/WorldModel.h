@@ -5,8 +5,8 @@
 #ifndef FLATCRAFT_WORLDMODEL_H
 #define FLATCRAFT_WORLDMODEL_H
 
-#include "world/Material.h"
-#include "util/Vec2d.h"
+#include "Material.h"
+#include "Vec2d.h"
 #include <mutex>
 
 class WorldModel {
@@ -16,6 +16,7 @@ public:
     Material materials_[MAX_COLUMN][MAX_ROW][2];
     Vec2d leftUpPosition_;
     Vec2d cameraPosition_;
+    long long ticks_;
     //读取数据前使用std::lock_guard<std::mutex> lock(WorldModel::instance_.mtx_);
     std::mutex mtx_;
     static WorldModel instance_;

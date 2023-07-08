@@ -21,9 +21,11 @@ public:
     void move(const Vec2d& dv);
     [[nodiscard]] bool isOnGround() const;
     [[nodiscard]] Vec2d getVelocity() const;
+    [[nodiscard]] BoundingBox getBoundingBox() const;
 protected:
     Location location_;
     Vec2d velocity_;
+    BoundingBox boundingBox_;
 private:
     Task* physicsTask_;
 };

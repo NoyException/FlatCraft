@@ -5,7 +5,7 @@
 #include "entity/player/Player.h"
 #include "common/PlayerController.h"
 #include "FlatCraft.h"
-#include "windows.h"
+#include "event/instance/EntityTeleportEvent.h"
 
 Player::Player(const Location &spawnLocation) : LivingEntity(spawnLocation), controller_(&PlayerController::instance_) {
     task_ = FlatCraft::getInstance()->getScheduler()->runTaskTimer([&](){
@@ -49,6 +49,17 @@ Player::Player(const Location &spawnLocation) : LivingEntity(spawnLocation), con
 
         updateModel();
     },0,0);
+
+    EventManager::registerListener(EventManager::ENTITY_TELEPORT_EVENT,EventPriority::MONITOR,[&](EventInstance* event){
+        auto e = dynamic_cast<EntityTeleportEvent*>(event);
+        if(!e->isCanceled() && e->getEntity()==this){
+            auto target = e->getTargetLocation().getWorld();
+            if(target!=location_.getWorld()){
+                location_.getWorld()->stop();
+                target->run();
+            }
+        }
+    });
 }
 
 Player::~Player() {
@@ -81,11 +92,13 @@ void Player::updateModel() {
     for(int i=0;i<WorldModel::MAX_COLUMN;i++){
         for(int j=0;j<WorldModel::MAX_ROW;j++){
             for(int k=0;k<=1;k++){
-                WorldModel::instance_.materials_[i][j][k] =
-                        world->getBlock((int)loc.getX()+i,(int)loc.getY()-j,k)->getMaterial();
+                auto block = world->getBlock((int)loc.getX()+i,(int)loc.getY()-j,k);
+                if(block == nullptr) WorldModel::instance_.materials_[i][j][k]=Material::BED_ROCK;
+                else WorldModel::instance_.materials_[i][j][k] = block->getMaterial();
             }
         }
     }
+    WorldModel::instance_.ticks_ = world->getTicks();
 }
 
 void Player::jump() {

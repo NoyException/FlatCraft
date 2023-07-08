@@ -35,6 +35,7 @@ public:
     void setX(double x);
     void setY(double y);
     void add(double x, double y);
+    void add(const Vec2d& v);
     void add(const Location& another);
     [[nodiscard]] double distanceSquared(const Location& another) const;
     [[nodiscard]] double distance(const Location& another) const;

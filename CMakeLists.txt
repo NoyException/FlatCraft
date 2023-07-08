@@ -8,3 +8,4 @@ set(BUILD_SHARED_LIBS OFF)
 
 add_subdirectory(third_party)
 add_subdirectory(src)
+add_subdirectory(test)

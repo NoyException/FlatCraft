@@ -12,7 +12,7 @@ class BoundingBox {
 public:
     BoundingBox(double minX, double minY, double maxX, double maxY);
     BoundingBox(const Vec2d& a, const Vec2d& b);
-
+    BoundingBox(const BoundingBox& another);
     [[nodiscard]] double getMinX() const;
     void setMinX(double minX);
     [[nodiscard]] double getMinY() const;
@@ -33,6 +33,7 @@ public:
     void intersection(const BoundingBox& another);
     [[nodiscard]] std::optional<Vec2d> rayTrace(const Vec2d& startPoint, const Vec2d& direction,
                                              double maxDistance, double raySize) const;
+    friend std::ostream& operator<<(std::ostream& out, const BoundingBox& aabb);
 private:
     double minX_;
     double minY_;

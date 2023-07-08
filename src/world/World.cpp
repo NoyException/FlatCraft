@@ -6,9 +6,48 @@
 #include <utility>
 
 #include "world/World.h"
+#include "FlatCraft.h"
 
-World::World(const std::string& name) : name_(std::move(name)) {
+World::World(const std::string& name) : name_(name), ticks_(0) {
     init();
+}
+
+nlohmann::json World::serialize() const {
+    nlohmann::json json({
+        {"name",name_},
+        {"ticks",ticks_}
+    });
+    nlohmann::json blocks;
+    for(int i=-128;i<=128;i++) {
+        for (int j = 0; j < 256; j++) {
+            for(int k = 0; k <= 1; k++){
+                std::stringstream ss;
+                ss<<i<<"_"<<j<<"_"<<k;
+                blocks.emplace(ss.str(), getBlock(i,j,k)->serialize());
+            }
+        }
+    }
+    json.emplace("blocks",std::move(blocks));
+    return std::move(json);
+}
+
+World World::deserialize(const nlohmann::json &json) {
+    World world(json.at("name").get<std::string>());
+    world.ticks_ = json.at("ticks").get<long long>();
+    auto blocks = json.at("blocks");
+    for(int i=-128;i<=128;i++) {
+        for (int j = 0; j < 256; j++) {
+            for(int k = 0; k <= 1; k++) {
+                std::stringstream ss;
+                ss << i << "_" << j << "_" << k;
+                Block block = Block::deserialize(Location(world.name_, i, j),
+                                                 k,blocks.at(ss.str()));
+                int hash = (i << 11) ^ (j << 1) ^ k;
+                world.blocks_[hash] = std::make_unique<Block>(block);
+            }
+        }
+    }
+    return std::move(world);
 }
 
 std::string World::getName() const {
@@ -61,49 +100,36 @@ void World::init() {
     }
 }
 
-nlohmann::json World::serialize() const {
-    nlohmann::json json({{"name",name_}});
-    nlohmann::json blocks;
-    for(int i=-128;i<=128;i++) {
-        for (int j = 0; j < 256; j++) {
-            for(int k = 0; k <= 1; k++){
-                std::stringstream ss;
-                ss<<i<<"_"<<j<<"_"<<k;
-                blocks.emplace(ss.str(), getBlock(i,j,k)->serialize());
-            }
-        }
-    }
-    json.emplace("blocks",std::move(blocks));
-    return std::move(json);
-}
-
-World World::deserialize(const nlohmann::json &json) {
-    World world(json.at("name").get<std::string>());
-    auto blocks = json.at("blocks");
-    for(int i=-128;i<=128;i++) {
-        for (int j = 0; j < 256; j++) {
-            for(int k = 0; k <= 1; k++) {
-                std::stringstream ss;
-                ss << i << "_" << j << "_" << k;
-                Block block = Block::deserialize(Location(world.name_, i, j),
-                                                 k,blocks.at(ss.str()));
-                int hash = (i << 11) ^ (j << 1) ^ k;
-                world.blocks_[hash] = std::make_unique<Block>(block);
-            }
-        }
-    }
-    return std::move(world);
-}
-
 std::unique_ptr<RayTraceResult> World::rayTrace(const Location &location, const Vec2d &direction,
                                                 double maxDistance, double raySize,
                                                 const std::function<bool(Material)>& blockFilter,
                                                 const std::function<bool(Entity *)>& entityFilter) const {
     for (auto &item: entities_){
         if(entityFilter(item)){
-
+            auto aabb = item->getBoundingBox();
         }
     }
     return nullptr;
+}
+
+void World::run() {
+    if(isRunning()) return;
+    task_ = FlatCraft::getInstance()->getScheduler()->runTaskTimer([&](){
+        ticks_++;
+    },0,0);
+}
+
+void World::stop() {
+    if(!isRunning()) return;
+    task_->cancel();
+    task_ = nullptr;
+}
+
+bool World::isRunning() const {
+    return task_!= nullptr;
+}
+
+long long World::getTicks() const {
+    return ticks_;
 }
 

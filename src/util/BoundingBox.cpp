@@ -14,6 +14,8 @@ BoundingBox::BoundingBox(double minX, double minY, double maxX, double maxY) : m
 BoundingBox::BoundingBox(const Vec2d &a, const Vec2d &b):
         minX_(min(a.getX(), b.getX())), minY_(min(a.getY(), b.getY())), maxX_(max(a.getX(), b.getX())), maxY_(max(a.getY(), b.getY())){}
 
+BoundingBox::BoundingBox(const BoundingBox &another) = default;
+
 double BoundingBox::getMinX() const {
     return minX_;
 }
@@ -109,70 +111,47 @@ BoundingBox::rayTrace(const Vec2d &startPoint, const Vec2d &direction, double ma
     return std::optional<Vec2d>();
 
 }*/
-// Vec2d是一个二维向量类，可以进行加减乘除等运算
-// std::optional是一个模板类，可以表示有值或者无值的情况
+
+// 假设BoundingBox的成员变量是double类型
 std::optional<Vec2d> BoundingBox::rayTrace(const Vec2d& startPoint, const Vec2d& direction,
                                            double maxDistance, double raySize) const {
-    Vec2d dir = direction;
-    dir.normalize();
-    // 计算射线和边界框的四个交点
-    std::optional<Vec2d> leftIntersect, rightIntersect, topIntersect, bottomIntersect;
-    // 如果射线不垂直于x轴
-    if (dir.x_ != 0) {
-        // 计算与左边界的交点
-        double t1 = (minX_ - startPoint.x_) / dir.x_;
-        if (t1 >= 0 && t1 <= maxDistance) {
-            double y1 = startPoint.y_ + t1 * dir.y_;
-            if (y1 >= minY_ - raySize && y1 <= maxY_ + raySize) {
-                leftIntersect = Vec2d(minX_, y1);
-            }
+    // 检查射线是否与包围盒相交，如果不相交则返回空值
+    double tmin = (minX_ - startPoint.x_) / direction.x_;
+    double tmax = (maxX_ - startPoint.x_) / direction.x_;
+    if (tmin > tmax) std::swap(tmin, tmax); // 保证tmin <= tmax
+    double tymin = (minY_ - startPoint.y_) / direction.y_;
+    double tymax = (maxY_ - startPoint.y_) / direction.y_;
+    if (tymin > tymax) std::swap(tymin, tymax); // 保证tymin <= tymax
+    if (tmin > tymax || tymin > tmax) return std::nullopt; // 射线与包围盒不相交
+    // 计算射线与包围盒的交点，取最近的一个
+    double t = max(tmin, tymin);
+    if (t < 0 || t > maxDistance) return std::nullopt; // 射线起点在包围盒外或超出最大距离
+    Vec2d hitPoint = startPoint + direction * t; // 射线与包围盒的交点
+    // 检查交点是否在包围盒的边界上，如果是则返回交点，否则返回空值
+    if (hitPoint.x_ == minX_ || hitPoint.x_ == maxX_) { // 射线与包围盒的左右边界相交
+        hitPoint.y_ = startPoint.y_ + direction.y_ / direction.x_ * t; // 根据射线方程计算hitPoint.y_
+        if (std::abs(hitPoint.y_ - minY_) <= raySize / 2 || std::abs(hitPoint.y_ - maxY_) <= raySize / 2) { // 考虑射线的宽度
+            return hitPoint;
         }
-        // 计算与右边界的交点
-        double t2 = (maxX_ - startPoint.x_) / dir.x_;
-        if (t2 >= 0 && t2 <= maxDistance) {
-            double y2 = startPoint.y_ + t2 * dir.y_;
-            if (y2 >= minY_ - raySize && y2 <= maxY_ + raySize) {
-                rightIntersect = Vec2d(maxX_, y2);
-            }
-        }
-    }
-    // 如果射线不垂直于y轴
-    if (dir.y_ != 0) {
-        // 计算与上边界的交点
-        double t3 = (maxY_ - startPoint.y_) / dir.y_;
-        if (t3 >= 0 && t3 <= maxDistance) {
-            double x3 = startPoint.x_ + t3 * dir.x_;
-            if (x3 >= minX_ - raySize && x3 <= maxX_ + raySize) {
-                topIntersect = Vec2d(x3, maxY_);
-            }
-        }
-        // 计算与下边界的交点
-        double t4 = (minY_ - startPoint.y_) / dir.y_;
-        if (t4 >= 0 && t4 <= maxDistance) {
-            double x4 = startPoint.x_ + t4 * dir.x_;
-            if (x4 >= minX_ - raySize && x4 <= maxX_ + raySize) {
-                bottomIntersect = Vec2d(x4, minY_);
-            }
+        else {
+            return std::nullopt;
         }
     }
-    // 筛选有效的交点
-    std::vector<std::optional<Vec2d>> validIntersects;
-    if (leftIntersect) validIntersects.push_back(leftIntersect);
-    if (rightIntersect) validIntersects.push_back(rightIntersect);
-    if (topIntersect) validIntersects.push_back(topIntersect);
-    if (bottomIntersect) validIntersects.push_back(bottomIntersect);
-    // 如果没有有效的交点，返回空值
-    if (validIntersects.empty()) return std::nullopt;
-    // 找出距离起点最近的交点
-    std::optional<Vec2d> closestIntersect = validIntersects[0];
-    double minDistance = (startPoint - closestIntersect.value()).length();
-    for (int i = 1; i < validIntersects.size(); i++) {
-        double distance = (startPoint - validIntersects[i].value()).length();
-        if (distance < minDistance) {
-            closestIntersect = validIntersects[i];
-            minDistance = distance;
+    else if (hitPoint.y_ == minY_ || hitPoint.y_ == maxY_) { // 射线与包围盒的上下边界相交
+        hitPoint.x_ = startPoint.x_ + direction.x_ / direction.y_ * t; // 根据射线方程计算hitPoint.x_
+        if (std::abs(hitPoint.x_ - minX_) <= raySize / 2 || std::abs(hitPoint.x_ - maxX_) <= raySize / 2) { // 考虑射线的宽度
+            return hitPoint;
+        }
+        else {
+            return std::nullopt;
         }
     }
-    // 返回最终的相交点
-    return closestIntersect;
+    else { // 射线与包围盒的内部相交，这种情况不应该发生，但为了安全起见还是返回空值
+        return std::nullopt;
+    }
+}
+
+
+std::ostream &operator<<(std::ostream &out, const BoundingBox &aabb) {
+    return out<<"[("<<aabb.minX_<<","<<aabb.minY_<<"),("<<aabb.maxX_<<","<<aabb.maxY_<<")]";
 }

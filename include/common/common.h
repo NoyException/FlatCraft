@@ -23,8 +23,9 @@
 #include <thread>
 #include <mutex>
 
-#include "util/json.hpp"
-#include "util/Vec2d.h"
+#include "json.hpp"
+#include "Vec2d.h"
+#include "BoundingBox.h"
 #include "WorldModel.h"
 #include "PlayerController.h"
 
