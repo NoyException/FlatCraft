@@ -46,7 +46,7 @@ Player::Player(const Location &spawnLocation) : LivingEntity(spawnLocation), con
         }
         controller_->reset();
 
-        std::cout<<location_<<std::endl;
+//        std::cout<<location_<<std::endl;
 
         updateModel();
     },0,0);
@@ -77,13 +77,13 @@ void Player::updateModel() {
 
     WorldModel::instance_.cameraPosition_ = location_.toVec2d();
     auto loc = location_.toBlockLocation().toVec2d();
-    loc.add(-(int)(WorldModel::MAX_COLUMN/2),-(int)(WorldModel::MAX_ROW*0.618));
+    loc.add(-(int)(WorldModel::MAX_COLUMN/2),(int)(WorldModel::MAX_ROW*0.618));
     WorldModel::instance_.leftUpPosition_ = loc;
     for(int i=0;i<WorldModel::MAX_COLUMN;i++){
         for(int j=0;j<WorldModel::MAX_ROW;j++){
             for(int k=0;k<=1;k++){
                 WorldModel::instance_.materials_[i][j][k] =
-                        world->getBlock((int)loc.getX()+i,(int)loc.getY()+j,k)->getMaterial();
+                        world->getBlock((int)loc.getX()+i,(int)loc.getY()-j,k)->getMaterial();
             }
         }
     }

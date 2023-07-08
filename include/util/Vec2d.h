@@ -5,6 +5,8 @@
 #ifndef FLATCRAFT_VEC2D_H
 #define FLATCRAFT_VEC2D_H
 
+#include <ostream>
+
 class Vec2d {
 public:
     Vec2d();
@@ -27,6 +29,11 @@ public:
     [[nodiscard]] Vec2d midPoint(const Vec2d& another) const;
     [[nodiscard]] double lengthSquared() const;
     [[nodiscard]] double length() const;
+    void rotate(double angle);
+    void rotate(double angle ,const Vec2d& center);
+    bool operator==(const Vec2d& another) const;
+    friend std::ostream& operator<<(std::ostream& out, const Vec2d& vec2D);
+    static const double epsilon;
 private:
     double x_;
     double y_;
