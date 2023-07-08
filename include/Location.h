@@ -21,6 +21,7 @@ public:
     Location& operator=(const Location& another);
     bool operator==(const Location& another) const;
     bool operator<(const Location& another) const;
+    friend std::ostream& operator<<(std::ostream& out, const Location& location);
     [[nodiscard]] Vec2d toVec2d() const;
     [[nodiscard]] World* getWorld() const;
     [[nodiscard]] Block* getBlock(bool front) const;

@@ -9,18 +9,18 @@
 
 Player::Player(const Location &spawnLocation) : LivingEntity(spawnLocation), controller_(&PlayerController::instance_) {
     task_ = FlatCraft::getInstance()->getScheduler()->runTaskTimer([&](){
-        if(GetAsyncKeyState('W')&0x8000){
-            controller_->up();
-        }
-        if(GetAsyncKeyState('A')&0x8000){
-            controller_->left();
-        }
-        if(GetAsyncKeyState('S')&0x8000){
-            controller_->down();
-        }
-        if(GetAsyncKeyState('D')&0x8000){
-            controller_->right();
-        }
+//        if(GetAsyncKeyState('W')&0x8000){
+//            controller_->up();
+//        }
+//        if(GetAsyncKeyState('A')&0x8000){
+//            controller_->left();
+//        }
+//        if(GetAsyncKeyState('S')&0x8000){
+//            controller_->down();
+//        }
+//        if(GetAsyncKeyState('D')&0x8000){
+//            controller_->right();
+//        }
 
         controller_->locked_ = true;
         bool onGround = isOnGround();
@@ -45,6 +45,8 @@ Player::Player(const Location &spawnLocation) : LivingEntity(spawnLocation), con
             location_.add(dx,0);
         }
         controller_->reset();
+
+        std::cout<<location_<<std::endl;
 
         updateModel();
     },0,0);

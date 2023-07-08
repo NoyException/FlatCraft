@@ -16,11 +16,9 @@ void control() {
 	int ch;
 	while (1) {
 		if (GetAsyncKeyState('A') & 0x8000) {
-			std::cout << 'A';
 			controller->left();
 		}
 		if (GetAsyncKeyState('S') & 0x8000) {
-			std::cout << 'S';
 			controller->down();
 		}
 		if (GetAsyncKeyState('D') & 0x8000) {
