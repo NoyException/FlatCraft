@@ -165,6 +165,7 @@ public:
 	void drawPlayer();
 	void drawRain();
 	void drawBackground();
+	void drawGui();
 private:
 	inline void getWorldXY(int x, int y, double& wX, double &wY) {
 		wX = cameraPosition_.getX() + (x - 640) / 32;
@@ -183,6 +184,7 @@ private:
 	Vec2d cameraPosition_;
 	SDL_Rect leftUpRect;
 	Material materials_[42][26][2];
+	long long ticks;
 };
 
 #endif
