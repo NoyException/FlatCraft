@@ -11,7 +11,9 @@ extern class DestroyBlock destroyBlock;
 void graphMain(FlatCraft* game);
 void control();
 
+class RainTexture {
 
+};
 
 class BlockTexture {//store the texutre of some blocks to save time
 public:
