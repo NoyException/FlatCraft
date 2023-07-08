@@ -2,9 +2,11 @@
 #include "graphics/graph.h"
 #include <chrono>
 
+bool graphFinish = false;
 DestroyBlock destroyBlock;
-void graphMain(FlatCraft *game) {
-	Graph graph(game);
+void graphMain() {
+	graphFinish = false;
+	Graph graph;
 	graph.display();
 }
 
@@ -18,39 +20,66 @@ void Graph::display() {
 	renderer = SDL_CreateRenderer(window, -1, 0);
 	blockTexture = new BlockTexture(renderer);
 	backgroundTexture = new BackgroundTexture(renderer);
-	PlayerController* playerController = FlatCraft::getInstance()->getPlayer()->getController();
+	environmentTexture = new EnvironmentTexture(renderer);
+	PlayerController* playerController = &PlayerController::instance_;
 	SDL_Event my_event;
 	KeyState keyState;
-	int quit = 0;
-	while (!quit) {
+	while (!graphFinish) {
 		while (SDL_PollEvent(&my_event) != 0) {
 			if (my_event.type == SDL_QUIT) {
-				quit = 1;
+				graphFinish = true;
 			}
-			if (my_event.type == SDL_KEYDOWN || my_event.type == SDL_KEYUP) {
+			else if (my_event.type == SDL_KEYDOWN || my_event.type == SDL_KEYUP) {
 				if (my_event.type == SDL_KEYDOWN)
 					keyState = KeyState::DOWN;
 				else
 					keyState = KeyState::UP;
-				std::cout << (keyState == KeyState::DOWN) ? "down" : "up";
 				switch (my_event.key.keysym.sym) {
-					case 'w': {
+					case SDLK_w: {
 						playerController->setKeyState(Key::UP, keyState); 
 						break;
 					}
-					case 's': {
+					case SDLK_s: {
 						playerController->setKeyState(Key::DOWN, keyState);
 						break;
 					}
-					case 'a': {
+					case SDLK_a: {
 						playerController->setKeyState(Key::LEFT, keyState);
 						break;
 					}
-					case 'd': {
+					case SDLK_d: {
 						playerController->setKeyState(Key::RIGHT, keyState);
 						break;
 					}
+					case SDLK_SPACE: {
+						playerController->setKeyState(Key::SPACE, keyState);
+						break;
+					}
+					case SDLK_LSHIFT:
+					case SDLK_RSHIFT: {
+						playerController->setKeyState(Key::SHIFT, keyState);
+						break;
+					}
+					case SDLK_LCTRL:
+					case SDLK_RCTRL: {
+						playerController->setKeyState(Key::CTRL, keyState);
+						break;
+					}
+								   
 				}
+			}
+			else if (my_event.type == SDL_MOUSEBUTTONDOWN || my_event.type == SDL_MOUSEBUTTONUP) {
+				if (my_event.type == SDL_MOUSEBUTTONDOWN)
+					keyState = KeyState::DOWN;
+				else
+					keyState = KeyState::UP;
+				if (SDL_BUTTON_LEFT == my_event.button.button) {
+					playerController->setKeyState(Key::LEFT_CLICK, keyState);
+				}
+				else if (SDL_BUTTON_RIGHT == my_event.button.button) {
+					playerController->setKeyState(Key::RIGHT_CLICK, keyState);
+				}
+				
 			}
 		}
 		 //clear before image in renderer
@@ -60,27 +89,66 @@ void Graph::display() {
 	}
 }
 	
-	//while (true) {
-	//	std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-	//	std::chrono::milliseconds duration(50);
-	//	std::chrono::system_clock::time_point targetTime = now + duration;
-	//	std::this_thread::sleep_until(targetTime);//wait
-	//	
-	//	
-	//	SDL_RenderClear(renderer); //clear before image in renderer
-	//	draw();
-	//	//SDL_RenderCopy(renderer, texture, NULL, &rect); 
-	//	SDL_RenderPresent(renderer); //output image
-	//}
 void Graph::draw() {
+	caculate();
+	drawBackground();
+	drawRain();
 	drawMap();
 	drawPlayer();
-	drawRain();
+	
 }
+void Graph::caculate() {
+	{//get the information
+		std::lock_guard<std::mutex> lock(WorldModel::instance_.mtx_);
+		memcpy(materials_, WorldModel::instance_.materials_, sizeof(int) * 26 * 42 * 2);
+		leftUpPosition_ = WorldModel::instance_.leftUpPosition_;
+		cameraPosition_ = WorldModel::instance_.cameraPosition_;
+	}
+	SDL_Rect rect;
+	rect.x = windowWidth / 2;
+	rect.y = 0.618 * windowHeight;
+	rect.w = rect.h = blockSize;
+	Vec2d tempVec;
+	tempVec = cameraPosition_;
+	tempVec.subtract(leftUpPosition_);
+	double ci, cj;
+	ci = tempVec.getX();
+	cj = tempVec.getY();
+	leftUpRect = rect;
+	leftUpRect.x = rect.x - blockSize * ci;
+	leftUpRect.y = rect.y + blockSize * (cj);
+}
+void Graph::drawBackground() {
+	SDL_Rect rect = leftUpRect;
+	double wx = 0, wy = 0;
+	rect.w = 1400;
+	rect.h = 32;
+	getWorldXY(rect.x, rect.y, wx, wy);
+	int k = 0;
+	double value;
+	int r, g, b;
+	while (rect.y < 770) {
+		value = (255 - (int)wy) / 192;
+		r = int(135 + value * 120);
+		g = int(206 + value * 49);
+		b = int(235 + value * 20);
+		r = r > 255 ? 255 : r;
+		g = g > 255 ? 255 : g;
+		b = b > 255 ? 255 : b;
+		if (wy < 64) {
+			r = g = b = 0;
+		}
+		SDL_SetRenderDrawColor(renderer, r, g, b, 255);
+		SDL_RenderFillRect(renderer, &rect);
+		rect.y += 32;
+		wy--;
+	}
+	
+
+}
+
 void Graph::drawPlayer() {
 	SDL_Texture* texture;
-	Location playerLocation = FlatCraft::getInstance()->getPlayer()->getLocation();
-	auto world = FlatCraft::getInstance()->getWorld("main_world");
 	SDL_Rect rect;
 	rect.x = windowWidth / 2 - blockSize*0.75;
 	rect.y = 0.618*windowHeight - blockSize*1.5;
@@ -91,31 +159,9 @@ void Graph::drawPlayer() {
 
 void Graph::drawMap() {
 	SDL_Texture* texture;
-	SDL_Rect rect;
-	rect.x = windowWidth/2;
-	rect.y = 0.618*windowHeight;
-	rect.w = rect.h = blockSize;
-	Vec2d leftUpPosition_;
-	Vec2d cameraPosition_;
-	Vec2d tempVec;
-	Material materials_[42][26][2];
-	{
-		std::lock_guard<std::mutex> lock(WorldModel::instance_.mtx_);
-		memcpy(materials_, WorldModel::instance_.materials_, sizeof(int)*26*42*2);
-		leftUpPosition_ = WorldModel::instance_.leftUpPosition_;
-		cameraPosition_ = WorldModel::instance_.cameraPosition_;
-	}
-	tempVec = cameraPosition_;
-	tempVec.subtract(leftUpPosition_);
-	Material material;
-	double ci, cj;
-	ci = tempVec.getX();
-	cj = tempVec.getY();
-	SDL_Rect leftUpRect = rect;
-	leftUpRect.x = rect.x - blockSize * ci;
-	leftUpRect.y = rect.y + blockSize * (cj) ;
 	int i, j;
 	SDL_Rect tempRect = leftUpRect;
+	Material material;
 	for (i = 0; i < 42; i++) {
 		tempRect.y = leftUpRect.y;
 		for (j = 0; j < 26; j++) {
@@ -132,6 +178,16 @@ void Graph::drawMap() {
 }
 
 void Graph::drawRain() {
-
+	SDL_Texture* texture = environmentTexture->getRain();
+	SDL_Rect rect;
+	static int rainY = -400;
+	rect.x = 0;
+	rect.y = rainY;
+	rect.w = 1280;
+	rect.h = 1000;
+	rainY += 6;
+	if (rainY > 0)
+		rainY = -200;
+	SDL_RenderCopy(renderer, texture, NULL, &rect);
 }
 

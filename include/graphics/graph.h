@@ -1,18 +1,51 @@
 #ifndef _GRAPHICS_H
 #define _GRAPHICS_H
-#include "FlatCraft.h"
 #include <unordered_map>
 #include "SDL.h"
 #include "SDL_image.h"
 #include <Windows.h>
 #include "WorldModel.h"
+#include "SDL_mouse.h"
+#include "PlayerController.h"
 const std::string TEXTURES_PATH = "../resources/textures/";
+extern bool graphFinish;
 extern class DestroyBlock destroyBlock;
-void graphMain(FlatCraft* game);
+void graphMain();
 void control();
 
-class RainTexture {
 
+class GuiTexture {
+public:
+	GuiTexture(SDL_Renderer* renderer) : renderer(renderer) {
+		std::string tempString = TEXTURES_PATH;
+		tempString.append("gui/items_bar.png");
+		SDL_Surface* pic = IMG_Load(tempString.c_str());
+		items_bar = SDL_CreateTextureFromSurface(renderer, pic);
+		SDL_FreeSurface(pic);
+	}
+	inline SDL_Texture* getItemsBar() {
+		return items_bar;
+	}
+private:
+	SDL_Texture* items_bar;
+	SDL_Renderer* renderer;
+};
+
+class EnvironmentTexture {
+public:
+	EnvironmentTexture(SDL_Renderer* renderer) : renderer(renderer) {
+		std::string tempString = TEXTURES_PATH;
+		tempString.append("environment/myRain.png");
+		SDL_Surface* pic = IMG_Load(tempString.c_str());
+		rainTexture = SDL_CreateTextureFromSurface(renderer, pic);
+		SDL_FreeSurface(pic);
+	}
+	inline SDL_Texture* getRain() {
+		return rainTexture;
+	}
+private:
+	SDL_Texture* rainTexture;
+	SDL_Renderer* renderer;
 };
 
 class BlockTexture {//store the texutre of some blocks to save time
@@ -30,9 +63,9 @@ public:
 		textures[Material::DIRT] = SDL_CreateTextureFromSurface(renderer, pic);
 		SDL_FreeSurface(pic);
 		tempString = TEXTURES_PATH;
-		tempString.append("block/white_stained_glass.png");
+		tempString.append("block/air.png");
 		pic = IMG_Load(tempString.c_str());
-		textures[Material::AIR] = SDL_CreateTextureFromSurface(renderer, pic);  
+		textures[Material::AIR] = nullptr;
 		SDL_FreeSurface(pic);
 		tempString = TEXTURES_PATH;
 		tempString.append("block/azalea_top.png");
@@ -77,7 +110,7 @@ public:
 		tempString = TEXTURES_PATH;
 		tempString.append("block/white_stained_glass.png");
 		pic = IMG_Load(tempString.c_str());
-		textures[Material::AIR] = SDL_CreateTextureFromSurface(renderer, pic);
+		textures[Material::AIR] = nullptr;
 		SDL_FreeSurface(pic);
 		tempString = TEXTURES_PATH;
 		tempString.append("block/grass_block_side.png");
@@ -125,19 +158,31 @@ private:
 
 class Graph {
 public:
-	Graph(FlatCraft* game) : game(game), windowWidth(1280), windowHeight(768), blockSize(32), renderer(nullptr), blockTexture(nullptr), backgroundTexture(nullptr) {}
+	Graph() : windowWidth(1280), windowHeight(768), blockSize(32), renderer(nullptr), blockTexture(nullptr), backgroundTexture(nullptr), environmentTexture(nullptr) {}
 	void display();//display the graph, including world and player
 	void drawMap();//draw the map as location as the center
 	void draw();//draw the graph on the renderer
 	void drawPlayer();
 	void drawRain();
+	void drawBackground();
 private:
-	FlatCraft* game;
+	inline void getWorldXY(int x, int y, double& wX, double &wY) {
+		wX = cameraPosition_.getX() + (x - 640) / 32;
+		wY = cameraPosition_.getY() - (y - 768 * 0.618) / 32;
+	}
+	inline void caculate();
+
 	int windowWidth, windowHeight;//pixel
 	int blockSize;//pixel
 	SDL_Renderer* renderer;
 	BlockTexture* blockTexture;
 	BackgroundTexture* backgroundTexture;
+	EnvironmentTexture* environmentTexture;
+	GuiTexture* guiTexture;
+	Vec2d leftUpPosition_;
+	Vec2d cameraPosition_;
+	SDL_Rect leftUpRect;
+	Material materials_[42][26][2];
 };
 
 #endif
