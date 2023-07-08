@@ -9,7 +9,7 @@
 #include "Block.h"
 #include "entity/Entity.h"
 #include "Location.h"
-#include "util/RayTraceResult.h"
+#include "RayTraceResult.h"
 
 enum class RayTraceFlag : int{
     HIT_ENTITY = 1,

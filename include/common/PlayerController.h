@@ -5,31 +5,33 @@
 #ifndef FLATCRAFT_PLAYERCONTROLLER_H
 #define FLATCRAFT_PLAYERCONTROLLER_H
 
+enum class Key : int{
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT,
+    SPACE,
+    SHIFT,
+    CTRL,
+    LEFT_CLICK,
+    RIGHT_CLICK,
+};
+
+enum class KeyState : bool{
+    UP,
+    DOWN,
+};
+
 class PlayerController {
 public:
-    void up();
-    void down();
-    void left();
-    void right();
-    void space();
-    void shift();
-    void ctrl();
-    void leftClick();
-    void rightClick();
+    PlayerController();
+    void setKeyState(Key key, KeyState state);
+    [[nodiscard]] KeyState getKeyState(Key key) const;
     void reset();
     static PlayerController instance_;
     friend class Player;
 private:
-    bool up_;
-    bool down_;
-    bool left_;
-    bool right_;
-    bool space_;
-    bool shift_;
-    bool ctrl_;
-    bool leftClick_;
-    bool rightClick_;
-    bool locked_;
+    KeyState states_[16];
 };
 
 

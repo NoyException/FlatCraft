@@ -22,26 +22,25 @@ Player::Player(const Location &spawnLocation) : LivingEntity(spawnLocation), con
 //            controller_->right();
 //        }
 
-        controller_->locked_ = true;
         bool onGround = isOnGround();
-        if(controller_->ctrl_){
+        if(controller_->getKeyState(Key::CTRL)==KeyState::DOWN){
             sprinting_ = true;
         }
-        if(controller_->shift_){
+        if(controller_->getKeyState(Key::SHIFT)==KeyState::DOWN){
             sprinting_ = false;
             sneaking_ = true;
         }
         else sneaking_ = false;
-        if(controller_->up_){
+        if(controller_->getKeyState(Key::UP)==KeyState::DOWN){
             if(onGround) jump();
         }
         double dx = onGround ? 0.2 : 0.05;
         if(sprinting_) dx*=1.3;
         if(sneaking_) dx*=0.3;
-        if(controller_->left_){
+        if(controller_->getKeyState(Key::LEFT)==KeyState::DOWN){
             location_.add(-dx,0);
         }
-        if(controller_->right_){
+        if(controller_->getKeyState(Key::RIGHT)==KeyState::DOWN){
             location_.add(dx,0);
         }
         controller_->reset();
