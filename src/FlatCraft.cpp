@@ -3,6 +3,7 @@
 //
 
 #include "FlatCraft.h"
+#include "item/Item.h"
 //#include <windows.h>
 #include <filesystem>
 
@@ -29,10 +30,14 @@ void FlatCraft::createWorld(const std::string &name) {
 }
 
 FlatCraft *FlatCraft::getInstance() {
+    if(instance==nullptr){
+        Item::registerAllItems();
+        instance = std::make_unique<FlatCraft>();
+    }
     return instance.get();
 }
 
-std::unique_ptr<FlatCraft> FlatCraft::instance = std::make_unique<FlatCraft>();
+std::unique_ptr<FlatCraft> FlatCraft::instance = nullptr;
 
 World *FlatCraft::getWorld(const std::string &name) const {
     auto it = worlds_.find(name);

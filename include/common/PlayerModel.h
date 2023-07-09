@@ -5,10 +5,12 @@
 #ifndef FLATCRAFT_PLAYERMODEL_H
 #define FLATCRAFT_PLAYERMODEL_H
 
-#include "Vec2d.h"
 #include "Material.h"
+#include "EntityModel.h"
+#include "ItemModel.h"
 
-class PlayerModel {
+class PlayerModel : public EntityModel{
+public:
     enum class HandAction : int{
         IDLE,
         ATTACK,
@@ -24,20 +26,18 @@ class PlayerModel {
         //疾跑
         SPRINT,
     };
+    PlayerModel();
     //玩家是否下蹲
     bool sneaking_;
-    //玩家所在位置
-    Vec2d position_;
-    //玩家移动速度
-    Vec2d velocity_;
     //玩家鼠标所持物品
-    Material cursor_;
+    ItemModel cursor_;
     //玩家行动栏的物品（下面的一排）
-    Material actionBar_[9];
+    ItemModel actionBar_[9];
     //玩家的手正持有行动栏的第几个格子
     int currentSlot_;
     HandAction handAction_;
     LegAction legAction_;
+    static PlayerModel instance_;
 };
 
 

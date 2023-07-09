@@ -7,7 +7,8 @@
 
 #include "common.h"
 #include "entity/LivingEntity.h"
-#include "common/PlayerController.h"
+#include "item/ItemStack.h"
+#include "item/Inventory.h"
 
 class Player : public LivingEntity{
 public:
@@ -16,15 +17,19 @@ public:
     ~Player() override;
     [[nodiscard]] nlohmann::json serialize() const override;
     static std::unique_ptr<Player> deserialize(const nlohmann::json& json);
-    [[nodiscard]] PlayerController* getController();
-    [[nodiscard]] BoundingBox getBoundingBox() const;
+    [[nodiscard]] BoundingBox getBoundingBox() const override;
 private:
+    void control();
     void updateModel();
     void jump();
     PlayerController* controller_;
+    PlayerModel* model_;
     Task* task_;
     bool sprinting_;
     bool sneaking_;
+    int currentSlot_;
+    ItemStack cursor_;
+    Inventory inventory_;
 };
 
 

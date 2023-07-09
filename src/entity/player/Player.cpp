@@ -7,58 +7,10 @@
 #include "FlatCraft.h"
 #include "event/instance/EntityTeleportEvent.h"
 
-Player::Player(const Location &spawnLocation) : LivingEntity(spawnLocation), controller_(&PlayerController::instance_) {
+Player::Player(const Location &spawnLocation) : LivingEntity(spawnLocation), controller_(&PlayerController::instance_),
+model_(&PlayerModel::instance_), currentSlot_(0), cursor_(Material::AIR){
     task_ = FlatCraft::getInstance()->getScheduler()->runTaskTimer([&](){
-
-        bool onGround = isOnGround();
-        if(controller_->getKeyState(Key::CTRL)==KeyState::DOWN){
-            sprinting_ = true;
-        }
-        if(controller_->getKeyState(Key::SHIFT)==KeyState::DOWN){
-            sprinting_ = false;
-            sneaking_ = true;
-        }
-        else sneaking_ = false;
-        if(controller_->getKeyState(Key::UP)==KeyState::DOWN){
-            if(onGround) jump();
-        }
-        double dx = onGround ? 0.2 : 0.05;
-        if(sprinting_) dx*=1.5;
-        if(sneaking_) dx*=0.3;
-        bool stopSprinting;
-        if(controller_->getKeyState(Key::LEFT)==KeyState::DOWN && controller_->getKeyState(Key::RIGHT)==KeyState::UP){
-            if(onGround){
-                velocity_.setX(std::max(-dx,velocity_.getX()-0.08));
-            }
-            else if(velocity_.getX()>-dx){
-                velocity_.setX(std::max(-dx,velocity_.getX()-0.02));
-            }
-            friction_ = false;
-            stopSprinting = false;
-        }
-        else if(controller_->getKeyState(Key::RIGHT)==KeyState::DOWN && controller_->getKeyState(Key::LEFT)==KeyState::UP){
-            if(onGround){
-                velocity_.setX(std::min(dx,velocity_.getX()+0.08));
-            }
-            else if(velocity_.getX()<dx){
-                velocity_.setX(std::min(dx,velocity_.getX()+0.02));
-            }
-            friction_ = false;
-            stopSprinting = false;
-        }
-        else{
-            friction_ = true;
-            stopSprinting = true;
-        }
-        if(stopSprinting) sprinting_ = false;
-        //controller_->reset();
-
-        if(controller_->getKeyState(Key::SPACE)==KeyState::DOWN){
-            controller_->setKeyState(Key::SPACE,KeyState::UP);
-//            onGround = isOnGround();
-            std::cout<<location_<<" "<<velocity_<<std::endl;
-        }
-
+        control();
         updateModel();
     },0,0);
 
@@ -89,14 +41,70 @@ std::unique_ptr<Player> Player::deserialize(const nlohmann::json &json) {
     return std::move(player);
 }
 
-PlayerController *Player::getController() {
-    return controller_;
+void Player::control() {
+    bool onGround = isOnGround();
+    if(controller_->getKeyState(Key::CTRL)==KeyState::DOWN){
+        sprinting_ = true;
+    }
+    if(controller_->getKeyState(Key::SHIFT)==KeyState::DOWN){
+        sprinting_ = false;
+        sneaking_ = true;
+    }
+    else sneaking_ = false;
+    if(controller_->getKeyState(Key::UP)==KeyState::DOWN){
+        if(onGround) jump();
+    }
+    double dx = onGround ? 0.2 : 0.05;
+    if(sprinting_) dx*=1.5;
+    if(sneaking_) dx*=0.3;
+    bool stopSprinting;
+    if(controller_->getKeyState(Key::LEFT)==KeyState::DOWN && controller_->getKeyState(Key::RIGHT)==KeyState::UP){
+        if(onGround){
+            velocity_.setX(std::max(-dx,velocity_.getX()-0.08));
+        }
+        else if(velocity_.getX()>-dx){
+            velocity_.setX(std::max(-dx,velocity_.getX()-0.02));
+        }
+        friction_ = false;
+        stopSprinting = false;
+    }
+    else if(controller_->getKeyState(Key::RIGHT)==KeyState::DOWN && controller_->getKeyState(Key::LEFT)==KeyState::UP){
+        if(onGround){
+            velocity_.setX(std::min(dx,velocity_.getX()+0.08));
+        }
+        else if(velocity_.getX()<dx){
+            velocity_.setX(std::min(dx,velocity_.getX()+0.02));
+        }
+        friction_ = false;
+        stopSprinting = false;
+    }
+    else{
+        friction_ = true;
+        stopSprinting = true;
+    }
+    if(stopSprinting) sprinting_ = false;
+    //controller_->reset();
+
+    if(controller_->getKeyState(Key::SPACE)==KeyState::DOWN){
+        controller_->setKeyState(Key::SPACE,KeyState::UP);
+//            onGround = isOnGround();
+        std::cout<<location_<<" "<<velocity_<<std::endl;
+    }
 }
 
 void Player::updateModel() {
+    //更新玩家ViewModel
+    std::lock_guard<std::mutex> lock1(model_->mtx_);
+    model_->position_ = location_.toVec2d();
+    model_->velocity_ = velocity_;
+    model_->sneaking_ = sneaking_;
+    model_->currentSlot_ = currentSlot_;
+    model_->cursor_ = {cursor_.getMaterial(), cursor_.getAmount()};
+
+    //更新世界ViewModel
     auto world = location_.getWorld();
     if(world == nullptr) return;
-    std::lock_guard<std::mutex> lock(WorldModel::instance_.mtx_);
+    std::lock_guard<std::mutex> lock2(WorldModel::instance_.mtx_);
 
     WorldModel::instance_.cameraPosition_ = location_.toVec2d();
     auto loc = location_.toBlockLocation().toVec2d();
