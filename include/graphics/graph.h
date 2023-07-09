@@ -246,7 +246,7 @@ public:
 	void drawHome();
 private:
 	inline void getWorldXY(int x, int y, double& wX, double &wY) {
-		wX = cameraPosition_.getX() + (x - 640) / 32;
+		wX = cameraPosition_.getX() + (x - 640.0) / 32;
 		wY = cameraPosition_.getY() - (y - 768 * 0.618) / 32;
 	}
 	inline void caculate();

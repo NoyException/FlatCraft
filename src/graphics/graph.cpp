@@ -28,9 +28,16 @@ void Graph::display() {
 	PlayerController* playerController = &PlayerController::instance_;
 	SDL_Event my_event;
 	KeyState keyState;
+	Vec2d clickPosition;
 	int mx, my;
 	while (!graphFinish) {
+		caculate();
 		while (SDL_PollEvent(&my_event) != 0) {
+			SDL_GetMouseState(&mx, &my);
+			clickPosition.setX(cameraPosition_.getX() + (mx - 640.0) / 32);
+			clickPosition.setY(cameraPosition_.getY() - (my - 768 * 0.618) / 32);
+			playerController->setClickPosition(clickPosition);
+			/*std::cout << clickPosition.getX() << "  " << clickPosition.getY() << std::endl;*/
 			if (my_event.type == SDL_QUIT) {
 				graphFinish = true;
 			}
@@ -113,7 +120,7 @@ void Graph::draw() {
 //		drawHome();
 //		break;
 	case GUI::GAME:
-		caculate();
+		
 		drawBackground();
 		drawRain();
 		drawMap();
