@@ -96,7 +96,7 @@ nlohmann::json Entity::serialize() const {
 }
 
 bool Entity::isOnGround() const {
-    if(abs(location_.getY()-location_.getBlockY())>0.000001) return false;
+    if(abs(location_.getY()-std::round(location_.getY()))>0.000001) return false;
 
     Location start = location_;
     auto aabb = getBoundingBox();
