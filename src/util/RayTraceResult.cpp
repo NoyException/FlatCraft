@@ -16,6 +16,9 @@ const Block *RayTraceResult::getHitBlock() const {
     return hitBlock_;
 }
 
-RayTraceResult::RayTraceResult(const Location &hitPoint, Entity *hitEntity, Block *hitBlock) : hitPoint_(hitPoint),
-                                                                                               hitEntity_(hitEntity),
-                                                                                               hitBlock_(hitBlock) {}
+BoundingBox::Face RayTraceResult::getHitFace() const {
+    return hitFace_;
+}
+
+RayTraceResult::RayTraceResult(const Location &hitPoint, Entity *hitEntity, Block *hitBlock, BoundingBox::Face hitFace)
+: hitPoint_(hitPoint), hitEntity_(hitEntity), hitBlock_(hitBlock), hitFace_(hitFace) {}

@@ -32,7 +32,7 @@ public:
     [[nodiscard]] Block* getBlock(int x, int y, bool front) const;
     [[nodiscard]] Block* getBlock(const Location& location, bool front) const;
     std::unique_ptr<RayTraceResult> rayTrace(const Location& location, const Vec2d& direction,
-                                             double maxDistance, double raySize,
+                                             double maxDistance, double xSize, double ySize,
                                              const std::function<bool(Material)>& blockFilter,
                                              const std::function<bool(Entity*)>& entityFilter) const;
 private:

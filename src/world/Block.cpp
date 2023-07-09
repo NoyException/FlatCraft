@@ -38,3 +38,8 @@ Block Block::deserialize(Location&& location, bool front, const nlohmann::json &
 bool Block::isFront() const {
     return front_;
 }
+
+BoundingBox Block::getBoundingBox() const {
+    if(MaterialHelper::isAir(material_)) return {location_.getX(),location_.getY(),location_.getX(),location_.getY()};
+    return {location_.getX()-1,location_.getY()-1,location_.getX(),location_.getY()};
+}

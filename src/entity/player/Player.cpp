@@ -9,18 +9,6 @@
 
 Player::Player(const Location &spawnLocation) : LivingEntity(spawnLocation), controller_(&PlayerController::instance_) {
     task_ = FlatCraft::getInstance()->getScheduler()->runTaskTimer([&](){
-//        if(GetAsyncKeyState('W')&0x8000){
-//            controller_->up();
-//        }
-//        if(GetAsyncKeyState('A')&0x8000){
-//            controller_->left();
-//        }
-//        if(GetAsyncKeyState('S')&0x8000){
-//            controller_->down();
-//        }
-//        if(GetAsyncKeyState('D')&0x8000){
-//            controller_->right();
-//        }
 
         bool onGround = isOnGround();
         if(controller_->getKeyState(Key::CTRL)==KeyState::DOWN){
@@ -35,17 +23,41 @@ Player::Player(const Location &spawnLocation) : LivingEntity(spawnLocation), con
             if(onGround) jump();
         }
         double dx = onGround ? 0.2 : 0.05;
-        if(sprinting_) dx*=1.3;
+        if(sprinting_) dx*=1.5;
         if(sneaking_) dx*=0.3;
-        if(controller_->getKeyState(Key::LEFT)==KeyState::DOWN){
-            location_.add(-dx,0);
+        bool stopSprinting;
+        if(controller_->getKeyState(Key::LEFT)==KeyState::DOWN && controller_->getKeyState(Key::RIGHT)==KeyState::UP){
+            if(onGround){
+                velocity_.setX(std::max(-dx,velocity_.getX()-0.08));
+            }
+            else if(velocity_.getX()>-dx){
+                velocity_.setX(std::max(-dx,velocity_.getX()-0.02));
+            }
+            friction_ = false;
+            stopSprinting = false;
         }
-        if(controller_->getKeyState(Key::RIGHT)==KeyState::DOWN){
-            location_.add(dx,0);
+        else if(controller_->getKeyState(Key::RIGHT)==KeyState::DOWN && controller_->getKeyState(Key::LEFT)==KeyState::UP){
+            if(onGround){
+                velocity_.setX(std::min(dx,velocity_.getX()+0.08));
+            }
+            else if(velocity_.getX()<dx){
+                velocity_.setX(std::min(dx,velocity_.getX()+0.02));
+            }
+            friction_ = false;
+            stopSprinting = false;
         }
+        else{
+            friction_ = true;
+            stopSprinting = true;
+        }
+        if(stopSprinting) sprinting_ = false;
         //controller_->reset();
 
-//        std::cout<<location_<<std::endl;
+        if(controller_->getKeyState(Key::SPACE)==KeyState::DOWN){
+            controller_->setKeyState(Key::SPACE,KeyState::UP);
+//            onGround = isOnGround();
+            std::cout<<location_<<" "<<velocity_<<std::endl;
+        }
 
         updateModel();
     },0,0);
@@ -103,4 +115,10 @@ void Player::updateModel() {
 
 void Player::jump() {
     velocity_.setY(0.2);
+}
+
+BoundingBox Player::getBoundingBox() const {
+    BoundingBox aabb = Entity::getBoundingBox();
+    aabb.expand(0.4,0,0.4,1.8);
+    return aabb;
 }

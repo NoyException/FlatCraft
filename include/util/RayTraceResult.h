@@ -11,14 +11,17 @@
 
 class RayTraceResult {
 public:
-    RayTraceResult(const Location &hitPoint, Entity *hitEntity, Block *hitBlock);
+    RayTraceResult(const Location &hitPoint, Entity *hitEntity, Block *hitBlock, BoundingBox::Face hitFace);
     [[nodiscard]] const Location* getHitPoint() const;
     [[nodiscard]] const Entity* getHitEntity() const;
     [[nodiscard]] const Block* getHitBlock() const;
+    [[nodiscard]] BoundingBox::Face getHitFace() const;
+
 private:
     Location hitPoint_;
     Entity* hitEntity_;
     Block* hitBlock_;
+    BoundingBox::Face hitFace_;
 };
 
 

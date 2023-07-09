@@ -11,6 +11,15 @@
 #include "Location.h"
 #include "BlockData.h"
 
+enum class BlockFace : unsigned char{
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT,
+    FORWARD,
+    BACKWARD
+};
+
 class Block {
 public:
     Block(Material material, const Location& location, bool front);
@@ -20,6 +29,7 @@ public:
     void setMaterial(const Material& material);
     [[nodiscard]] Location getLocation() const;
     [[nodiscard]] bool isFront() const;
+    [[nodiscard]] BoundingBox getBoundingBox() const;
 private:
     Material material_;
     Location location_;

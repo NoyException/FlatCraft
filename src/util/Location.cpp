@@ -123,4 +123,9 @@ Vec2d Location::toVec2d() const {
     return {x_,y_};
 }
 
+void Location::adjust() {
+    if(abs(x_-(int)x_)<0.000001) x_ = (int)x_;
+    if(abs(y_-(int)y_)<0.000001) y_ = (int)y_;
+}
+
 
