@@ -26,6 +26,14 @@ void PlayerController::setWheelY(double wheelY) {
     wheelY_ = wheelY;
 }
 
+const Vec2d &PlayerController::getClickPosition() const {
+    return clickPosition_;
+}
+
+void PlayerController::setClickPosition(const Vec2d &clickPosition) {
+    clickPosition_ = clickPosition;
+}
+
 void PlayerController::reset() {
     for (auto &item: states_){
         item = KeyState::UP;
@@ -33,18 +41,3 @@ void PlayerController::reset() {
     wheelY_ = 0;
 }
 
-const std::optional<Vec2d> &PlayerController::getLeftClickPosition() const {
-    return leftClickPosition_;
-}
-
-void PlayerController::setLeftClickPosition(const std::optional<Vec2d> &leftClickPosition) {
-    PlayerController::leftClickPosition_ = leftClickPosition;
-}
-
-const std::optional<Vec2d> &PlayerController::getRightClickPosition() const {
-    return rightClickPosition_;
-}
-
-void PlayerController::setRightClickPosition(const std::optional<Vec2d> &rightClickPosition) {
-    PlayerController::rightClickPosition_ = rightClickPosition;
-}
