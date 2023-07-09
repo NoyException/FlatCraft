@@ -38,6 +38,7 @@ public:
 private:
     void init();
     void notifyTeleported(Entity& entity);
+    void setBlock(int x, int y, bool front, std::unique_ptr<Block> block);
     Task* task_ = nullptr;
     long long ticks_;
     std::string name_;
