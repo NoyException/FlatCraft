@@ -204,8 +204,14 @@ public:
 		MYLOAD("character/twolegs.png", twolegs);
 		MYLOAD("character/uprightarm.png", uprightarm);
 		MYLOAD("character/upsidearm.png", upsidearm);
+		MYLOAD("steve/left.png", left);
+		MYLOAD("steve/leftRun.png", leftRun);
+		MYLOAD("steve/leftAttack.png", leftAttack);
+		MYLOAD("steve/right.png", right);
+		MYLOAD("steve/rightRun.png", rightRun);
+		MYLOAD("steve/rightAttack.png", rightAttack);
 	}
-	SDL_Texture* body, *fronthead, *leftarm, *leg, *runlegs, *sidearm, *sidehead, *twoarms, *twolegs, *uprightarm, *upsidearm;
+	SDL_Texture* body, *fronthead, *leftarm, *leg, *runlegs, *sidearm, *sidehead, *twoarms, *twolegs, *uprightarm, *upsidearm, *right, *left, *leftRun, *rightRun, *leftAttack, *rightAttack;
 private:
 	SDL_Renderer* renderer;
 };

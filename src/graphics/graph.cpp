@@ -230,23 +230,32 @@ void Graph::drawBackground() {
 void Graph::drawPlayer() {
 	SDL_Texture* texture;
 	SDL_Rect rect;
-	int playerSize = 120;
-	rect.x = windowWidth / 2  - playerSize*0.4;
+	int playerSize = 64*3;
+	rect.x = windowWidth / 2  - playerSize/2;
 	rect.y = 0.618*windowHeight - playerSize*0.8;
 	rect.w = rect.h = playerSize * 0.8;
+	rect.w = playerSize;
 
 
-	texture = characterTexture->leg;
-	SDL_RenderCopy(renderer, texture, NULL, &rect);
-	texture = characterTexture->body;
-	SDL_RenderCopy(renderer, texture, NULL, &rect);
-	texture = characterTexture->sidehead;
-	SDL_RenderCopy(renderer, texture, NULL, &rect);
-	texture = characterTexture->sidearm;
-	SDL_RenderCopy(renderer, texture, NULL, &rect);
-	
-	//texture = blockTexture->getTexture(Material::BED_ROCK);
+	//texture = characterTexture->leg;
 	//SDL_RenderCopy(renderer, texture, NULL, &rect);
+	//texture = characterTexture->body;
+	//SDL_RenderCopy(renderer, texture, NULL, &rect);
+	//texture = characterTexture->sidehead;
+	//SDL_RenderCopy(renderer, texture, NULL, &rect);
+	//texture = characterTexture->sidearm;
+	//SDL_RenderCopy(renderer, texture, NULL, &rect);
+	static bool changeRun = false;
+	static long long lastTicks = ticks;
+	if (ticks - lastTicks > 7) {
+		changeRun = !changeRun;
+		lastTicks = ticks;
+	}
+		
+	texture = characterTexture->right;
+	if(changeRun)
+		texture = characterTexture->rightRun;
+	SDL_RenderCopy(renderer, texture, NULL, &rect);
 	rect.x = 638;
 	rect.x = 638;
 	rect.y = 0;
