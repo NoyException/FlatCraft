@@ -72,6 +72,7 @@ void FlatCraft::loadPlayer() {
         if(!s.empty()){
             player_ = Player::deserialize(nlohmann::json::parse(s));
             player_->teleport(player_->getLocation());
+            player_->getWorld()->run();
             return;
         }
     }
