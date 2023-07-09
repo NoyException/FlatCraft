@@ -114,7 +114,7 @@ void Player::updateModel() {
     for(int i=0;i<WorldModel::MAX_COLUMN;i++){
         for(int j=0;j<WorldModel::MAX_ROW;j++){
             for(int k=0;k<=1;k++){
-                auto block = world->getBlock((int)loc.getX()+i,(int)loc.getY()-j,k);
+                auto block = world->getBlock((int)loc.getX()+i+1,(int)loc.getY()-j,k);
                 if(block == nullptr) WorldModel::instance_.materials_[i][j][k]=Material::BED_ROCK;
                 else WorldModel::instance_.materials_[i][j][k] = block->getMaterial();
             }
