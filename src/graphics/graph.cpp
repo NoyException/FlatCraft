@@ -196,11 +196,25 @@ void Graph::drawBackground() {
 void Graph::drawPlayer() {
 	SDL_Texture* texture;
 	SDL_Rect rect;
-	rect.x = windowWidth / 2 + 0.4*32;
-	rect.y = 0.618*windowHeight - blockSize*0.8;
-	rect.w = rect.h = blockSize * 0.8;
-	texture = blockTexture->getTexture(Material::BED_ROCK);
+	int playerSize = 80;
+	rect.x = windowWidth / 2 ;
+	rect.y = 0.618*windowHeight - playerSize*0.8;
+	rect.w = rect.h = playerSize * 0.8;
+
+	switch (PlayerModel::instance_.legAction_) {
+	case PlayerModel::LegAction::IDLE :
+		texture = characterTexture->leg;
+	}
+
 	SDL_RenderCopy(renderer, texture, NULL, &rect);
+	texture = characterTexture->body;
+	SDL_RenderCopy(renderer, texture, NULL, &rect);
+	texture = characterTexture->sidehead;
+	SDL_RenderCopy(renderer, texture, NULL, &rect);
+	texture = characterTexture->sidearm;
+	SDL_RenderCopy(renderer, texture, NULL, &rect);
+	//texture = blockTexture->getTexture(Material::BED_ROCK);
+	//SDL_RenderCopy(renderer, texture, NULL, &rect);
 }
 
 void Graph::drawMap() {

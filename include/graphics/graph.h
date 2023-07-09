@@ -8,6 +8,7 @@
 #include "SDL_mouse.h"
 #include "PlayerController.h"
 #include <iostream>
+#include "PlayerModel.h"
 const std::string TEXTURES_PATH = "../resources/textures/";
 extern bool graphFinish;
 extern class DestroyBlock destroyBlock;
