@@ -2,6 +2,7 @@
 #include "graphics/graph.h"
 #include <chrono>
 
+
 bool graphFinish = false;
 DestroyBlock destroyBlock;
 void graphMain() {
@@ -18,12 +19,16 @@ void Graph::display() {
 	SDL_Surface* pic = nullptr, *screen = nullptr;
 	SDL_Window *window = SDL_CreateWindow("FlatCraft", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_SHOWN);//create window
 	renderer = SDL_CreateRenderer(window, -1, 0);
+	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 	blockTexture = new BlockTexture(renderer);
 	backgroundTexture = new BackgroundTexture(renderer);
 	environmentTexture = new EnvironmentTexture(renderer);
+	guiTexture = new GuiTexture(renderer);
+	characterTexture = new CharacterTexture(renderer);
 	PlayerController* playerController = &PlayerController::instance_;
 	SDL_Event my_event;
 	KeyState keyState;
+	int mx, my;
 	while (!graphFinish) {
 		while (SDL_PollEvent(&my_event) != 0) {
 			if (my_event.type == SDL_QUIT) {
@@ -75,6 +80,9 @@ void Graph::display() {
 					keyState = KeyState::UP;
 				if (SDL_BUTTON_LEFT == my_event.button.button) {
 					playerController->setKeyState(Key::LEFT_CLICK, keyState);
+					//SDL_GetMouseState(&mx, &my);
+					//std::cout << mx << " " << my << std::endl;
+					
 				}
 				else if (SDL_BUTTON_RIGHT == my_event.button.button) {
 					playerController->setKeyState(Key::RIGHT_CLICK, keyState);
@@ -88,14 +96,42 @@ void Graph::display() {
 		SDL_RenderPresent(renderer); //output image
 	}
 }
-	
+
+void Graph::drawHome() {
+	SDL_Texture* texture;
+	texture = guiTexture->getHome();
+	SDL_Rect rect;
+	rect.x = rect.y = 0;
+	rect.w = 1280;
+	rect.h = 768;
+	SDL_RenderCopy(renderer, texture, NULL, &rect);
+}
+
 void Graph::draw() {
-	caculate();
-	drawBackground();
-	drawRain();
-	drawMap();
-	drawPlayer();
-	
+	switch (gui) {
+	case GUI::HOME:
+//		drawHome();
+//		break;
+	case GUI::GAME:
+		caculate();
+		drawBackground();
+		drawRain();
+		drawMap();
+		drawPlayer();
+		drawGui();
+		break;
+	}
+}
+
+void Graph::drawGui() {
+	SDL_Texture* texture;
+	texture = guiTexture->getItemsBar();
+	SDL_Rect rect;
+	rect.x = 400;
+	rect.y = 700;
+	rect.h = 68;
+	rect.w = 450;
+	SDL_RenderCopy(renderer, texture, NULL, &rect);
 }
 void Graph::caculate() {
 	{//get the information
@@ -103,6 +139,8 @@ void Graph::caculate() {
 		memcpy(materials_, WorldModel::instance_.materials_, sizeof(int) * 26 * 42 * 2);
 		leftUpPosition_ = WorldModel::instance_.leftUpPosition_;
 		cameraPosition_ = WorldModel::instance_.cameraPosition_;
+		ticks = WorldModel::instance_.ticks_;
+		ticks %= 24000;
 	}
 	SDL_Rect rect;
 	rect.x = windowWidth / 2;
@@ -119,14 +157,20 @@ void Graph::caculate() {
 	leftUpRect.y = rect.y + blockSize * (cj);
 }
 void Graph::drawBackground() {
+	/*std::string tempString = TEXTURES_PATH;
+	tempString.append("block/black10.png");
+	SDL_Surface* pic = IMG_Load(tempString.c_str());
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, pic);*/
+	//SDL_FreeSurface(pic);
+
 	SDL_Rect rect = leftUpRect;
 	double wx = 0, wy = 0;
 	rect.w = 1400;
 	rect.h = 32;
 	getWorldXY(rect.x, rect.y, wx, wy);
-	int k = 0;
 	double value;
 	int r, g, b;
+	double k =  1.0*abs(ticks - 12000) / 12000;
 	while (rect.y < 770) {
 		value = (255 - (int)wy) / 192;
 		r = int(135 + value * 120);
@@ -140,6 +184,8 @@ void Graph::drawBackground() {
 		}
 		SDL_SetRenderDrawColor(renderer, r, g, b, 255);
 		SDL_RenderFillRect(renderer, &rect);
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255*k);
+		SDL_RenderFillRect(renderer, &rect);
 		rect.y += 32;
 		wy--;
 	}
@@ -150,9 +196,9 @@ void Graph::drawBackground() {
 void Graph::drawPlayer() {
 	SDL_Texture* texture;
 	SDL_Rect rect;
-	rect.x = windowWidth / 2 - blockSize*0.75;
-	rect.y = 0.618*windowHeight - blockSize*1.5;
-	rect.w = rect.h = blockSize * 1.5;
+	rect.x = windowWidth / 2 + 0.4*32;
+	rect.y = 0.618*windowHeight - blockSize*0.8;
+	rect.w = rect.h = blockSize * 0.8;
 	texture = blockTexture->getTexture(Material::BED_ROCK);
 	SDL_RenderCopy(renderer, texture, NULL, &rect);
 }
@@ -185,7 +231,7 @@ void Graph::drawRain() {
 	rect.y = rainY;
 	rect.w = 1280;
 	rect.h = 1000;
-	rainY += 6;
+	rainY += 2;
 	if (rainY > 0)
 		rainY = -200;
 	SDL_RenderCopy(renderer, texture, NULL, &rect);
