@@ -215,13 +215,14 @@ void Graph::drawPlayer() {
 	//SDL_RenderCopy(renderer, texture, NULL, &rect);
 	texture = blockTexture->getTexture(Material::BED_ROCK);
 	SDL_RenderCopy(renderer, texture, NULL, &rect);
-
+	rect.x = 638;
 	rect.x = 638;
 	rect.y = 0;
 	rect.w = 4;
 	rect.h = 768;
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 	SDL_RenderFillRect(renderer, &rect);
+	
 }
 
 void Graph::drawMap() {
