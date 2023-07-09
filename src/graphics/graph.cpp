@@ -118,20 +118,53 @@ void Graph::draw() {
 		drawRain();
 		drawMap();
 		drawPlayer();
-		drawGui();
+		drawItemBar();
 		break;
 	}
 }
 
-void Graph::drawGui() {
+void Graph::drawItemBar() {
 	SDL_Texture* texture;
 	texture = guiTexture->getItemsBar();
 	SDL_Rect rect;
 	rect.x = 400;
 	rect.y = 700;
 	rect.h = 68;
-	rect.w = 450;
+	rect.w = 440;
 	SDL_RenderCopy(renderer, texture, NULL, &rect);
+	rect.x = 425;
+	rect.h = rect.w = 30;
+	rect.y += 20;
+	SDL_Rect digitRect = rect;
+	Material material;
+	digitRect.y += 18;
+	digitRect.w = 8;
+	digitRect.h = 12;
+	int num, digit;
+	for (int i = 0; i < 9; i++) {
+		material = PlayerModel::instance_.actionBar_[i].material_;
+		//material = Material::STONE;
+		texture = blockTexture->getTexture(material);
+		SDL_RenderCopy(renderer, texture, NULL, &rect);
+		digitRect.x = rect.x;
+		num = PlayerModel::instance_.actionBar_[i].amount_;
+		//num = 63;
+		digit = num / 10;
+		if (digit) {
+			texture = guiTexture->getDigit(digit);
+			SDL_RenderCopy(renderer, texture, NULL, &digitRect);
+			digitRect.x += 8;
+			texture = guiTexture->getDigit(num%10);
+			SDL_RenderCopy(renderer, texture, NULL, &digitRect);
+			digitRect.x += 8;
+		}
+		else if (num != 1) {
+			texture = guiTexture->getDigit(num);
+			SDL_RenderCopy(renderer, texture, NULL, &digitRect);
+		}
+		rect.x += 45;
+	}
+
 }
 void Graph::caculate() {
 	{//get the information
@@ -171,6 +204,7 @@ void Graph::drawBackground() {
 	double value;
 	int r, g, b;
 	double k =  1.0*abs(ticks - 12000) / 12000;
+	k = 0.2;
 	while (rect.y < 770) {
 		value = (255 - (int)wy) / 192;
 		r = int(135 + value * 120);
@@ -196,25 +230,23 @@ void Graph::drawBackground() {
 void Graph::drawPlayer() {
 	SDL_Texture* texture;
 	SDL_Rect rect;
-	int playerSize = 32;
-	rect.x = windowWidth / 2  - 32*0.4;
+	int playerSize = 120;
+	rect.x = windowWidth / 2  - playerSize*0.4;
 	rect.y = 0.618*windowHeight - playerSize*0.8;
 	rect.w = rect.h = playerSize * 0.8;
 
-	//switch (PlayerModel::instance_.legAction_) {
-	//case PlayerModel::LegAction::IDLE :
-	//	texture = characterTexture->leg;
-	//}
 
-	//SDL_RenderCopy(renderer, texture, NULL, &rect);
-	//texture = characterTexture->body;
-	//SDL_RenderCopy(renderer, texture, NULL, &rect);
-	//texture = characterTexture->sidehead;
-	//SDL_RenderCopy(renderer, texture, NULL, &rect);
-	//texture = characterTexture->sidearm;
-	//SDL_RenderCopy(renderer, texture, NULL, &rect);
-	texture = blockTexture->getTexture(Material::BED_ROCK);
+	texture = characterTexture->leg;
 	SDL_RenderCopy(renderer, texture, NULL, &rect);
+	texture = characterTexture->body;
+	SDL_RenderCopy(renderer, texture, NULL, &rect);
+	texture = characterTexture->sidehead;
+	SDL_RenderCopy(renderer, texture, NULL, &rect);
+	texture = characterTexture->sidearm;
+	SDL_RenderCopy(renderer, texture, NULL, &rect);
+	
+	//texture = blockTexture->getTexture(Material::BED_ROCK);
+	//SDL_RenderCopy(renderer, texture, NULL, &rect);
 	rect.x = 638;
 	rect.x = 638;
 	rect.y = 0;
@@ -248,14 +280,28 @@ void Graph::drawMap() {
 void Graph::drawRain() {
 	SDL_Texture* texture = environmentTexture->getRain();
 	SDL_Rect rect;
+	SDL_Rect rainRect;
 	static int rainY = -400;
+	static int rainX = 0;
+	double v = PlayerModel::instance_.velocity_.getX();//速度
+	if (v > 0)
+		rainX += 1;
+	else if (v < 0)
+		rainX -= 1;
 	rect.x = 0;
 	rect.y = rainY;
 	rect.w = 1280;
 	rect.h = 1000;
+	rainRect.x = 320 + rainX;
+	rainRect.y = 0;
+	rainRect.w = 1280;
+	rainRect.h = 768;
 	rainY += 2;
+	
 	if (rainY > 0)
 		rainY = -200;
-	SDL_RenderCopy(renderer, texture, NULL, &rect);
+	if (rainX > 300 || rainX <-300)
+		rainX = 0;
+	SDL_RenderCopy(renderer, texture, &rainRect, &rect);
 }
 

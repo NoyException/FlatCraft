@@ -42,6 +42,17 @@ public:
 		pic = IMG_Load(tempString.c_str());
 		home = SDL_CreateTextureFromSurface(renderer, pic);
 		SDL_FreeSurface(pic);
+		digits.resize(10);
+		MYLOAD("digit/0.png", digits[0]);
+		MYLOAD("digit/1.png", digits[1]);
+		MYLOAD("digit/2.png", digits[2]);
+		MYLOAD("digit/3.png", digits[3]);
+		MYLOAD("digit/4.png", digits[4]);
+		MYLOAD("digit/5.png", digits[5]);
+		MYLOAD("digit/6.png", digits[6]);
+		MYLOAD("digit/7.png", digits[7]);
+		MYLOAD("digit/8.png", digits[8]);
+		MYLOAD("digit/9.png", digits[9]);
 	}
 	inline SDL_Texture* getItemsBar() {
 		return items_bar;
@@ -49,10 +60,14 @@ public:
 	inline SDL_Texture* getHome() {
 		return home;
 	}
+	inline SDL_Texture* getDigit(int digit) {
+		return digits[digit];
+	}
 private:
 	SDL_Texture* items_bar;
 	SDL_Renderer* renderer;
 	SDL_Texture* home;
+	std::vector<SDL_Texture*> digits;
 };
 
 class EnvironmentTexture {
@@ -221,7 +236,7 @@ public:
 	void drawPlayer();
 	void drawRain();
 	void drawBackground();
-	void drawGui();
+	void drawItemBar();
 	void drawHome();
 private:
 	inline void getWorldXY(int x, int y, double& wX, double &wY) {
