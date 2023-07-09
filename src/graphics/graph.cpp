@@ -2,6 +2,7 @@
 #include "graphics/graph.h"
 #include <chrono>
 
+
 bool graphFinish = false;
 DestroyBlock destroyBlock;
 void graphMain() {
@@ -23,9 +24,11 @@ void Graph::display() {
 	backgroundTexture = new BackgroundTexture(renderer);
 	environmentTexture = new EnvironmentTexture(renderer);
 	guiTexture = new GuiTexture(renderer);
+	characterTexture = new CharacterTexture(renderer);
 	PlayerController* playerController = &PlayerController::instance_;
 	SDL_Event my_event;
 	KeyState keyState;
+	int mx, my;
 	while (!graphFinish) {
 		while (SDL_PollEvent(&my_event) != 0) {
 			if (my_event.type == SDL_QUIT) {
@@ -77,6 +80,9 @@ void Graph::display() {
 					keyState = KeyState::UP;
 				if (SDL_BUTTON_LEFT == my_event.button.button) {
 					playerController->setKeyState(Key::LEFT_CLICK, keyState);
+					//SDL_GetMouseState(&mx, &my);
+					//std::cout << mx << " " << my << std::endl;
+					
 				}
 				else if (SDL_BUTTON_RIGHT == my_event.button.button) {
 					playerController->setKeyState(Key::RIGHT_CLICK, keyState);
@@ -90,15 +96,31 @@ void Graph::display() {
 		SDL_RenderPresent(renderer); //output image
 	}
 }
-	
+
+void Graph::drawHome() {
+	SDL_Texture* texture;
+	texture = guiTexture->getHome();
+	SDL_Rect rect;
+	rect.x = rect.y = 0;
+	rect.w = 1280;
+	rect.h = 768;
+	SDL_RenderCopy(renderer, texture, NULL, &rect);
+}
+
 void Graph::draw() {
-	caculate();
-	drawBackground();
-	drawRain();
-	drawMap();
-	drawPlayer();
-	drawGui();
-	
+	switch (gui) {
+	case GUI::HOME:
+//		drawHome();
+//		break;
+	case GUI::GAME:
+		caculate();
+		drawBackground();
+		drawRain();
+		drawMap();
+		drawPlayer();
+		drawGui();
+		break;
+	}
 }
 
 void Graph::drawGui() {
@@ -209,7 +231,7 @@ void Graph::drawRain() {
 	rect.y = rainY;
 	rect.w = 1280;
 	rect.h = 1000;
-	rainY += 6;
+	rainY += 2;
 	if (rainY > 0)
 		rainY = -200;
 	SDL_RenderCopy(renderer, texture, NULL, &rect);

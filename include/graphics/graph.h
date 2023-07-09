@@ -7,12 +7,26 @@
 #include "WorldModel.h"
 #include "SDL_mouse.h"
 #include "PlayerController.h"
+#include <iostream>
 const std::string TEXTURES_PATH = "../resources/textures/";
 extern bool graphFinish;
 extern class DestroyBlock destroyBlock;
 void graphMain();
 void control();
 
+#define MYLOAD(path, name) \
+do{	\
+tempString = TEXTURES_PATH;\
+tempString.append(path);\
+pic = IMG_Load(tempString.c_str());\
+name = SDL_CreateTextureFromSurface(renderer, pic);\
+SDL_FreeSurface(pic);\
+}while(0);
+
+enum class GUI : int {
+	HOME,
+	GAME
+};
 
 class GuiTexture {
 public:
@@ -22,13 +36,22 @@ public:
 		SDL_Surface* pic = IMG_Load(tempString.c_str());
 		items_bar = SDL_CreateTextureFromSurface(renderer, pic);
 		SDL_FreeSurface(pic);
+		tempString = TEXTURES_PATH;
+		tempString.append("gui/home.png");
+		pic = IMG_Load(tempString.c_str());
+		home = SDL_CreateTextureFromSurface(renderer, pic);
+		SDL_FreeSurface(pic);
 	}
 	inline SDL_Texture* getItemsBar() {
 		return items_bar;
 	}
+	inline SDL_Texture* getHome() {
+		return home;
+	}
 private:
 	SDL_Texture* items_bar;
 	SDL_Renderer* renderer;
+	SDL_Texture* home;
 };
 
 class EnvironmentTexture {
@@ -139,6 +162,38 @@ private:
 	SDL_Renderer* renderer;
 };
 
+class CharacterTexture {
+public:
+	CharacterTexture(SDL_Renderer* renderer) : renderer(renderer) {
+		std::string tempString = TEXTURES_PATH;
+		tempString.append("character/body.png");
+		SDL_Surface* pic = IMG_Load(tempString.c_str());
+		body = SDL_CreateTextureFromSurface(renderer, pic);
+		SDL_FreeSurface(pic);
+		tempString = TEXTURES_PATH;
+		tempString.append("character/fronthead.png");
+		pic = IMG_Load(tempString.c_str());
+		fronthead = SDL_CreateTextureFromSurface(renderer, pic);
+		SDL_FreeSurface(pic);
+		tempString = TEXTURES_PATH;
+		tempString.append("character/leftarm.png");
+		pic = IMG_Load(tempString.c_str());
+		leftarm = SDL_CreateTextureFromSurface(renderer, pic);
+		SDL_FreeSurface(pic);
+		MYLOAD("character/leg.png", leg);
+		MYLOAD("character/runlegs.png", runlegs);
+		MYLOAD("character/sidearm.png", sidearm);
+		MYLOAD("character/sidehead.png", sidehead);
+		MYLOAD("character/twoarms.png", twoarms);
+		MYLOAD("character/twolegs.png", twolegs);
+		MYLOAD("character/uprightarm.png", uprightarm);
+		MYLOAD("character/upsidearm.png", upsidearm);
+	}
+	SDL_Texture* body, *fronthead, *leftarm, *leg, *runlegs, *sidearm, *sidehead, *twoarms, *twolegs, *uprightarm, *upsidearm;
+private:
+	SDL_Renderer* renderer;
+};
+
 class DestroyBlock {
 public:
 	DestroyBlock() : flag(false), x(0), y(0), progress(0) {}
@@ -158,7 +213,7 @@ private:
 
 class Graph {
 public:
-	Graph() : windowWidth(1280), windowHeight(768), blockSize(32), renderer(nullptr), blockTexture(nullptr), backgroundTexture(nullptr), environmentTexture(nullptr) {}
+	Graph() : windowWidth(1280), windowHeight(768), blockSize(32), renderer(nullptr), blockTexture(nullptr), backgroundTexture(nullptr), environmentTexture(nullptr), gui(GUI::HOME) {}
 	void display();//display the graph, including world and player
 	void drawMap();//draw the map as location as the center
 	void draw();//draw the graph on the renderer
@@ -166,6 +221,7 @@ public:
 	void drawRain();
 	void drawBackground();
 	void drawGui();
+	void drawHome();
 private:
 	inline void getWorldXY(int x, int y, double& wX, double &wY) {
 		wX = cameraPosition_.getX() + (x - 640) / 32;
@@ -180,11 +236,13 @@ private:
 	BackgroundTexture* backgroundTexture;
 	EnvironmentTexture* environmentTexture;
 	GuiTexture* guiTexture;
+	CharacterTexture* characterTexture;
 	Vec2d leftUpPosition_;
 	Vec2d cameraPosition_;
 	SDL_Rect leftUpRect;
 	Material materials_[42][26][2];
 	long long ticks;
+	GUI gui;
 };
 
 #endif
