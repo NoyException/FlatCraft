@@ -121,6 +121,7 @@ void Player::updateModel() {
         }
     }
     WorldModel::instance_.ticks_ = world->getTicks();
+    WorldModel::instance_.weather_ = world->getWeather();
 }
 
 void Player::jump() {
