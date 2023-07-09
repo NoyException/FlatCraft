@@ -208,8 +208,8 @@ long long World::getTicks() const {
     return ticks_;
 }
 
-void World::setBlock(int x, int y, bool front, std::unique_ptr<Block> block) {
+void World::setBlock(int x, int y, bool front, Material material) {
     int hash = (x<<11)^(y<<1)^front;
-    blocks_[hash] = std::move(block);
+    blocks_[hash] = std::make_unique<Block>(material,Location(name_,x,y),front);
 }
 
