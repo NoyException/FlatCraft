@@ -66,9 +66,10 @@ Player::Player(const Location &spawnLocation) : LivingEntity(spawnLocation), con
         auto e = dynamic_cast<EntityTeleportEvent*>(event);
         if(!e->isCanceled() && e->getEntity()==this){
             auto target = e->getTargetLocation().getWorld();
-            if(target!=location_.getWorld()){
-                location_.getWorld()->stop();
-                target->run();
+            auto old = location_.getWorld();
+            if(target!=old){
+                if(old != nullptr) old->stop();
+                if(target != nullptr) target->run();
             }
         }
     });
