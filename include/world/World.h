@@ -19,6 +19,7 @@ enum class RayTraceFlag : int{
 class World {
 public:
     friend class Entity;
+    friend class WorldGenerator;
     explicit World(const std::string& name);
     [[nodiscard]] nlohmann::json serialize() const;
     static World deserialize(const nlohmann::json& json);
