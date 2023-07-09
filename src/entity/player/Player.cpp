@@ -88,7 +88,8 @@ void Player::control() {
     if(controller_->getKeyState(Key::SPACE)==KeyState::DOWN){
         controller_->setKeyState(Key::SPACE,KeyState::UP);
 //            onGround = isOnGround();
-        std::cout<<location_<<" "<<velocity_<<std::endl;
+        std::cout<<location_<<" "<<velocity_<<" "<<onGround<<std::endl;
+        isOnGround();
     }
 }
 

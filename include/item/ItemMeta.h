@@ -10,7 +10,8 @@
 
 class ItemMeta {
 public:
-    static ItemMeta ofDefault(Item* item);
+    virtual ~ItemMeta() = default;
+    static std::unique_ptr<ItemMeta> ofDefault(Item* item);
 };
 
 

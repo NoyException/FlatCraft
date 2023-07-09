@@ -96,9 +96,24 @@ nlohmann::json Entity::serialize() const {
 }
 
 bool Entity::isOnGround() const {
-    Block* block = location_.getBlock(true);
-    if(block == nullptr) return false;
-    return MaterialHelper::isOccluded(block->getMaterial()) && abs(location_.getY()-location_.getBlockY())<0.000001;
+    if(abs(location_.getY()-location_.getBlockY())>0.000001) return false;
+
+    Location start = location_;
+    auto aabb = getBoundingBox();
+    start.add(0,aabb.getHeight()/2);
+    auto res = getWorld()->rayTrace(start,Vec2d(0,-1),0.000001,aabb.getWidth()/2,aabb.getHeight()/2,
+                                    [](Material material){return true;},[](Entity* entity){return false;});
+    return res!= nullptr;
+//    auto aabb = getBoundingBox();
+//    auto world = getWorld();
+//
+//    int y = location_.getBlockY();
+//    for(int i = std::ceil(location_.getX()-aabb.getWidth()/2), endI = std::ceil(location_.getX()+aabb.getWidth()/2);
+//    i <= endI; i++){
+//        auto block = world->getBlock(i,y, true);
+//        if(block != nullptr && MaterialHelper::isOccluded(block->getMaterial())) return true;
+//    }
+//    return false;
 }
 
 Vec2d Entity::getVelocity() const {

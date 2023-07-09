@@ -29,12 +29,12 @@ void ItemStack::setMaterial(Material material) {
     setItem(Item::of(material));
 }
 
-const ItemMeta &ItemStack::getMeta() const {
-    return meta_;
+ItemMeta* ItemStack::getMeta() const {
+    return meta_.get();
 }
 
-void ItemStack::setMeta(const ItemMeta &meta) {
-    meta_ = meta;
+void ItemStack::setMeta(std::unique_ptr<ItemMeta> meta) {
+    meta_ = std::move(meta);
 }
 
 int ItemStack::getAmount() const {

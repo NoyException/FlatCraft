@@ -19,15 +19,15 @@ public:
     [[nodiscard]] Material getMaterial() const;
     void setMaterial(Material material);
 
-    [[nodiscard]] const ItemMeta &getMeta() const;
-    void setMeta(const ItemMeta &meta);
+    [[nodiscard]] ItemMeta* getMeta() const;
+    void setMeta(std::unique_ptr<ItemMeta> meta);
 
     [[nodiscard]] int getAmount() const;
     void setAmount(int amount);
 
 private:
     Item* item_;
-    ItemMeta meta_;
+    std::unique_ptr<ItemMeta> meta_;
     int amount_;
 };
 
