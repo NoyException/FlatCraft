@@ -19,6 +19,8 @@ public:
     Vec2d operator/(double a) const;
     [[nodiscard]] double getX() const;
     [[nodiscard]] double getY() const;
+    [[nodiscard]] int getBlockX() const;
+    [[nodiscard]] int getBlockY() const;
     void setX(double x);
     void setY(double y);
     void add(double x, double y);

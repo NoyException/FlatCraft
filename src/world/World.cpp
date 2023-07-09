@@ -60,6 +60,10 @@ Block* World::getBlock(int x, int y, bool front) const {
     return it->second.get();
 }
 
+Block *World::getBlock(const Vec2d &v, bool front) const {
+    return getBlock(v.getBlockX(),v.getBlockY(),front);
+}
+
 Block* World::getBlock(const Location &location, bool front) const {
     if(location.getRawWorld()!=name_) return nullptr;
     return getBlock(location.getBlockX(), location.getBlockY(), front);
@@ -266,4 +270,5 @@ Weather World::getWeather() const {
 void World::setWeather(Weather weather) {
     weather_ = weather;
 }
+
 

@@ -35,6 +35,14 @@ double Vec2d::getY() const {
     return y_;
 }
 
+int Vec2d::getBlockX() const {
+    return std::floor(x_);
+}
+
+int Vec2d::getBlockY() const {
+    return std::floor(y_);
+}
+
 void Vec2d::setX(double x) {
     x_ = x;
 }
@@ -136,6 +144,7 @@ std::ostream &operator<<(std::ostream &out, const Vec2d &vec2D) {
 }
 
 const double Vec2d::epsilon = 0.000001;
+
 
 
 

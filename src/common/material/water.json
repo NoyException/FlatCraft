@@ -1,0 +1,8 @@
+{
+  "id": 9,
+  "flags": ["LIQUID"],
+  "max_stacks": 64,
+  "hardness": -1.0,
+  "anti_explosion": -1.0,
+  "tools": ["BUCKET"]
+}

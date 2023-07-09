@@ -1,0 +1,8 @@
+{
+  "id": 3,
+  "flags": ["OCCLUDED","SOLID"],
+  "max_stacks": 64,
+  "hardness": 0.5,
+  "anti_explosion": 0.5,
+  "tools": ["shovel"]
+}

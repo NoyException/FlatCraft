@@ -31,6 +31,7 @@ void FlatCraft::createWorld(const std::string &name) {
 
 FlatCraft *FlatCraft::getInstance() {
     if(instance==nullptr){
+        MaterialHelper::registerAllMaterials();
         Item::registerAllItems();
         instance = std::make_unique<FlatCraft>();
     }

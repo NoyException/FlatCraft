@@ -36,6 +36,8 @@ public:
     int currentSlot_;
     HandAction handAction_;
     LegAction legAction_;
+    Vec2d breakingPosition_;
+    double breakingProgress_;
     static PlayerModel instance_;
 };
 

@@ -43,6 +43,7 @@ std::unique_ptr<Player> Player::deserialize(const nlohmann::json &json) {
 }
 
 void Player::control() {
+    //飞行
     if(flying_){
         double speed = 0.2;
         if(controller_->getKeyState(Key::CTRL)==KeyState::DOWN)
@@ -61,6 +62,7 @@ void Player::control() {
             setFlying(false);
         return;
     }
+    //走路
     bool onGround = isOnGround();
     if(controller_->getKeyState(Key::CTRL)==KeyState::DOWN){
         sprinting_ = true;
@@ -101,14 +103,58 @@ void Player::control() {
         friction_ = true;
         stopSprinting = true;
     }
+    //下蹲边缘检测
+    if(onGround && sneaking_ && std::abs(velocity_.getX())<0.1){
+
+        auto aabb = getBoundingBox();
+        Location start = location_;
+        start.add(velocity_.getX(),aabb.getHeight()/2);
+        auto res = getWorld()->rayTrace(start,{0,-1},0.000001,aabb.getWidth()/2,aabb.getHeight()/2,
+                                        [](Material material){return true;},[](Entity* entity){return false;});
+        if(res==nullptr)
+            velocity_.setX(0);
+    }
     if(stopSprinting) sprinting_ = false;
-    //controller_->reset();
+
+    //交互
+    bool resetBreakingProgress = true;
+    if(controller_->getKeyState(Key::LEFT_CLICK)==KeyState::DOWN){
+        auto world = getWorld();
+        if(world!= nullptr) {
+            //攻击暂时省略
+            //挖掘
+            auto block = world->getBlock(controller_->clickPosition_, true);
+            if (MaterialHelper::isAir(block->getMaterial()) || MaterialHelper::isLiquid(block->getMaterial()))
+                block = world->getBlock(controller_->clickPosition_, false);
+            if(block != nullptr){
+                if(block==lastBreaking_){
+                    double hardness = MaterialHelper::getHardness(block->getMaterial());
+                    if(hardness>0) breakingProgress_+=0.05/hardness;
+                    if(hardness==0) breakingProgress_=1;
+                    if(hardness<0) breakingProgress_=0;
+                    if(breakingProgress_>1.0) breakingProgress_=1.0;
+                    if(breakingProgress_==1.0){
+                        block->setMaterial(Material::AIR);
+                    }
+                    resetBreakingProgress = false;
+                }
+                else lastBreaking_=block;
+            }
+        }
+
+        std::cout<<"progress: "<<breakingProgress_<<std::endl;
+    }
+    else if(controller_->getKeyState(Key::RIGHT_CLICK)==KeyState::DOWN){
+        ;
+    }
+    if(resetBreakingProgress) breakingProgress_ = 0;
+
+    //DEBUG
     if(controller_->getKeyState(Key::SPACE)==KeyState::DOWN)
         setFlying(true);
-
+    //
     if(controller_->getKeyState(Key::RIGHT_CLICK)==KeyState::DOWN){
         controller_->setKeyState(Key::RIGHT_CLICK,KeyState::UP);
-//            onGround = isOnGround();
         std::cout<<location_<<" "<<velocity_<<" "<<onGround<<std::endl;
 //        isOnGround();
     }
@@ -122,6 +168,8 @@ void Player::updateModel() {
     model_->sneaking_ = sneaking_;
     model_->currentSlot_ = currentSlot_;
     model_->cursor_ = {cursor_.getMaterial(), cursor_.getAmount()};
+    model_->breakingPosition_ = controller_->clickPosition_;
+    model_->breakingProgress_ = breakingProgress_;
 
     //更新世界ViewModel
     auto world = location_.getWorld();
