@@ -8,7 +8,7 @@
 #include "world/World.h"
 #include "FlatCraft.h"
 
-World::World(const std::string& name) : name_(name), ticks_(0) {
+World::World(const std::string& name) : name_(name), ticks_(0), weather_(Weather::CLEAR) {
     init();
 }
 
@@ -94,6 +94,7 @@ void World::init() {
             else if(j<64) m = Material::DIRT;
             else if(j==64) m = Material::GRASS;
             else m = Material::AIR;
+            if(m==Material::GRASS && i%2) m=Material::STONE;
             blocks_[hash] = std::make_unique<Block>(m,Location(name_,i,j),false);
             blocks_[hash^1] = std::make_unique<Block>(m,Location(name_,i,j),true);
         }
@@ -159,7 +160,6 @@ std::unique_ptr<RayTraceResult> World::rayTrace(const Location &location, const 
     double locY = location.getY();
     double xAdjust = maxDistance+xSize;
     double yAdjust = maxDistance+ySize;
-    double maxAdjust = std::max(xAdjust,yAdjust);
     //与方块碰撞
     for(int x = (int)(locX-xAdjust)-1,endX = (int)(locX+xAdjust)+1;x<=endX;x++){
         for(int y = (int)(locY-yAdjust)-1,endY = (int)(locY-yAdjust)+1;y<=endY;y++){
@@ -167,7 +167,7 @@ std::unique_ptr<RayTraceResult> World::rayTrace(const Location &location, const 
             || (direction.getX()<=0 && x-1>=locX+xSize) || (direction.getX()>=0 && x<=locX-xSize)
             || (direction.getY()<=0 && y-1>=locY+ySize) || (direction.getY()>=0 && y<=locY-ySize)) continue;
 
-            if(!isCloseToRay(Vec2d(x,y),startPoint,direction,maxDistance+maxAdjust,maxAdjust)) continue;
+            //if(!isCloseToRay(Vec2d(x,y),startPoint,direction,maxDistance+xSize+ySize,xSize+ySize)) continue;
             auto block = getBlock(x,y,true);
             if(blockFilter(block->getMaterial()) && !MaterialHelper::isAir(block->getMaterial())){
                 auto res = block->getBoundingBox().rayTrace(startPoint, direction, maxDistance, xSize, ySize);
@@ -212,5 +212,13 @@ long long World::getTicks() const {
 void World::setBlock(int x, int y, bool front, Material material) {
     int hash = (x<<11)^(y<<1)^front;
     blocks_[hash] = std::make_unique<Block>(material,Location(name_,x,y),front);
+}
+
+Weather World::getWeather() const {
+    return weather_;
+}
+
+void World::setWeather(Weather weather) {
+    weather_ = weather;
 }
 

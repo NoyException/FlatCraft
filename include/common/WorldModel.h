@@ -9,6 +9,12 @@
 #include "Vec2d.h"
 #include <mutex>
 
+enum class Weather : int{
+    CLEAR,
+    RAIN,
+    THUNDERSTORM
+};
+
 class WorldModel {
 public:
     static const int MAX_ROW = 26;
@@ -17,6 +23,7 @@ public:
     Vec2d leftUpPosition_;
     Vec2d cameraPosition_;
     long long ticks_;
+    Weather weather_;
     //读取数据前使用std::lock_guard<std::mutex> lock(WorldModel::instance_.mtx_);
     std::mutex mtx_;
     static WorldModel instance_;

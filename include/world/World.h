@@ -5,7 +5,7 @@
 #ifndef FLATCRAFT_WORLD_H
 #define FLATCRAFT_WORLD_H
 
-#include "common/common.h"
+#include "common.h"
 #include "Block.h"
 #include "entity/Entity.h"
 #include "Location.h"
@@ -27,6 +27,8 @@ public:
     void stop();
     [[nodiscard]] bool isRunning() const;
     [[nodiscard]] long long getTicks() const;
+    [[nodiscard]] Weather getWeather() const;
+    void setWeather(Weather weather);
     [[nodiscard]] std::string getName() const;
     void getEntities(std::vector<Entity*>& entities) const;
     void getEntities(std::vector<Entity*>& entities, bool(*filter)(const Entity&)) const;
@@ -42,6 +44,7 @@ private:
     void setBlock(int x, int y, bool front, Material material);
     Task* task_ = nullptr;
     long long ticks_;
+    Weather weather_;
     std::string name_;
     std::set<Entity*> entities_;
     std::unordered_map<int, std::unique_ptr<Block>> blocks_;
