@@ -196,25 +196,32 @@ void Graph::drawBackground() {
 void Graph::drawPlayer() {
 	SDL_Texture* texture;
 	SDL_Rect rect;
-	int playerSize = 80;
-	rect.x = windowWidth / 2 ;
+	int playerSize = 32;
+	rect.x = windowWidth / 2  - 32*0.4;
 	rect.y = 0.618*windowHeight - playerSize*0.8;
 	rect.w = rect.h = playerSize * 0.8;
 
-	switch (PlayerModel::instance_.legAction_) {
-	case PlayerModel::LegAction::IDLE :
-		texture = characterTexture->leg;
-	}
+	//switch (PlayerModel::instance_.legAction_) {
+	//case PlayerModel::LegAction::IDLE :
+	//	texture = characterTexture->leg;
+	//}
 
-	SDL_RenderCopy(renderer, texture, NULL, &rect);
-	texture = characterTexture->body;
-	SDL_RenderCopy(renderer, texture, NULL, &rect);
-	texture = characterTexture->sidehead;
-	SDL_RenderCopy(renderer, texture, NULL, &rect);
-	texture = characterTexture->sidearm;
-	SDL_RenderCopy(renderer, texture, NULL, &rect);
-	//texture = blockTexture->getTexture(Material::BED_ROCK);
 	//SDL_RenderCopy(renderer, texture, NULL, &rect);
+	//texture = characterTexture->body;
+	//SDL_RenderCopy(renderer, texture, NULL, &rect);
+	//texture = characterTexture->sidehead;
+	//SDL_RenderCopy(renderer, texture, NULL, &rect);
+	//texture = characterTexture->sidearm;
+	//SDL_RenderCopy(renderer, texture, NULL, &rect);
+	texture = blockTexture->getTexture(Material::BED_ROCK);
+	SDL_RenderCopy(renderer, texture, NULL, &rect);
+
+	rect.x = 638;
+	rect.y = 0;
+	rect.w = 4;
+	rect.h = 768;
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+	SDL_RenderFillRect(renderer, &rect);
 }
 
 void Graph::drawMap() {
