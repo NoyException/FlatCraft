@@ -4,6 +4,6 @@
 
 #include "item/ItemMeta.h"
 
-ItemMeta ItemMeta::ofDefault(Item *item) {
+std::unique_ptr<ItemMeta> ItemMeta::ofDefault(Item *item) {
     return {};
 }

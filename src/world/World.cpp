@@ -98,6 +98,7 @@ void World::init() {
             blocks_[hash^1] = std::make_unique<Block>(m,Location(name_,i,j),true);
         }
     }
+    setBlock(5,65, true,Material::DIRT);
 }
 
 bool isCloseToRay(const Vec2d& point, const Vec2d& startPoint, const Vec2d& direction, double maxDistance, double epsilon) {
