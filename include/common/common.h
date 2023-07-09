@@ -28,5 +28,6 @@
 #include "BoundingBox.h"
 #include "WorldModel.h"
 #include "PlayerController.h"
+#include "PlayerModel.h"
 
 #endif //FLATCRAFT_COMMON_H
