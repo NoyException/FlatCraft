@@ -5,7 +5,6 @@
 #ifndef FLATCRAFT_PLAYERCONTROLLER_H
 #define FLATCRAFT_PLAYERCONTROLLER_H
 
-#include <optional>
 #include "Vec2d.h"
 
 enum class Key : int{
@@ -32,10 +31,8 @@ public:
     [[nodiscard]] KeyState getKeyState(Key key) const;
     [[nodiscard]] double getWheelY() const;
     void setWheelY(double wheelY);
-    [[nodiscard]] const std::optional<Vec2d> &getLeftClickPosition() const;
-    void setLeftClickPosition(const std::optional<Vec2d> &leftClickPosition);
-    [[nodiscard]] const std::optional<Vec2d> &getRightClickPosition() const;
-    void setRightClickPosition(const std::optional<Vec2d> &rightClickPosition);
+    [[nodiscard]] const Vec2d &getClickPosition() const;
+    void setClickPosition(const Vec2d &clickPosition);
     void reset();
     static PlayerController instance_;
     friend class Player;
@@ -44,8 +41,7 @@ private:
     //滚轮移动量，向上为正，向下为负
     double wheelY_;
     //鼠标点击位置（绝对位置）
-    std::optional<Vec2d> leftClickPosition_;
-    std::optional<Vec2d> rightClickPosition_;
+    Vec2d clickPosition_;
 };
 
 
