@@ -196,9 +196,9 @@ void Graph::drawBackground() {
 void Graph::drawPlayer() {
 	SDL_Texture* texture;
 	SDL_Rect rect;
-	rect.x = windowWidth / 2 - blockSize*0.75;
-	rect.y = 0.618*windowHeight - blockSize*1.5;
-	rect.w = rect.h = blockSize * 1.5;
+	rect.x = windowWidth / 2 + 0.4*32;
+	rect.y = 0.618*windowHeight - blockSize*0.8;
+	rect.w = rect.h = blockSize * 0.8;
 	texture = blockTexture->getTexture(Material::BED_ROCK);
 	SDL_RenderCopy(renderer, texture, NULL, &rect);
 }
