@@ -9,7 +9,8 @@
 
 Entity::Entity(const Location &spawnLocation) : location_(spawnLocation), velocity_(), friction_(true), gravity_(true){
     physicsTask_ = FlatCraft::getInstance()->getScheduler()->runTaskTimer([&]() {
-        if(isOnGround()){
+        bool onGround = isOnGround();
+        if(onGround){
             if(friction_){
                 double x = velocity_.getX();
                 if(x<0) {
@@ -26,6 +27,13 @@ Entity::Entity(const Location &spawnLocation) : location_(spawnLocation), veloci
             }
         }
         velocity_.adjust();
+//        if(velocity_.getX()>0){
+//            std::cout<<"*";
+//        }
+        if(velocity_.getX()>0 && isCollided(BoundingBox::Face::RIGHT)) velocity_.setX(0);
+        if(velocity_.getX()<0 && isCollided(BoundingBox::Face::LEFT)) velocity_.setX(0);
+        if(velocity_.getY()>0 && isCollided(BoundingBox::Face::TOP)) velocity_.setY(0);
+        if(velocity_.getY()<0 && onGround) velocity_.setY(0);
         move();
     },0,0);
 }
@@ -72,21 +80,21 @@ void Entity::move(const Vec2d &v) {
        location_.add(dv);
     }
     else{
-       auto dv2 = res->getHitPoint()->toVec2d()-start.toVec2d();
-       if(dv2.lengthSquared()<dv.lengthSquared()){
-           location_.add(dv2);
-           switch (res->getHitFace()) {
-               case BoundingBox::Face::LEFT:
-               case BoundingBox::Face::RIGHT:
-                   velocity_.setX(0);
-                   break;
-               case BoundingBox::Face::TOP:
-               case BoundingBox::Face::BOTTOM:
-                   velocity_.setY(0);
-                   break;
-           }
-       }
-       else location_.add(dv);
+        auto dv2 = res->getHitPoint()->toVec2d()-start.toVec2d();
+        if(dv2.lengthSquared()<dv.lengthSquared()){
+            location_.add(dv2);
+            switch (res->getHitFace()) {
+                case BoundingBox::Face::LEFT:
+                case BoundingBox::Face::RIGHT:
+                    velocity_.setX(0);
+                    break;
+                case BoundingBox::Face::TOP:
+                case BoundingBox::Face::BOTTOM:
+                    velocity_.setY(0);
+                    break;
+            }
+        }
+        else location_.add(dv);
     }
     location_.adjust();
 }
@@ -95,15 +103,38 @@ nlohmann::json Entity::serialize() const {
     return {{"location",location_.serialize()}};
 }
 
-bool Entity::isOnGround() const {
-    if(abs(location_.getY()-std::round(location_.getY()))>0.000001) return false;
-
-    Location start = location_;
+bool Entity::isCollided(BoundingBox::Face face) const {
     auto aabb = getBoundingBox();
+    double d;
+    Vec2d dir;
+    switch (face) {
+        case BoundingBox::Face::TOP:
+            d = location_.getY()+aabb.getHeight();
+            dir = {0,1};
+            break;
+        case BoundingBox::Face::BOTTOM:
+            d = location_.getY();
+            dir = {0,-1};
+            break;
+        case BoundingBox::Face::LEFT:
+            d = location_.getX()-aabb.getWidth()/2;
+            dir = {-1,0};
+            break;
+        case BoundingBox::Face::RIGHT:
+            d = location_.getX()+aabb.getWidth()/2;
+            dir = {1,0};
+            break;
+    }
+    if(abs(d-std::round(d))>0.000001) return false;
+    Location start = location_;
     start.add(0,aabb.getHeight()/2);
-    auto res = getWorld()->rayTrace(start,Vec2d(0,-1),0.000001,aabb.getWidth()/2,aabb.getHeight()/2,
+    auto res = getWorld()->rayTrace(start,dir,0.000001,aabb.getWidth()/2,aabb.getHeight()/2,
                                     [](Material material){return true;},[](Entity* entity){return false;});
     return res!= nullptr;
+}
+
+bool Entity::isOnGround() const {
+    return isCollided(BoundingBox::Face::BOTTOM);
 //    auto aabb = getBoundingBox();
 //    auto world = getWorld();
 //
@@ -135,4 +166,3 @@ bool Entity::hasFriction() const {
 bool Entity::hasGravity() const {
     return gravity_;
 }
-

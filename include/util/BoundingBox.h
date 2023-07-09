@@ -21,6 +21,13 @@ public:
     BoundingBox(double minX, double minY, double maxX, double maxY);
     BoundingBox(const Vec2d& a, const Vec2d& b);
     BoundingBox(const BoundingBox& another);
+    BoundingBox& operator=(const BoundingBox& another);
+    /**并集*/
+    BoundingBox operator+(const BoundingBox& another) const;
+    /**交集*/
+    BoundingBox operator*(const BoundingBox& another) const;
+    BoundingBox operator+(const Vec2d& shift) const;
+    BoundingBox operator-(const Vec2d& shift) const;
     [[nodiscard]] double getMinX() const;
     void setMinX(double minX);
     [[nodiscard]] double getMinY() const;
@@ -41,6 +48,7 @@ public:
     [[nodiscard]] bool contains(const BoundingBox& another) const;
     [[nodiscard]] bool overlaps(const BoundingBox& another) const;
     void shift(double x,double y);
+    void shift(const Vec2d& v);
     void union_(const BoundingBox& another);
     void intersection(const BoundingBox& another);
     [[nodiscard]] std::optional<BoundingBoxRayTraceResult> rayTrace(const Vec2d& startPoint, const Vec2d& direction, double maxDistance) const;

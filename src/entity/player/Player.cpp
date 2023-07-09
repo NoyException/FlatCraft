@@ -8,7 +8,8 @@
 #include "event/instance/EntityTeleportEvent.h"
 
 Player::Player(const Location &spawnLocation) : LivingEntity(spawnLocation), controller_(&PlayerController::instance_),
-model_(&PlayerModel::instance_), currentSlot_(0), cursor_(Material::AIR){
+model_(&PlayerModel::instance_), currentSlot_(0), cursor_(Material::AIR),
+sprinting_(false), sneaking_(false), flying_(false){
     task_ = FlatCraft::getInstance()->getScheduler()->runTaskTimer([&](){
         control();
         updateModel();
@@ -42,6 +43,24 @@ std::unique_ptr<Player> Player::deserialize(const nlohmann::json &json) {
 }
 
 void Player::control() {
+    if(flying_){
+        double speed = 0.2;
+        if(controller_->getKeyState(Key::CTRL)==KeyState::DOWN)
+            speed = 0.4;
+        if(controller_->getKeyState(Key::SHIFT)==KeyState::DOWN)
+            speed = 0.05;
+        if(controller_->getKeyState(Key::UP)==KeyState::DOWN)
+            location_.add(0,speed);
+        if(controller_->getKeyState(Key::DOWN)==KeyState::DOWN)
+            location_.add(0,-speed);
+        if(controller_->getKeyState(Key::LEFT)==KeyState::DOWN)
+            location_.add(-speed,0);
+        if(controller_->getKeyState(Key::RIGHT)==KeyState::DOWN)
+            location_.add(speed,0);
+        if(controller_->getKeyState(Key::SPACE)==KeyState::UP)
+            setFlying(false);
+        return;
+    }
     bool onGround = isOnGround();
     if(controller_->getKeyState(Key::CTRL)==KeyState::DOWN){
         sprinting_ = true;
@@ -84,12 +103,14 @@ void Player::control() {
     }
     if(stopSprinting) sprinting_ = false;
     //controller_->reset();
+    if(controller_->getKeyState(Key::SPACE)==KeyState::DOWN)
+        setFlying(true);
 
-    if(controller_->getKeyState(Key::SPACE)==KeyState::DOWN){
-        controller_->setKeyState(Key::SPACE,KeyState::UP);
+    if(controller_->getKeyState(Key::RIGHT_CLICK)==KeyState::DOWN){
+        controller_->setKeyState(Key::RIGHT_CLICK,KeyState::UP);
 //            onGround = isOnGround();
         std::cout<<location_<<" "<<velocity_<<" "<<onGround<<std::endl;
-        isOnGround();
+//        isOnGround();
     }
 }
 
@@ -132,4 +153,14 @@ BoundingBox Player::getBoundingBox() const {
     BoundingBox aabb = Entity::getBoundingBox();
     aabb.expand(0.4,0,0.4,1.8);
     return aabb;
+}
+
+bool Player::isFlying() const {
+    return flying_;
+}
+
+void Player::setFlying(bool flying) {
+    gravity_ = !flying;
+    flying_ = flying;
+    velocity_ = {};
 }

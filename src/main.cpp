@@ -25,8 +25,9 @@ int main(){
 //    std::this_thread::sleep_for(std::chrono::seconds(3));
 //    FlatCraft::getInstance()->getScheduler()->runTask([](){
 //        auto player = FlatCraft::getInstance()->getPlayer();
-//        player->teleport(Location(*player->getWorld(),-66.58,65.08));
-//        player->setVelocity(Vec2d(0,-0.28));
+//        player->setFlying(true);
+////        player->teleport(Location(*player->getWorld(),3.6,64));
+////        player->setVelocity(Vec2d(0,-0.28));
 ////        player->teleport(Location(*player->getWorld(),-66.58,64.9));
 ////        player->setVelocity(Vec2d(0,-0.2));
 //    });

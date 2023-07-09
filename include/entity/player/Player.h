@@ -18,6 +18,8 @@ public:
     [[nodiscard]] nlohmann::json serialize() const override;
     static std::unique_ptr<Player> deserialize(const nlohmann::json& json);
     [[nodiscard]] BoundingBox getBoundingBox() const override;
+    [[nodiscard]] bool isFlying() const;
+    void setFlying(bool flying);
 private:
     void control();
     void updateModel();
@@ -28,6 +30,7 @@ private:
     bool sprinting_;
     bool sneaking_;
     int currentSlot_;
+    bool flying_;
     ItemStack cursor_;
     Inventory inventory_;
 };

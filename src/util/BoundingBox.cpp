@@ -6,23 +6,46 @@
 #include <vector>
 #include <cmath>
 
-#define min(a,b) ((a)>(b)?(b):(a))
-#define max(a,b) ((a)>(b)?(a):(b))
 
 BoundingBox::BoundingBox(double minX, double minY, double maxX, double maxY) : minX_(minX), minY_(minY), maxX_(maxX),
                                                                                maxY_(maxY) {}
 
 BoundingBox::BoundingBox(const Vec2d &a, const Vec2d &b):
-        minX_(min(a.getX(), b.getX())), minY_(min(a.getY(), b.getY())), maxX_(max(a.getX(), b.getX())), maxY_(max(a.getY(), b.getY())){}
+        minX_(std::min(a.getX(), b.getX())), minY_(std::min(a.getY(), b.getY())), maxX_(std::max(a.getX(), b.getX())), maxY_(std::max(a.getY(), b.getY())){}
 
 BoundingBox::BoundingBox(const BoundingBox &another) = default;
+
+BoundingBox &BoundingBox::operator=(const BoundingBox &another) = default;
+
+BoundingBox BoundingBox::operator+(const BoundingBox &another) const {
+    return {
+        std::min(minX_,another.minX_),
+        std::min(minY_,another.minY_),
+        std::max(maxX_,another.maxX_),
+        std::max(maxY_,another.maxY_)
+    };
+}
+
+BoundingBox BoundingBox::operator*(const BoundingBox &another) const {
+    BoundingBox aabb = another;
+    aabb.union_(*this);
+    return aabb;
+}
+
+BoundingBox BoundingBox::operator+(const Vec2d &shift) const {
+    return {minX_+shift.x_,minY_+shift.y_,maxX_+shift.x_,maxY_+shift.y_};
+}
+
+BoundingBox BoundingBox::operator-(const Vec2d &shift) const {
+    return {minX_-shift.x_,minY_-shift.y_,maxX_-shift.x_,maxY_-shift.y_};
+}
 
 double BoundingBox::getMinX() const {
     return minX_;
 }
 
 void BoundingBox::setMinX(double minX) {
-    minX_ = min(minX,maxX_);
+    minX_ = std::min(minX,maxX_);
 }
 
 double BoundingBox::getMinY() const {
@@ -30,7 +53,7 @@ double BoundingBox::getMinY() const {
 }
 
 void BoundingBox::setMinY(double minY) {
-    minY_ = min(minY,maxY_);
+    minY_ = std::min(minY,maxY_);
 }
 
 double BoundingBox::getMaxX() const {
@@ -38,7 +61,7 @@ double BoundingBox::getMaxX() const {
 }
 
 void BoundingBox::setMaxX(double maxX) {
-    maxX_ = max(maxX,minX_);
+    maxX_ = std::max(maxX,minX_);
 }
 
 double BoundingBox::getMaxY() const {
@@ -46,7 +69,7 @@ double BoundingBox::getMaxY() const {
 }
 
 void BoundingBox::setMaxY(double maxY) {
-    maxY_ = max(maxY,minY_);
+    maxY_ = std::max(maxY,minY_);
 }
 
 double BoundingBox::getWidth() const {
@@ -83,7 +106,7 @@ void BoundingBox::expand(double negativeX, double negativeY, double positiveX, d
 }
 
 bool BoundingBox::contains(double x, double y) const {
-    return x >= minX_ && x < maxX_ && y >= minY_ && y < maxY_;
+    return x >= minX_ && x <= maxX_ && y >= minY_ && y <= maxY_;
 }
 
 bool BoundingBox::contains(const Vec2d &v) const {
@@ -105,39 +128,34 @@ void BoundingBox::shift(double x, double y) {
     minY_+=y;
 }
 
+void BoundingBox::shift(const Vec2d &v) {
+    shift(v.x_,v.y_);
+}
+
 void BoundingBox::union_(const BoundingBox &another) {
-    maxX_= max(another.maxX_,maxX_);
-    maxY_= max(another.maxY_,maxY_);
-    minX_= min(another.minX_,minX_);
-    minY_= min(another.minY_,minY_);
+    maxX_= std::max(another.maxX_,maxX_);
+    maxY_= std::max(another.maxY_,maxY_);
+    minX_= std::min(another.minX_,minX_);
+    minY_= std::min(another.minY_,minY_);
 }
 
 void BoundingBox::intersection(const BoundingBox &another) {
     Vec2d center = getCenter().midPoint(another.getCenter());
-    maxX_= min(maxX_,another.maxX_);
-    minX_= max(minX_,another.minX_);
-    maxY_= min(maxY_,another.maxY_);
-    minY_= max(minY_,another.minY_);
+    maxX_= std::min(maxX_,another.maxX_);
+    minX_= std::max(minX_,another.minX_);
+    maxY_= std::min(maxY_,another.maxY_);
+    minY_= std::max(minY_,another.minY_);
     adjust(center);
 }
-/*
-std::optional<Vec2d>
-BoundingBox::rayTrace(const Vec2d &startPoint, const Vec2d &direction, double maxDistance, double raySize) const {
-    double y0=startPoint.getY();
-    double x0=startPoint.getX();
-    Vec2d nordirection=direction;
-    nordirection.normalize();
-    double xfinal=maxDistance*nordirection.getX()+x0;
-    double yfinal=maxDistance*nordirection.getY()+x0;
-    Vec2d rayA(x0-raySize*nordirection.getY(),y0+raySize*nordirection.getX());
-    Vec2d rayB(x0+raySize*nordirection.getY(),y0-raySize*nordirection.getX());
 
-    return std::optional<Vec2d>();
-
-}*/
 std::optional<BoundingBoxRayTraceResult> BoundingBox::rayTrace(const Vec2d& startPoint, const Vec2d& direction,
                                            double maxDistance) const {
     if(!isCollidable()) return std::nullopt;
+    if(contains(startPoint)){
+        if(!((startPoint.getX()==minX_ && direction.getX()>0) || (startPoint.getX()==maxX_ && direction.getX()<0)
+        || (startPoint.getY()==minY_ && direction.getY()>0) || (startPoint.getY()==maxY_ && direction.getY()<0)))
+            return std::nullopt;
+    }
     Vec2d dir = direction;
     dir.normalize();
     // 计算射线和边界框的四个交点
@@ -149,7 +167,7 @@ std::optional<BoundingBoxRayTraceResult> BoundingBox::rayTrace(const Vec2d& star
         double t1 = (minX_ - startPoint.x_) / dir.x_;
         if (t1 >= -epsilon && t1 <= maxDistance) {
             double y1 = startPoint.y_ + t1 * dir.y_;
-            if (y1 >= minY_ && y1 <= maxY_) {
+            if (y1 > minY_ && y1 < maxY_) {
                 leftIntersect = Vec2d(minX_, y1);
             }
         }
@@ -157,7 +175,7 @@ std::optional<BoundingBoxRayTraceResult> BoundingBox::rayTrace(const Vec2d& star
         double t2 = (maxX_ - startPoint.x_) / dir.x_;
         if (t2 >= -epsilon && t2 <= maxDistance) {
             double y2 = startPoint.y_ + t2 * dir.y_;
-            if (y2 >= minY_ && y2 <= maxY_) {
+            if (y2 > minY_ && y2 < maxY_) {
                 rightIntersect = Vec2d(maxX_, y2);
             }
         }
@@ -168,7 +186,7 @@ std::optional<BoundingBoxRayTraceResult> BoundingBox::rayTrace(const Vec2d& star
         double t3 = (maxY_ - startPoint.y_) / dir.y_;
         if (t3 >= -epsilon && t3 <= maxDistance) {
             double x3 = startPoint.x_ + t3 * dir.x_;
-            if (x3 >= minX_ && x3 <= maxX_) {
+            if (x3 > minX_ && x3 < maxX_) {
                 topIntersect = Vec2d(x3, maxY_);
             }
         }
@@ -176,7 +194,7 @@ std::optional<BoundingBoxRayTraceResult> BoundingBox::rayTrace(const Vec2d& star
         double t4 = (minY_ - startPoint.y_) / dir.y_;
         if (t4 >= -epsilon && t4 <= maxDistance) {
             double x4 = startPoint.x_ + t4 * dir.x_;
-            if (x4 >= minX_ && x4 <= maxX_) {
+            if (x4 > minX_ && x4 < maxX_) {
                 bottomIntersect = Vec2d(x4, minY_);
             }
         }

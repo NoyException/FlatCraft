@@ -51,11 +51,11 @@ double Location::getY() const {
 }
 
 int Location::getBlockX() const {
-    return (int) x_;
+    return std::floor(x_);
 }
 
 int Location::getBlockY() const {
-    return (int) y_;
+    return std::floor(y_);
 }
 
 void Location::setWorld(const World &world) {

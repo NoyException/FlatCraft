@@ -21,7 +21,6 @@ public:
         IDLE,
         //跳跃，不用view做任何动画
         JUMP,
-        SNEAK,
         WALK,
         //疾跑
         SPRINT,

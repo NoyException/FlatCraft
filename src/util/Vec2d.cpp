@@ -103,6 +103,11 @@ double Vec2d::length() const {
     return sqrt(x_*x_+y_*y_);
 }
 
+bool Vec2d::isLeft(const Vec2d &start, const Vec2d &direction) const {
+    // 如果叉积大于0，说明在直线的左侧
+    return (*this - start).crossProduct(direction) > 0;
+}
+
 void Vec2d::adjust() {
     if(std::abs(x_-(int)x_)<epsilon) x_ = (int)x_;
     if(std::abs(y_-(int)y_)<epsilon) y_ = (int)y_;

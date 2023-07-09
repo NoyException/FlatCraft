@@ -22,6 +22,7 @@ public:
     [[nodiscard]] bool hasFriction() const;
     [[nodiscard]] bool hasGravity() const;
     [[nodiscard]] bool isOnGround() const;
+    [[nodiscard]] bool isCollided(BoundingBox::Face face) const;
     [[nodiscard]] Vec2d getVelocity() const;
     void setVelocity(const Vec2d &velocity);
     [[nodiscard]] virtual BoundingBox getBoundingBox() const;

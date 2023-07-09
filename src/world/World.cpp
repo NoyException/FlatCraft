@@ -135,6 +135,9 @@ std::unique_ptr<RayTraceResult> World::rayTrace(const Location &location, const 
                                                 double maxDistance, double xSize, double ySize,
                                                 const std::function<bool(Material)>& blockFilter,
                                                 const std::function<bool(Entity *)>& entityFilter) const {
+    if(direction.getX()==0 && direction.getY()==0) return nullptr;
+    Vec2d dir = direction;
+    dir.normalize();
     Vec2d startPoint = location.toVec2d();
     std::optional<Vec2d> closestPoint = std::nullopt;
     double minDistance = maxDistance*maxDistance+1;
@@ -144,7 +147,7 @@ std::unique_ptr<RayTraceResult> World::rayTrace(const Location &location, const 
     //与实体碰撞
     for (auto &item: entities_){
         if(entityFilter(item)){
-            auto res = item->getBoundingBox().rayTrace(startPoint, direction, maxDistance, xSize, ySize);
+            auto res = item->getBoundingBox().rayTrace(startPoint, dir, maxDistance, xSize, ySize);
             if(res.has_value()){
                 double len = (res->hitPoint-startPoint).lengthSquared();
                 if(len < minDistance){
@@ -156,21 +159,63 @@ std::unique_ptr<RayTraceResult> World::rayTrace(const Location &location, const 
             }
         }
     }
-    double locX = location.getX();
-    double locY = location.getY();
-    double xAdjust = maxDistance+xSize;
-    double yAdjust = maxDistance+ySize;
-    //与方块碰撞
-    for(int x = (int)(locX-xAdjust)-1,endX = (int)(locX+xAdjust)+1;x<=endX;x++){
-        for(int y = (int)(locY-yAdjust)-1,endY = (int)(locY-yAdjust)+1;y<=endY;y++){
-            if((x==location.getBlockX() && y==location.getBlockY())
-            || (direction.getX()<=0 && x-1>=locX+xSize) || (direction.getX()>=0 && x<=locX-xSize)
-            || (direction.getY()<=0 && y-1>=locY+ySize) || (direction.getY()>=0 && y<=locY-ySize)) continue;
+    BoundingBox rayPoint(startPoint-Vec2d(xSize,ySize),startPoint+Vec2d(xSize,ySize));
+    BoundingBox rayBegin = rayPoint;
+    rayBegin.expand(1,1,1,1);
+    BoundingBox rayEnd = rayBegin+dir*maxDistance;
+    BoundingBox rayUnion = rayBegin+rayEnd;
+//    std::list<std::pair<Vec2d,Vec2d>> edges;
+//    //顺时针环
+//    if(dir.getX()<0 && dir.getY()<0){
+//        edges.emplace_back(Vec2d(rayBegin.getMinX(),rayBegin.getMaxY()),Vec2d(rayBegin.getMaxX(),rayBegin.getMinY()));
+//        edges.emplace_back(Vec2d(rayBegin.getMaxX(),rayBegin.getMinY()),Vec2d(rayEnd.getMaxX(),rayEnd.getMinY()));
+//        edges.emplace_back(Vec2d(rayEnd.getMaxX(),rayEnd.getMinY()),Vec2d(rayEnd.getMinX(),rayEnd.getMinY()));
+//        edges.emplace_back(Vec2d(rayEnd.getMinX(),rayEnd.getMinY()),Vec2d(rayEnd.getMinX(),rayEnd.getMaxY()));
+//        edges.emplace_back(Vec2d(rayEnd.getMinX(),rayEnd.getMaxY()),Vec2d(rayBegin.getMinX(),rayBegin.getMaxY()));
+//    }
+//    else if(dir.getX()>0 && dir.getY()>0){
+//        edges.emplace_back(Vec2d(rayBegin.getMaxX(),rayBegin.getMinY()),Vec2d(rayBegin.getMinX(),rayBegin.getMaxY()));
+//        edges.emplace_back(Vec2d(rayBegin.getMinX(),rayBegin.getMaxY()),Vec2d(rayEnd.getMinX(),rayEnd.getMaxY()));
+//        edges.emplace_back(Vec2d(rayEnd.getMinX(),rayEnd.getMaxY()),Vec2d(rayEnd.getMaxX(),rayEnd.getMaxY()));
+//        edges.emplace_back(Vec2d(rayEnd.getMaxX(),rayEnd.getMaxY()),Vec2d(rayEnd.getMaxX(),rayEnd.getMinY()));
+//        edges.emplace_back(Vec2d(rayEnd.getMaxX(),rayEnd.getMinY()),Vec2d(rayBegin.getMaxX(),rayBegin.getMinY()));
+//    }
+//    else if(dir.getX()>0 && dir.getY()<0){
+//        edges.emplace_back(Vec2d(rayBegin.getMinX(),rayBegin.getMinY()),Vec2d(rayBegin.getMaxX(),rayBegin.getMaxY()));
+//        edges.emplace_back(Vec2d(rayBegin.getMaxX(),rayBegin.getMaxY()),Vec2d(rayEnd.getMaxX(),rayEnd.getMaxY()));
+//        edges.emplace_back(Vec2d(rayEnd.getMaxX(),rayEnd.getMaxY()),Vec2d(rayEnd.getMaxX(),rayEnd.getMinY()));
+//        edges.emplace_back(Vec2d(rayEnd.getMaxX(),rayEnd.getMinY()),Vec2d(rayEnd.getMinX(),rayEnd.getMinY()));
+//        edges.emplace_back(Vec2d(rayEnd.getMinX(),rayEnd.getMinY()),Vec2d(rayBegin.getMinX(),rayBegin.getMinY()));
+//    }
+//    else if(dir.getX()<0 && dir.getY()>0){
+//        edges.emplace_back(Vec2d(rayBegin.getMaxX(),rayBegin.getMaxY()),Vec2d(rayBegin.getMinX(),rayBegin.getMinY()));
+//        edges.emplace_back(Vec2d(rayBegin.getMinX(),rayBegin.getMinY()),Vec2d(rayEnd.getMinX(),rayEnd.getMinY()));
+//        edges.emplace_back(Vec2d(rayEnd.getMinX(),rayEnd.getMinY()),Vec2d(rayEnd.getMinX(),rayEnd.getMaxY()));
+//        edges.emplace_back(Vec2d(rayEnd.getMinX(),rayEnd.getMaxY()),Vec2d(rayEnd.getMaxX(),rayEnd.getMaxY()));
+//        edges.emplace_back(Vec2d(rayEnd.getMaxX(),rayEnd.getMaxY()),Vec2d(rayBegin.getMaxX(),rayBegin.getMaxY()));
+//    }
 
-            //if(!isCloseToRay(Vec2d(x,y),startPoint,direction,maxDistance+xSize+ySize,xSize+ySize)) continue;
+    //与方块碰撞
+    for(int x = (int)std::floor(rayUnion.getMinX()),endX = (int)std::ceil(rayUnion.getMaxX());x<=endX;x++){
+        for(int y = (int)std::floor(rayUnion.getMinY()),endY = (int)std::ceil(rayUnion.getMaxY());y<=endY;y++){
+//            Vec2d point(x+0.5,y+0.5);
+
+            //斜线移动，环检测
+//            bool flag = false;
+//            for (auto &pair: edges){
+//                Vec2d d = pair.second-pair.first;
+//                if(point.isLeft(pair.first,d)){
+//                    flag = true;
+//                    break;
+//                }
+//            }
+//            if(flag) continue;
+
+            //判断(x+0.5,y+0.5)是否在
+            //if(!isCloseToRay(Vec2d(x,y),startPoint,dir,maxDistance+xSize+ySize,xSize+ySize)) continue;
             auto block = getBlock(x,y,true);
             if(blockFilter(block->getMaterial()) && !MaterialHelper::isAir(block->getMaterial())){
-                auto res = block->getBoundingBox().rayTrace(startPoint, direction, maxDistance, xSize, ySize);
+                auto res = block->getBoundingBox().rayTrace(startPoint, dir, maxDistance, xSize, ySize);
                 if(res.has_value()){
                     double len = (res->hitPoint-startPoint).lengthSquared();
                     if(len < minDistance){
