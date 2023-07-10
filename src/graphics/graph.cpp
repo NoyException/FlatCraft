@@ -287,8 +287,8 @@ void Graph::drawMap() {
 			material = materials_[i][j][0];
 			texture = blockTexture->getTexture(material);
 			SDL_RenderCopy(renderer, texture, NULL, &tempRect);
-			/*tempRect.y += blockSize;
-			if (i > 20) {
+			tempRect.y += blockSize;
+			/*if (i > 20) {
 				SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 				SDL_RenderFillRect(renderer, &tempRect);
 			}*/
