@@ -262,7 +262,7 @@ private:
 	Vec2d leftUpPosition_;
 	Vec2d cameraPosition_;
 	SDL_Rect leftUpRect;
-	Material materials_[42][26][2];
+	Material materials_[42][28][2];
 	long long ticks;
 	GUI gui;
 };
