@@ -26,8 +26,7 @@
 #include "json.hpp"
 #include "Vec2d.h"
 #include "BoundingBox.h"
-#include "WorldModel.h"
-#include "PlayerController.h"
-#include "PlayerModel.h"
+#include "Material.h"
+#include "EntityType.h"
 
 #endif //FLATCRAFT_COMMON_H
