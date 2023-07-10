@@ -40,6 +40,8 @@ bool Block::isFront() const {
 }
 
 BoundingBox Block::getBoundingBox() const {
-    if(MaterialHelper::isAir(material_)) return {location_.getX(),location_.getY(),location_.getX(),location_.getY()};
-    return {location_.getX()-1,location_.getY()-1,location_.getX(),location_.getY()};
+    double x = location_.getBlockX();
+    double y = location_.getBlockY();
+    if(MaterialHelper::isAir(material_)) return {x,y,x,y};
+    return {x,y,x+1,y+1};
 }

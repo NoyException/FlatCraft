@@ -95,15 +95,15 @@ void World::init() {
             Material m;
             if(j==0) m = Material::BED_ROCK;
             else if(j<48) m = Material::STONE;
-            else if(j<64) m = Material::DIRT;
-            else if(j==64) m = Material::GRASS;
+            else if(j<63) m = Material::DIRT;
+            else if(j==63) m = Material::GRASS;
             else m = Material::AIR;
             if(m==Material::GRASS && i%2) m=Material::STONE;
             blocks_[hash] = std::make_unique<Block>(m,Location(name_,i,j),false);
             blocks_[hash^1] = std::make_unique<Block>(m,Location(name_,i,j),true);
         }
     }
-    setBlock(5,65, true,Material::DIRT);
+    setBlock(5,64, true,Material::DIRT);
 }
 
 bool isCloseToRay(const Vec2d& point, const Vec2d& startPoint, const Vec2d& direction, double maxDistance, double epsilon) {

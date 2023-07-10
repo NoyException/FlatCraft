@@ -142,6 +142,7 @@ void Player::control() {
             }
         }
 
+        std::cout<<"click: "<<controller_->clickPosition_<<std::endl;
         std::cout<<"progress: "<<breakingProgress_<<std::endl;
     }
     else if(controller_->getKeyState(Key::RIGHT_CLICK)==KeyState::DOWN){
@@ -168,7 +169,7 @@ void Player::updateModel() {
     model_->sneaking_ = sneaking_;
     model_->currentSlot_ = currentSlot_;
     model_->cursor_ = {cursor_.getMaterial(), cursor_.getAmount()};
-    model_->breakingPosition_ = controller_->clickPosition_;
+    model_->clickPosition_ = controller_->clickPosition_;
     model_->breakingProgress_ = breakingProgress_;
 
     //更新世界ViewModel
@@ -183,7 +184,7 @@ void Player::updateModel() {
     for(int i=0;i<WorldModel::MAX_COLUMN;i++){
         for(int j=0;j<WorldModel::MAX_ROW;j++){
             for(int k=0;k<=1;k++){
-                auto block = world->getBlock((int)loc.getX()+i+1,(int)loc.getY()-j,k);
+                auto block = world->getBlock(loc.getBlockX()+i,loc.getBlockY()-j,k);
                 if(block == nullptr) WorldModel::instance_.materials_[i][j][k]=Material::BED_ROCK;
                 else WorldModel::instance_.materials_[i][j][k] = block->getMaterial();
             }
