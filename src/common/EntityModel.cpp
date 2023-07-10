@@ -5,6 +5,6 @@
 #include "EntityModel.h"
 
 EntityModel::EntityModel(EntityType type) : type_(type), damaged_(false), burning_(false),
-position_(0,64), velocity_(){
+position_(0,64), direction_(1,0), velocity_(){
 
 }

@@ -7,7 +7,8 @@
 #include "FlatCraft.h"
 #include "event/instance/EntityTeleportEvent.h"
 
-Entity::Entity(const Location &spawnLocation) : location_(spawnLocation), velocity_(), friction_(true), gravity_(true){
+Entity::Entity(const Location &spawnLocation, const Vec2d& direction) : location_(spawnLocation), direction_(direction), velocity_(),
+friction_(true), gravity_(true){
     physicsTask_ = FlatCraft::getInstance()->getScheduler()->runTaskTimer([&]() {
         bool onGround = isOnGround();
         if(onGround){
@@ -30,6 +31,9 @@ Entity::Entity(const Location &spawnLocation) : location_(spawnLocation), veloci
 //        if(velocity_.getX()>0){
 //            std::cout<<"*";
 //        }
+        if(velocity_.getX()!=0) direction_.setX(velocity_.getX());
+        if(velocity_.getY()!=0) direction_.setY(velocity_.getY());
+
         if(velocity_.getX()>0 && isCollided(BoundingBox::Face::RIGHT)) velocity_.setX(0);
         if(velocity_.getX()<0 && isCollided(BoundingBox::Face::LEFT)) velocity_.setX(0);
         if(velocity_.getY()>0 && isCollided(BoundingBox::Face::TOP)) velocity_.setY(0);
@@ -62,6 +66,22 @@ void Entity::teleport(const Location &location) {
         if(oldWorld != nullptr) oldWorld->notifyTeleported(*this);
         targetLocation.getWorld()->notifyTeleported(*this);
     }
+}
+
+Vec2d Entity::getDirection() const {
+    return direction_;
+}
+
+void Entity::setDirection(const Vec2d &direction) {
+    direction_ = direction;
+}
+
+Vec2d Entity::getVelocity() const {
+    return velocity_;
+}
+
+void Entity::setVelocity(const Vec2d &velocity) {
+    velocity_ = velocity;
 }
 
 void Entity::move() {
@@ -145,14 +165,6 @@ bool Entity::isOnGround() const {
 //        if(block != nullptr && MaterialHelper::isOccluded(block->getMaterial())) return true;
 //    }
 //    return false;
-}
-
-Vec2d Entity::getVelocity() const {
-    return velocity_;
-}
-
-void Entity::setVelocity(const Vec2d &velocity) {
-    velocity_ = velocity;
 }
 
 BoundingBox Entity::getBoundingBox() const {

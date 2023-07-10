@@ -19,6 +19,8 @@ public:
     bool burning_;
     //实体所在位置
     Vec2d position_;
+    //实体面朝的方向
+    Vec2d direction_;
     //实体移动速度
     Vec2d velocity_;
     //读取数据前使用std::lock_guard<std::mutex> lock(WorldModel::instance_.mtx_);

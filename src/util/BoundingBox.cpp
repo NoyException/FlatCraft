@@ -167,7 +167,7 @@ std::optional<BoundingBoxRayTraceResult> BoundingBox::rayTrace(const Vec2d& star
         double t1 = (minX_ - startPoint.x_) / dir.x_;
         if (t1 >= -epsilon && t1 <= maxDistance) {
             double y1 = startPoint.y_ + t1 * dir.y_;
-            if (y1 > minY_ && y1 < maxY_) {
+            if (y1 >= minY_ && y1 <= maxY_) {
                 leftIntersect = Vec2d(minX_, y1);
             }
         }
@@ -175,7 +175,7 @@ std::optional<BoundingBoxRayTraceResult> BoundingBox::rayTrace(const Vec2d& star
         double t2 = (maxX_ - startPoint.x_) / dir.x_;
         if (t2 >= -epsilon && t2 <= maxDistance) {
             double y2 = startPoint.y_ + t2 * dir.y_;
-            if (y2 > minY_ && y2 < maxY_) {
+            if (y2 >= minY_ && y2 <= maxY_) {
                 rightIntersect = Vec2d(maxX_, y2);
             }
         }
@@ -186,7 +186,7 @@ std::optional<BoundingBoxRayTraceResult> BoundingBox::rayTrace(const Vec2d& star
         double t3 = (maxY_ - startPoint.y_) / dir.y_;
         if (t3 >= -epsilon && t3 <= maxDistance) {
             double x3 = startPoint.x_ + t3 * dir.x_;
-            if (x3 > minX_ && x3 < maxX_) {
+            if (x3 >= minX_ && x3 <= maxX_) {
                 topIntersect = Vec2d(x3, maxY_);
             }
         }
@@ -194,7 +194,7 @@ std::optional<BoundingBoxRayTraceResult> BoundingBox::rayTrace(const Vec2d& star
         double t4 = (minY_ - startPoint.y_) / dir.y_;
         if (t4 >= -epsilon && t4 <= maxDistance) {
             double x4 = startPoint.x_ + t4 * dir.x_;
-            if (x4 > minX_ && x4 < maxX_) {
+            if (x4 >= minX_ && x4 <= maxX_) {
                 bottomIntersect = Vec2d(x4, minY_);
             }
         }

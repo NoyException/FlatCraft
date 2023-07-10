@@ -109,7 +109,7 @@ void Player::control() {
         auto aabb = getBoundingBox();
         Location start = location_;
         start.add(velocity_.getX(),aabb.getHeight()/2);
-        auto res = getWorld()->rayTrace(start,{0,-1},0.000001,aabb.getWidth()/2,aabb.getHeight()/2,
+        auto res = getWorld()->rayTrace(start,{0,-1},0.5,aabb.getWidth()/2,aabb.getHeight()/2,
                                         [](Material material){return true;},[](Entity* entity){return false;});
         if(res==nullptr)
             velocity_.setX(0);
@@ -137,13 +137,15 @@ void Player::control() {
                         block->setMaterial(Material::AIR);
                     }
                     resetBreakingProgress = false;
+
+                    direction_ = controller_->clickPosition_-location_.toVec2d();
                 }
                 else lastBreaking_=block;
             }
         }
 
-        std::cout<<"click: "<<controller_->clickPosition_<<std::endl;
-        std::cout<<"progress: "<<breakingProgress_<<std::endl;
+//        std::cout<<"click: "<<controller_->clickPosition_<<std::endl;
+//        std::cout<<"progress: "<<breakingProgress_<<std::endl;
     }
     else if(controller_->getKeyState(Key::RIGHT_CLICK)==KeyState::DOWN){
         ;
@@ -165,6 +167,7 @@ void Player::updateModel() {
     //更新玩家ViewModel
     std::lock_guard<std::mutex> lock1(model_->mtx_);
     model_->position_ = location_.toVec2d();
+    model_->direction_ = direction_;
     model_->velocity_ = velocity_;
     model_->sneaking_ = sneaking_;
     model_->currentSlot_ = currentSlot_;
