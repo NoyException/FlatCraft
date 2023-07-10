@@ -1,11 +1,10 @@
-﻿#include <conio.h>
+﻿
 #include "view/graph.h"
-
 
 bool graphFinish = false;
 DestroyBlock destroyBlock;
 
-void Graph::display() {
+void WorldView::display() {
 	//World* world = game->getPlayer()->getLocation().getWorld();
 	//World* world = FlatCraft::getInstance()->getWorld("test");
     //const char* path = "../../../../src/graphics/textures/birch.bmp";
@@ -19,13 +18,13 @@ void Graph::display() {
 	environmentTexture = new EnvironmentTexture(renderer);
 	guiTexture = new GuiTexture(renderer);
 	characterTexture = new CharacterTexture(renderer);
-	PlayerController* playerController = &PlayerController::instance_;
+//	PlayerController* playerController = &PlayerController::instance_;
 	SDL_Event my_event;
 	KeyState keyState;
 	Vec2d clickPosition;
 	int mx, my;
 	while (!graphFinish) {
-		caculate();
+        calculate();
 		while (SDL_PollEvent(&my_event) != 0) {
 			SDL_GetMouseState(&mx, &my);
 			clickPosition.setX(cameraPosition_.getX() + (mx - 640.0) / 32);
@@ -98,7 +97,7 @@ void Graph::display() {
 	}
 }
 
-void Graph::drawHome() {
+void WorldView::drawHome() {
 	SDL_Texture* texture;
 	texture = guiTexture->getHome();
 	SDL_Rect rect;
@@ -108,7 +107,7 @@ void Graph::drawHome() {
 	SDL_RenderCopy(renderer, texture, NULL, &rect);
 }
 
-void Graph::draw() {
+void WorldView::draw() {
 	switch (gui) {
 	case GUI::HOME:
 //		drawHome();
@@ -124,7 +123,7 @@ void Graph::draw() {
 	}
 }
 
-void Graph::drawItemBar() {
+void WorldView::drawItemBar() {
 	SDL_Texture* texture;
 	texture = guiTexture->getItemsBar();
 	SDL_Rect rect;
@@ -167,11 +166,11 @@ void Graph::drawItemBar() {
 	}
 
 }
-void Graph::caculate() {
-    updateMaterials_(materials_, leftUpPosition_);
-    leftUpPosition_ = getLeftUpPosition_();
-    cameraPosition_ = getCameraPosition_();
-    ticks = getTicks_();
+void WorldView::calculate() {
+//    updateMaterials_(materials_, leftUpPosition_);
+//    leftUpPosition_ = getLeftUpPosition_();
+//    cameraPosition_ = getCameraPosition_();
+//    ticks = getTicks_();
 //    materialsUpdater_(materials_);//memcpy(materials_, WorldModel::instance_.materials_, sizeof(int) * 28 * 42 * 2);
 //    leftUpPosition_ = WorldModel::instance_.leftUpPosition_;
 //    cameraPosition_ = WorldModel::instance_.cameraPosition_;
@@ -192,7 +191,7 @@ void Graph::caculate() {
 	leftUpRect.x = rect.x - blockSize * ci;
 	leftUpRect.y = rect.y + blockSize * (cj);
 }
-void Graph::drawBackground() {
+void WorldView::drawBackground() {
 	/*std::string tempString = TEXTURES_PATH;
 	tempString.append("block/black10.png");
 	SDL_Surface* pic = IMG_Load(tempString.c_str());
@@ -230,7 +229,7 @@ void Graph::drawBackground() {
 
 }
 
-void Graph::drawPlayer() {
+void WorldView::drawPlayer() {
 	SDL_Texture* texture;
 	SDL_Rect rect;
 	int playerSize = 64*3;
@@ -288,7 +287,7 @@ void Graph::drawPlayer() {
 	
 }
 
-void Graph::drawMap() {
+void WorldView::drawMap() {
 	SDL_Texture* texture;
 	int i, j;
 	SDL_Rect tempRect = leftUpRect;
@@ -308,7 +307,7 @@ void Graph::drawMap() {
 	}
 }
 
-void Graph::drawRain() {
+void WorldView::drawRain() {
 	SDL_Texture* texture = environmentTexture->getRain();
 	SDL_Rect rect;
 	SDL_Rect rainRect;
@@ -336,3 +335,111 @@ void Graph::drawRain() {
 	SDL_RenderCopy(renderer, texture, &rainRect, &rect);
 }
 
+//TODO: 实现！
+void WorldView::setBinderCameraPosition(const std::function<Vec2d()>& binder) {
+
+}
+
+//TODO: 实现！
+void WorldView::setBinderLeftUpPosition(const std::function<Vec2d()>& binder) {
+
+}
+
+//TODO: 实现！
+void WorldView::setBinderTicks(const std::function<double()>& binder) {
+
+}
+
+//TODO: 实现！
+void WorldView::setBinderMaterialMatrix(const std::function<void(MaterialMatrix &)>& binder) {
+
+}
+
+//TODO: 实现！
+void WorldView::setBinderWeather(const std::function<Weather()>& binder) {
+
+}
+
+//TODO: 实现！
+std::function<void()> WorldView::getNotificationWeatherChanged() {
+    return [&](){
+        //这里的代码将在Model通知该View天气发生改变
+    };
+}
+
+//TODO: 实现！
+void PlayerView::setCommandChangeCursorPosition(const std::function<void(const Vec2d &)>& command) {
+
+}
+
+//TODO: 实现！
+void PlayerView::setCommandChangeKeyState(const std::function<void(Key, KeyState)>& command) {
+
+}
+
+//TODO: 实现！
+void PlayerView::setCommandScrollMouseWheel(const std::function<void(double)>& command) {
+
+}
+
+//TODO: 实现！
+void PlayerView::setBinderLocation(const std::function<Vec2d()>& binder) {
+
+}
+
+//TODO: 实现！
+void PlayerView::setBinderDirection(const std::function<Vec2d()>& binder) {
+
+}
+
+//TODO: 实现！
+void PlayerView::setBinderCurrentSlot(const std::function<int()>& binder) {
+
+}
+
+//TODO: 实现！
+void PlayerView::setBinderVelocity(const std::function<Vec2d()>& binder) {
+
+}
+
+//TODO: 实现！
+void PlayerView::setBinderSneaking(const std::function<bool()>& binder) {
+
+}
+
+//TODO: 实现！
+void PlayerView::setBinderBreakingProgress(const std::function<double()>& binder) {
+
+}
+
+//TODO: 实现！
+std::function<void()> PlayerView::getNotificationLocationChanged() {
+    return [&](){
+        //这里的代码将在Model通知该View玩家位置发生改变时被执行
+    };
+}
+
+//TODO: 实现！
+std::function<void()> PlayerView::getNotificationVelocityChanged() {
+    return [&](){};
+}
+
+//TODO: 实现！
+std::function<void()> PlayerView::getNotificationDirectionChanged() {
+    return [&](){};
+}
+
+//TODO: 实现！
+std::function<void()> PlayerView::getNotificationCurrentSlotChanged() {
+    return [&](){};
+}
+
+//TODO: 实现！
+std::function<void()> PlayerView::getNotificationBreakingProgressChanged() {
+    return [&](){};
+}
+
+//TODO: 实现！
+std::function<void()> PlayerView::getNotificationSneakingStateChanged() {
+    return [&](){};
+}

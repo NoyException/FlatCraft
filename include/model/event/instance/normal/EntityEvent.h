@@ -5,8 +5,9 @@
 #ifndef FLATCRAFT_ENTITYEVENT_H
 #define FLATCRAFT_ENTITYEVENT_H
 
-#include "EventInstance.h"
-#include "model/entity/Entity.h"
+#include "model/event/instance/EventInstance.h"
+
+class Entity;
 
 class EntityEvent : public EventInstance{
 public:

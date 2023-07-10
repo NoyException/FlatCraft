@@ -8,6 +8,7 @@
 #include "common.h"
 #include "Binder.h"
 #include "model/FlatCraft.h"
+#include "viewmodel/PlayerViewModel.h"
 #include "view/graph.h"
 
 class Launcher {
@@ -20,7 +21,9 @@ public:
 private:
     void test();
     FlatCraft* game_ = nullptr;
-    Graph* graph_ = nullptr;
+    PlayerView* playerView_ = nullptr;
+    WorldView* worldView_ = nullptr;
+    PlayerViewModel* playerViewModel_ = nullptr;
     std::thread* viewThread_ = nullptr;
     WorldViewModel* worldViewModel_ = nullptr;
 };

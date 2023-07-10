@@ -3,7 +3,8 @@
 //
 
 #include "model/event/EventType.h"
-#include "model/event/instance/EntityEvent.h"
+#include "model/event/instance/normal/EntityEvent.h"
+#include "model/entity/Entity.h"
 
 EntityEvent::EntityEvent(Entity *entity) : EventInstance(EventType::ENTITY_EVENT), entity_(entity) {}
 

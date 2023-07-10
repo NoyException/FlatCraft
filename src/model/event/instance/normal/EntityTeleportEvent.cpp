@@ -2,8 +2,9 @@
 // Created by Noy on 2023/7/7.
 //
 
-#include "model/event/instance/EntityTeleportEvent.h"
+#include "model/event/instance/normal/EntityTeleportEvent.h"
 #include "model/event/EventType.h"
+#include "model/entity/Entity.h"
 
 EntityTeleportEvent::EntityTeleportEvent(Entity *entity, const Location &targetLocation) :
 EntityEvent(EventType::ENTITY_TELEPORT_EVENT, entity), Cancelable(), target_(targetLocation) {}

@@ -11,10 +11,10 @@
 
 class EventManager {
 public:
-    static void callEvent(EventInstance& event) ;
-    static void registerListener(Event* event, EventPriority priority, const std::function<void(EventInstance*)>& listener) ;
+    static void callEvent(EventInstance& event);
+    static void registerListener(Event* event, EventPriority priority,
+                                 const std::function<void(EventInstance*)>& listener);
 private:
 };
-
 
 #endif //FLATCRAFT_EVENTMANAGER_H

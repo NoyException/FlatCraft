@@ -2,11 +2,12 @@
 // Created by Noy on 2023/7/7.
 //
 
-#ifndef FLATCRAFT_ENTITYEVENT_H
-#define FLATCRAFT_ENTITYEVENT_H
+#ifndef FLATCRAFT_WORLDEVENT_H
+#define FLATCRAFT_WORLDEVENT_H
 
-#include "EventInstance.h"
-#include "model/world/World.h"
+#include "../EventInstance.h"
+
+class World;
 
 class WorldEvent : public EventInstance{
 public:
@@ -20,4 +21,4 @@ private:
 };
 
 
-#endif //FLATCRAFT_ENTITYEVENT_H
+#endif //FLATCRAFT_WORLDEVENT_H

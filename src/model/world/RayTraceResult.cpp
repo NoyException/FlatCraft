@@ -2,7 +2,7 @@
 // Created by Noy on 2023/7/7.
 //
 
-#include "RayTraceResult.h"
+#include "model/world/RayTraceResult.h"
 
 const Location* RayTraceResult::getHitPoint() const {
     return &hitPoint_;

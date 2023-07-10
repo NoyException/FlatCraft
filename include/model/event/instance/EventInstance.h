@@ -5,6 +5,7 @@
 #ifndef FLATCRAFT_EVENTINSTANCE_H
 #define FLATCRAFT_EVENTINSTANCE_H
 
+#include "common.h"
 #include "model/event/Event.h"
 
 /**

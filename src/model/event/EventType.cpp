@@ -4,16 +4,32 @@
 
 #include "model/event/EventType.h"
 
-Event* EventType::BASE_EVENT = nullptr;
+Event* EventType::NORMAL_EVENT = nullptr;
 Event* EventType::ENTITY_EVENT = nullptr;
 Event* EventType::ENTITY_TELEPORT_EVENT = nullptr;
 Event* EventType::WORLD_EVENT = nullptr;
 Event* EventType::WORLD_LOADED_EVENT = nullptr;
+Event* EventType::WORLD_WEATHER_CHANGE_EVENT = nullptr;
+
+Event* EventType::NOTIFICATION_EVENT = nullptr;
+Event* EventType::VALUE_CHANGED_NOTIFICATION = nullptr;
+Event* EventType::ENTITY_NOTIFICATION = nullptr;
+Event* EventType::ENTITY_LOCATION_CHANGED_NOTIFICATION = nullptr;
+Event* EventType::ENTITY_DIRECTION_CHANGED_NOTIFICATION = nullptr;
+Event* EventType::ENTITY_VELOCITY_CHANGED_NOTIFICATION = nullptr;
 
 void EventType::init() {
-    BASE_EVENT = new Event(nullptr);
-    ENTITY_EVENT = new Event(BASE_EVENT);
+    NORMAL_EVENT = new Event(nullptr);
+    ENTITY_EVENT = new Event(NORMAL_EVENT);
     ENTITY_TELEPORT_EVENT = new Event(ENTITY_EVENT);
-    WORLD_EVENT = new Event(BASE_EVENT);
+    WORLD_EVENT = new Event(NORMAL_EVENT);
     WORLD_LOADED_EVENT = new Event(WORLD_EVENT);
+    WORLD_WEATHER_CHANGE_EVENT = new Event(WORLD_EVENT);
+
+    NOTIFICATION_EVENT = new Event(nullptr);
+    VALUE_CHANGED_NOTIFICATION = new Event(NOTIFICATION_EVENT);
+    ENTITY_NOTIFICATION = new Event(NOTIFICATION_EVENT);
+    ENTITY_LOCATION_CHANGED_NOTIFICATION = new Event(ENTITY_NOTIFICATION);
+    ENTITY_DIRECTION_CHANGED_NOTIFICATION = new Event(ENTITY_NOTIFICATION);
+    ENTITY_VELOCITY_CHANGED_NOTIFICATION = new Event(ENTITY_NOTIFICATION);
 }

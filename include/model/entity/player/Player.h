@@ -9,8 +9,6 @@
 #include "model/entity/LivingEntity.h"
 #include "model/item/ItemStack.h"
 #include "model/item/Inventory.h"
-#include "viewmodel/PlayerController.h"
-#include "viewmodel/PlayerModel.h"
 
 class Player : public LivingEntity{
 public:
@@ -20,15 +18,35 @@ public:
     [[nodiscard]] nlohmann::json serialize() const override;
     static std::unique_ptr<Player> deserialize(const nlohmann::json& json);
     [[nodiscard]] BoundingBox getBoundingBox() const override;
+
+    [[nodiscard]] int getCurrentSlot() const;
+
+    [[nodiscard]] double getBreakingProgress() const;
+
+    [[nodiscard]] int getWalkingDirection() const;
+
+    void setWalkingDirection(int walkingDirection);
+
+    [[nodiscard]] bool isSprinting() const;
+
+    void setSprinting(bool sprinting);
+
+    [[nodiscard]] bool isSneaking() const;
+
+    void setSneaking(bool sneaking);
+
     [[nodiscard]] bool isFlying() const;
+
     void setFlying(bool flying);
+
+    void jump();
+
+    void tryToBreak(const Vec2d& position);
 private:
     void control();
-    void updateModel();
-    void jump();
-    PlayerController* controller_;
-    PlayerModel* model_;
     Task* task_;
+    //只能是-1 0 1
+    int walkingDirection_;
     bool sprinting_;
     bool sneaking_;
     int currentSlot_;

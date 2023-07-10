@@ -5,7 +5,7 @@
 #include "model/entity/Entity.h"
 #include "model/world/World.h"
 #include "model/FlatCraft.h"
-#include "model/event/instance/EntityTeleportEvent.h"
+#include "model/event/events.h"
 
 Entity::Entity(const Location &spawnLocation, const Vec2d& direction) : location_(spawnLocation), direction_(direction), velocity_(),
 friction_(true), gravity_(true){
@@ -31,8 +31,10 @@ friction_(true), gravity_(true){
 //        if(velocity_.getX()>0){
 //            std::cout<<"*";
 //        }
-        if(velocity_.getX()!=0) direction_.setX(velocity_.getX());
-        if(velocity_.getY()!=0) direction_.setY(velocity_.getY());
+        if(velocity_.getX()!=0)
+            setDirection({velocity_.getX(),direction_.getY()});
+        if(velocity_.getY()!=0)
+            setDirection({direction_.getX(),velocity_.getY()});
 
         if(velocity_.getX()>0 && isCollided(BoundingBox::Face::RIGHT)){
 //            std::cout<<"paused";
@@ -43,6 +45,8 @@ friction_(true), gravity_(true){
         if(velocity_.getY()>0 && isCollided(BoundingBox::Face::TOP)) velocity_.setY(0);
         if(velocity_.getY()<0 && onGround) velocity_.setY(0);
         move();
+        EntityNotification notification(EventType::ENTITY_VELOCITY_CHANGED_NOTIFICATION, this);
+        EventManager::callEvent(notification);
     },0,0);
 }
 
@@ -59,7 +63,6 @@ World *Entity::getWorld() const {
 }
 
 void Entity::teleport(const Location &location) {
-
     EntityTeleportEvent event(this, location);
     EventManager::callEvent(event);
     if(event.isCanceled()) return;
@@ -70,6 +73,8 @@ void Entity::teleport(const Location &location) {
         if(oldWorld != nullptr) oldWorld->notifyTeleported(*this);
         targetLocation.getWorld()->notifyTeleported(*this);
     }
+    EntityNotification notification(EventType::ENTITY_LOCATION_CHANGED_NOTIFICATION, this);
+    EventManager::callEvent(notification);
 }
 
 Vec2d Entity::getDirection() const {
@@ -78,6 +83,8 @@ Vec2d Entity::getDirection() const {
 
 void Entity::setDirection(const Vec2d &direction) {
     direction_ = direction;
+    EntityNotification notification(EventType::ENTITY_DIRECTION_CHANGED_NOTIFICATION, this);
+    EventManager::callEvent(notification);
 }
 
 Vec2d Entity::getVelocity() const {
@@ -122,6 +129,8 @@ void Entity::move(const Vec2d &v) {
         else location_.add(dv);
     }
     location_.adjust();
+    EntityNotification notification(EventType::ENTITY_LOCATION_CHANGED_NOTIFICATION, this);
+    EventManager::callEvent(notification);
 }
 
 nlohmann::json Entity::serialize() const {

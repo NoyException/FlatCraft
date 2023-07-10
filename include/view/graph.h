@@ -1,13 +1,9 @@
-#ifndef _GRAPHICS_H
-#define _GRAPHICS_H
-#include <unordered_map>
+#ifndef _MY_GRAPHICS_H_
+#define _MY_GRAPHICS_H_
 #include "SDL.h"
 #include "SDL_image.h"
-#include <Windows.h>
 #include "SDL_mouse.h"
-#include "PlayerController.h"
-#include <iostream>
-#include "PlayerModel.h"
+#include "common.h"
 const std::string TEXTURES_PATH = "../resources/textures/";
 extern bool graphFinish;
 extern class DestroyBlock destroyBlock;
@@ -230,10 +226,10 @@ private:
 	int progress;//the progress of destroying the block, from 0 to 100
 };
 
-
-class Graph {
+//TODO: 建立WorldView.h/cpp
+class WorldView {
 public:
-	Graph() : windowWidth(1280), windowHeight(768), blockSize(32), renderer(nullptr), blockTexture(nullptr), backgroundTexture(nullptr), environmentTexture(nullptr), gui(GUI::HOME) {}
+	WorldView() : windowWidth(1280), windowHeight(768), blockSize(32), renderer(nullptr), blockTexture(nullptr), backgroundTexture(nullptr), environmentTexture(nullptr), gui(GUI::HOME) {}
 	void display();//display the graph, including world and player
 	void drawMap();//draw the map as location as the center
 	void draw();//draw the graph on the renderer
@@ -242,13 +238,25 @@ public:
 	void drawBackground();
 	void drawItemBar();
 	void drawHome();
-    friend class Binder;
+
+    void setBinderCameraPosition(const std::function<Vec2d()>& binder);
+
+    void setBinderLeftUpPosition(const std::function<Vec2d()>& binder);
+
+    void setBinderMaterialMatrix(const std::function<void(MaterialMatrix &)>& binder);
+
+    void setBinderTicks(const std::function<double()>& binder);
+
+    void setBinderWeather(const std::function<Weather()>& binder);
+
+    std::function<void()> getNotificationWeatherChanged();
+
 private:
 	inline void getWorldXY(int x, int y, double& wX, double &wY) {
 		wX = cameraPosition_.getX() + (x - 640.0) / 32;
 		wY = cameraPosition_.getY() - (y - 768 * 0.618) / 32;
 	}
-	inline void caculate();
+	inline void calculate();
 
 	int windowWidth, windowHeight;//pixel
 	int blockSize;//pixel
@@ -265,13 +273,40 @@ private:
 	long long ticks;
 	GUI gui;
 
+};
 
-    //使用updateMaterials_(materials,lastLeftUpPosition)更新
-    std::function<void(Material[][28][2],const Vec2d&)> updateMaterials_;
-    std::function<Vec2d(void)> getLeftUpPosition_;
-    std::function<Vec2d(void)> getCameraPosition_;
-    //使用ticks_ = getTicks()更新
-    std::function<long long(void)> getTicks_;
+//TODO: 建立PlayerView.h/cpp
+class PlayerView{
+public:
+    void setCommandChangeCursorPosition(const std::function<void(const Vec2d &)>& command);
+
+    void setCommandChangeKeyState(const std::function<void(Key, KeyState)>& command);
+
+    void setCommandScrollMouseWheel(const std::function<void(double)>& command);
+
+    void setBinderLocation(const std::function<Vec2d()>& binder);
+
+    void setBinderDirection(const std::function<Vec2d()>& binder);
+
+    void setBinderVelocity(const std::function<Vec2d()>& binder);
+
+    void setBinderCurrentSlot(const std::function<int()>& binder);
+
+    void setBinderSneaking(const std::function<bool()>& binder);
+
+    void setBinderBreakingProgress(const std::function<double()>& binder);
+
+    std::function<void()> getNotificationDirectionChanged();
+
+    std::function<void()> getNotificationVelocityChanged();
+
+    std::function<void()> getNotificationCurrentSlotChanged();
+
+    std::function<void()> getNotificationLocationChanged();
+
+    std::function<void()> getNotificationSneakingStateChanged();
+
+    std::function<void()> getNotificationBreakingProgressChanged();
 };
 
 #endif

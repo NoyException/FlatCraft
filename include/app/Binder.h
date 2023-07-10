@@ -7,10 +7,12 @@
 
 #include "view/graph.h"
 #include "viewmodel/WorldViewModel.h"
+#include "viewmodel/PlayerViewModel.h"
 
 class Binder {
 public:
-    static void bindWorld(Graph& graph, WorldViewModel& viewModel);
+    static void bindWorld(WorldView& view, WorldViewModel& viewModel);
+    static void bindPlayer(PlayerView& view, PlayerViewModel& viewModel);
 };
 
 

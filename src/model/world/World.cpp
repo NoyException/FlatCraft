@@ -2,11 +2,10 @@
 // Created by Noy on 2023/7/3.
 //
 
-
-#include <utility>
-
 #include "model/world/World.h"
 #include "model/FlatCraft.h"
+#include "model/event/instance/normal/WorldEvent.h"
+
 
 World::World(const std::string& name) : name_(name), ticks_(0), weather_(Weather::CLEAR) {
     init();
@@ -268,6 +267,9 @@ Weather World::getWeather() const {
 }
 
 void World::setWeather(Weather weather) {
+    WorldWeatherChangeEvent event(this, weather);
+    EventManager::callEvent(event);
+    if(event.isCanceled()) return;
     weather_ = weather;
 }
 

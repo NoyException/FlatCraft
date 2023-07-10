@@ -8,20 +8,13 @@
 #include "common.h"
 #include "Block.h"
 #include "model/entity/Entity.h"
-#include "Location.h"
 #include "RayTraceResult.h"
-
-enum class Weather : int{
-    CLEAR,
-    RAIN,
-    THUNDERSTORM
-};
+#include "model/event/events.h"
 
 class World {
 public:
     friend class Entity;
     friend class WorldGenerator;
-    friend class WorldViewModel;
     explicit World(const std::string& name);
     [[nodiscard]] nlohmann::json serialize() const;
     static World deserialize(const nlohmann::json& json);
