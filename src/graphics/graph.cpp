@@ -220,9 +220,9 @@ void Graph::drawBackground() {
 		r = r > 255 ? 255 : r;
 		g = g > 255 ? 255 : g;
 		b = b > 255 ? 255 : b;
-		if (wy < 64) {
-			r = g = b = 0;
-		}
+		//if (wy < 64) {
+		//	r = g = b = 0;
+		//}
 		SDL_SetRenderDrawColor(renderer, r, g, b, 255);
 		SDL_RenderFillRect(renderer, &rect);
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255*k);
@@ -252,16 +252,35 @@ void Graph::drawPlayer() {
 	//SDL_RenderCopy(renderer, texture, NULL, &rect);
 	//texture = characterTexture->sidearm;
 	//SDL_RenderCopy(renderer, texture, NULL, &rect);
-	static bool changeRun = false;
+	static bool change = false;
 	static long long lastTicks = ticks;
 	if (ticks - lastTicks > 7) {
-		changeRun = !changeRun;
+		change = !change;
 		lastTicks = ticks;
 	}
-		
-	texture = characterTexture->right;
-	if(changeRun)
-		texture = characterTexture->rightRun;
+	if (PlayerModel::instance_.direction_.getX() > 0) {
+		if (PlayerModel::instance_.legAction_ == PlayerModel::LegAction::IDLE) {
+			if (PlayerModel::instance_.handAction_ != PlayerModel::HandAction::IDLE && change)
+				texture = characterTexture->rightAttack;
+			else
+				texture = characterTexture->right;
+		}
+		else
+			texture = characterTexture->rightRun;
+	}
+	else {
+		if (PlayerModel::instance_.legAction_ == PlayerModel::LegAction::IDLE) {
+			if (PlayerModel::instance_.handAction_ != PlayerModel::HandAction::IDLE && change)
+				texture = characterTexture->leftAttack;
+			else
+				texture = characterTexture->left;
+		}
+		else
+			texture = characterTexture->leftRun;
+	}
+	//texture = characterTexture->right;
+	//if(change)
+	//	texture = characterTexture->rightRun;
 	SDL_RenderCopy(renderer, texture, NULL, &rect);
 	rect.x = 638;
 	rect.x = 638;
@@ -288,10 +307,6 @@ void Graph::drawMap() {
 			texture = blockTexture->getTexture(material);
 			SDL_RenderCopy(renderer, texture, NULL, &tempRect);
 			tempRect.y += blockSize;
-			/*if (i > 20) {
-				SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-				SDL_RenderFillRect(renderer, &tempRect);
-			}*/
 		}
 		tempRect.x += blockSize;
 	}
