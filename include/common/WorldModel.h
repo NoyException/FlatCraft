@@ -17,7 +17,7 @@ enum class Weather : int{
 
 class WorldModel {
 public:
-    static const int MAX_ROW = 26;
+    static const int MAX_ROW = 28;
     static const int MAX_COLUMN = 42;
     Material materials_[MAX_COLUMN][MAX_ROW][2];
     Vec2d leftUpPosition_;

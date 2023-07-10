@@ -181,6 +181,7 @@ void Player::updateModel() {
     auto loc = location_.toBlockLocation().toVec2d();
     loc.add(-(int)(WorldModel::MAX_COLUMN/2),(int)(WorldModel::MAX_ROW*0.618));
     WorldModel::instance_.leftUpPosition_ = loc;
+    WorldModel::instance_.leftUpPosition_.add(0,1);
     for(int i=0;i<WorldModel::MAX_COLUMN;i++){
         for(int j=0;j<WorldModel::MAX_ROW;j++){
             for(int k=0;k<=1;k++){
