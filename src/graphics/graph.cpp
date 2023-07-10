@@ -176,7 +176,7 @@ void Graph::drawItemBar() {
 void Graph::caculate() {
 	{//get the information
 		std::lock_guard<std::mutex> lock(WorldModel::instance_.mtx_);
-		memcpy(materials_, WorldModel::instance_.materials_, sizeof(int) * 26 * 42 * 2);
+		memcpy(materials_, WorldModel::instance_.materials_, sizeof(int) * 28 * 42 * 2);
 		leftUpPosition_ = WorldModel::instance_.leftUpPosition_;
 		cameraPosition_ = WorldModel::instance_.cameraPosition_;
 		ticks = WorldModel::instance_.ticks_;
@@ -280,14 +280,18 @@ void Graph::drawMap() {
 	Material material;
 	for (i = 0; i < 42; i++) {
 		tempRect.y = leftUpRect.y;
-		for (j = 0; j < 26; j++) {
+		for (j = 0; j < 28; j++) {
 			material = materials_[i][j][1];
 			texture = backgroundTexture->getTexture(material);
 			SDL_RenderCopy(renderer, texture, NULL, &tempRect);
 			material = materials_[i][j][0];
 			texture = blockTexture->getTexture(material);
 			SDL_RenderCopy(renderer, texture, NULL, &tempRect);
-			tempRect.y += blockSize;
+			/*tempRect.y += blockSize;
+			if (i > 20) {
+				SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+				SDL_RenderFillRect(renderer, &tempRect);
+			}*/
 		}
 		tempRect.x += blockSize;
 	}
