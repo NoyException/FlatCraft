@@ -9,10 +9,17 @@ Event::Event(Event *parent) : parent_(parent) {
 }
 
 void Event::call(EventInstance *eventInstance) const{
-    if(parent_ != nullptr) parent_->call(eventInstance);
-    for (auto &listenerList : listeners_) {
-        for (const auto &listener: listenerList){
-            listener(eventInstance);
-        }
+    call(eventInstance, EventPriority::LOWEST);
+    call(eventInstance, EventPriority::LOW);
+    call(eventInstance, EventPriority::NORMAL);
+    call(eventInstance, EventPriority::HIGH);
+    call(eventInstance, EventPriority::HIGHEST);
+    call(eventInstance, EventPriority::MONITOR);
+}
+
+void Event::call(EventInstance *eventInstance, EventPriority priority) const {
+    if(parent_ != nullptr) parent_->call(eventInstance, priority);
+    for (const auto &listener: listeners_[static_cast<int>(priority)]){
+        listener(eventInstance);
     }
 }

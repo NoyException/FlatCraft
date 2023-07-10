@@ -13,6 +13,7 @@ enum class EventPriority : int{
     NORMAL,
     HIGH,
     HIGHEST,
+    /**该级别下要求不可以改变事件结果，仅做监听*/
     MONITOR,
 };
 
@@ -25,13 +26,10 @@ class Event {
 public:
     Event() = delete;
     explicit Event(Event* parent);
-    /**
-     * 子Event必须调用父Event的call
-     * @param eventInstance 事件实例
-     */
     void call(EventInstance* eventInstance) const;
     friend class EventManager;
 private:
+    void call(EventInstance* eventInstance, EventPriority priority) const;
     Event *parent_;
     std::list<std::function<void(EventInstance*)>> listeners_[6];
 };
