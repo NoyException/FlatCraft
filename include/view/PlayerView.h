@@ -36,7 +36,7 @@ public:
     std::function<void()> getNotificationSneakingStateChanged();
 
     std::function<void()> getNotificationBreakingProgressChanged();
-private:
+
     std::function<void(const Vec2d&)> commandChangeCursorPosition_;
     std::function<void(Key, KeyState)> commandChangeKeyState_;
     std::function<void(double)> commandScrollMouseWheel_;
