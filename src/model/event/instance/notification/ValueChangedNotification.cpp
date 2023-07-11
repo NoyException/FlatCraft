@@ -4,6 +4,4 @@
 
 #include "model/event/instance/notification/ValueChangedNotification.h"
 
-const std::string &ValueChangedNotification::getKey() const {
-    return key_;
-}
+

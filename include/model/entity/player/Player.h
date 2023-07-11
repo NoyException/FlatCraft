@@ -43,6 +43,8 @@ public:
 
     void tryToBreak(const Vec2d& position);
 
+    void stopBreaking();
+
     friend class PlayerViewModel;
 private:
     void control();

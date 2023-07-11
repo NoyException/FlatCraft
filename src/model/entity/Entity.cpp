@@ -45,8 +45,6 @@ friction_(true), gravity_(true){
         if(velocity_.getY()>0 && isCollided(BoundingBox::Face::TOP)) velocity_.setY(0);
         if(velocity_.getY()<0 && onGround) velocity_.setY(0);
         move();
-        EntityNotification notification(EventType::ENTITY_VELOCITY_CHANGED_NOTIFICATION, this);
-        EventManager::callEvent(notification);
     },0,0);
 }
 
@@ -73,7 +71,7 @@ void Entity::teleport(const Location &location) {
         if(oldWorld != nullptr) oldWorld->notifyTeleported(*this);
         targetLocation.getWorld()->notifyTeleported(*this);
     }
-    EntityNotification notification(EventType::ENTITY_LOCATION_CHANGED_NOTIFICATION, this);
+    ValueChangedNotification notification(this,Field::ENTITY_POSITION,location_.toVec2d());
     EventManager::callEvent(notification);
 }
 
@@ -83,7 +81,7 @@ Vec2d Entity::getDirection() const {
 
 void Entity::setDirection(const Vec2d &direction) {
     direction_ = direction;
-    EntityNotification notification(EventType::ENTITY_DIRECTION_CHANGED_NOTIFICATION, this);
+    ValueChangedNotification notification(this,Field::ENTITY_DIRECTION,direction_);
     EventManager::callEvent(notification);
 }
 
@@ -129,8 +127,10 @@ void Entity::move(const Vec2d &v) {
         else location_.add(dv);
     }
     location_.adjust();
-    EntityNotification notification(EventType::ENTITY_LOCATION_CHANGED_NOTIFICATION, this);
+    ValueChangedNotification notification(this,Field::ENTITY_POSITION,location_.toVec2d());
     EventManager::callEvent(notification);
+    ValueChangedNotification notification2(this,Field::ENTITY_VELOCITY,velocity_);
+    EventManager::callEvent(notification2);
 }
 
 nlohmann::json Entity::serialize() const {

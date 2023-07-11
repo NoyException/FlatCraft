@@ -15,9 +15,9 @@ public:
     std::function<void(double)> getCommandScrollMouseWheel();
     std::function<void(const Vec2d&)> getCommandChangeCursorPosition();
 
-    std::function<int()> getBinderCurrentSlot();
-    std::function<bool()> getBinderSneaking();
-    std::function<double()> getBinderBreakingProgress();
+    std::function<void(RefPtr<int>)> getBinderCurrentSlot();
+    std::function<void(RefPtr<bool>)> getBinderSneaking();
+    std::function<void(RefPtr<double>)> getBinderBreakingProgress();
 
     void setNotificationCurrentSlotChanged(const std::function<void()> &notificationCurrentSlotChanged);
     void setNotificationSneakingStateChanged(const std::function<void()> &notificationSneakingStateChanged);

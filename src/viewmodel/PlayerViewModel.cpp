@@ -37,21 +37,21 @@ std::function<void(const Vec2d &)> PlayerViewModel::getCommandChangeCursorPositi
     };
 }
 
-std::function<int()> PlayerViewModel::getBinderCurrentSlot() {
-    return [&]() {
-        return getPlayer()->getCurrentSlot();
+std::function<void(RefPtr<int>)> PlayerViewModel::getBinderCurrentSlot() {
+    return [&](RefPtr<int> ptr) {
+        ptr.pointTo(getPlayer()->currentSlot_);
     };
 }
 
-std::function<bool()> PlayerViewModel::getBinderSneaking() {
-    return [&]() {
-        return getPlayer()->isSneaking();
+std::function<void(RefPtr<bool>)> PlayerViewModel::getBinderSneaking() {
+    return [&](RefPtr<bool> ptr) {
+        ptr.pointTo(getPlayer()->sneaking_);
     };
 }
 
-std::function<double()> PlayerViewModel::getBinderBreakingProgress() {
-    return [&]() {
-        return getPlayer()->getBreakingProgress();
+std::function<void(RefPtr<double>)> PlayerViewModel::getBinderBreakingProgress() {
+    return [&](RefPtr<double> ptr) {
+        ptr.pointTo(getPlayer()->breakingProgress_);
     };
 }
 
@@ -105,12 +105,13 @@ void PlayerViewModel::control() {
     if(isPressed(Key::UP))
         player->jump();
     //挖掘与放置
+    double progress = player->getBreakingProgress();
     if(isPressed(Key::LEFT_CLICK)){
-        double progress = player->getBreakingProgress();
         player->tryToBreak(cursorPosition_);
-        if(progress!=player->getBreakingProgress())
-            notificationBreakingProgressChanged_();
     }
+    else player->stopBreaking();
+    if(progress!=player->getBreakingProgress())
+        notificationBreakingProgressChanged_();
     //TODO: 滚轮滚动
     //
     player->control();
