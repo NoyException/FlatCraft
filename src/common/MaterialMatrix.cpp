@@ -11,3 +11,6 @@ Material (*MaterialMatrix::operator[](int num))[2]{
 std::shared_mutex &MaterialMatrix::getSharedMutex(){
     return mtx_;
 }
+Material* MaterialMatrix::getMatrix() {
+    return reinterpret_cast<Material*> (matrix_);
+}

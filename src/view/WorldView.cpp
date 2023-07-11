@@ -170,14 +170,18 @@ void WorldView::calculate() {
 	//    ticks = WorldModel::instance_.ticks_;
 	
 	//ticks %= 24000;
-
 	SDL_Rect rect;
 	rect.x = windowWidth / 2;
 	rect.y = std::floor(0.618 * windowHeight);
 	rect.w = rect.h = blockSize;
 	Vec2d tempVec;
-	tempVec = *binderCameraPosition_;
-	leftUpPosition_ = *binderLeftUpPosition_;
+	{
+		std::shared_lock<std::shared_mutex> lock( binderMaterialMatrix_->getSharedMutex());
+		tempVec = *binderCameraPosition_;
+		leftUpPosition_ = *binderLeftUpPosition_;
+		memcpy( materials_, binderMaterialMatrix_->getMatrix(), 42 * 28 * 2* sizeof(int));
+	}
+	
 	tempVec.subtract(leftUpPosition_);
 	double ci, cj;
 	ci = tempVec.getX();
@@ -283,10 +287,10 @@ void WorldView::drawMap() {
 	for (i = 0; i < 42; i++) {
 		tempRect.y = leftUpRect.y;
 		for (j = 0; j < 28; j++) {
-			material = ( * binderMaterialMatrix_)[i][j][1];
+			material = materials_[i][j][1];
 			texture = backgroundTexture->getTexture(material);
 			SDL_RenderCopy(renderer, texture, NULL, &tempRect);
-			material = ( * binderMaterialMatrix_)[i][j][0];
+			material = materials_[i][j][0];
 			texture = blockTexture->getTexture(material);
 			SDL_RenderCopy(renderer, texture, NULL, &tempRect);
 			tempRect.y += blockSize;

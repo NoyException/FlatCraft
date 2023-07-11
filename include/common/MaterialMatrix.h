@@ -14,6 +14,7 @@ public:
     static const int MAX_COLUMN = 42;
     Material (*operator[](int num))[2];
     std::shared_mutex &getSharedMutex();
+    Material* getMatrix();
 private:
     Material matrix_[MAX_COLUMN][MAX_ROW][2];
     std::shared_mutex mtx_;
