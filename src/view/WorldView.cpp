@@ -171,19 +171,20 @@ void WorldView::calculate() {
 	
 	//ticks %= 24000;
 
-	//SDL_Rect rect;
-	//rect.x = windowWidth / 2;
-	//rect.y = std::floor(0.618 * windowHeight);
-	//rect.w = rect.h = blockSize;
-	//Vec2d tempVec;
-	//tempVec = cameraPosition_;
-	//tempVec.subtract(leftUpPosition_);
-	//double ci, cj;
-	//ci = tempVec.getX();
-	//cj = tempVec.getY();
-	//leftUpRect = rect;
-	//leftUpRect.x = rect.x - blockSize * ci;
-	//leftUpRect.y = rect.y + blockSize * (cj);
+	SDL_Rect rect;
+	rect.x = windowWidth / 2;
+	rect.y = std::floor(0.618 * windowHeight);
+	rect.w = rect.h = blockSize;
+	Vec2d tempVec;
+	tempVec = *binderCameraPosition_;
+	leftUpPosition_ = *binderLeftUpPosition_;
+	tempVec.subtract(leftUpPosition_);
+	double ci, cj;
+	ci = tempVec.getX();
+	cj = tempVec.getY();
+	leftUpRect = rect;
+	leftUpRect.x = rect.x - blockSize * ci;
+	leftUpRect.y = rect.y + blockSize * (cj);
 }
 void WorldView::drawBackground() {
 	/*std::string tempString = TEXTURES_PATH;
@@ -329,36 +330,34 @@ void WorldView::drawRain() {
 	//SDL_RenderCopy(renderer, texture, &rainRect, &rect);
 }
 
-void WorldView::setBinderCameraPosition(const std::function<Vec2d()>& binder) {
-	binderCameraPosition_ = binder;
-	
-	//cameraPosition_ = binderCameraPosition_();
+void WorldView::setBinderCameraPosition(const std::function<void(RefPtr<Vec2d>)>& binder) {
+	binder(binderCameraPosition_);
 }
 
 
-void WorldView::setBinderLeftUpPosition(const std::function<Vec2d()>& binder) {
-	binderLeftUpPosition_ = binder;
+void WorldView::setBinderLeftUpPosition(const std::function<void(RefPtr<Vec2d>)>& binder) {
+	binder(binderLeftUpPosition_);
 }
 
 
-void WorldView::setBinderTicks(const std::function<double()>& binder) {
-	binderTricks_ = binder;
+void WorldView::setBinderTicks(const std::function<void(RefPtr<long long>)>& binder) {
+	binder(binderTricks_);
 }
 
 
-void WorldView::setBinderMaterialMatrix(const std::function<void(MaterialMatrix&)>& binder) {
-	binderMaterialMatrix_ = binder;
+void WorldView::setBinderMaterialMatrix(const std::function<void(RefPtr<MaterialMatrix>)>& binder) {
+	binder(binderMaterialMatrix_);
 }
 
 
-void WorldView::setBinderWeather(const std::function<Weather()>& binder) {
-	binderWeather_ = binder;
+void WorldView::setBinderWeather(const std::function<void(RefPtr<Weather>)>& binder) {
+	binder(binderWeather_);
 }
 
 //TODO: 实现！
 std::function<void()> WorldView::getNotificationWeatherChanged() {
 	return [&]() {
-
+		
 		//这里的代码将在Model通知该View天气发生改变
 	};
 }

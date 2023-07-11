@@ -15,33 +15,33 @@ void PlayerView::setCommandScrollMouseWheel(const std::function<void(double)>& c
 }
 
 //TODO: 实现！
-void PlayerView::setBinderLocation(const std::function<Vec2d()>& binder) {
-
+void PlayerView::setBinderPosition(const std::function<void(RefPtr<Vec2d>)>& binder) {
+    binder(binderPosition_);
 }
 
 //TODO: 实现！
-void PlayerView::setBinderDirection(const std::function<Vec2d()>& binder) {
-
+void PlayerView::setBinderDirection(const std::function<void(RefPtr<Vec2d>)>& binder) {
+    binder(binderDirection_);
 }
 
 //TODO: 实现！
-void PlayerView::setBinderCurrentSlot(const std::function<int()>& binder) {
-
+void PlayerView::setBinderCurrentSlot(const std::function<void(RefPtr<int>)>& binder) {
+    binder(binderSlot_);
 }
 
 //TODO: 实现！
-void PlayerView::setBinderVelocity(const std::function<Vec2d()>& binder) {
-
+void PlayerView::setBinderVelocity(const std::function<void(RefPtr<Vec2d>)>& binder) {
+    binder(binderVelocity_);
 }
 
 //TODO: 实现！
-void PlayerView::setBinderSneaking(const std::function<bool()>& binder) {
-
+void PlayerView::setBinderSneaking(const std::function<void(RefPtr<bool>)>& binder) {
+    binder(binderSneak_);
 }
 
 //TODO: 实现！
-void PlayerView::setBinderBreakingProgress(const std::function<double()>& binder) {
-
+void PlayerView::setBinderBreakingProgress(const std::function<void(RefPtr<double>)>& binder) {
+    binder(binderBreakingProgress_);
 }
 
 //TODO: 实现！

@@ -28,10 +28,10 @@ WorldViewModel::WorldViewModel(Player *player) : player_(player) {
             if(e2!= nullptr && e2->getObject() == player_ ){
                 if(e2->getField()==Field::ENTITY_POSITION){
                     cameraPosition_ = player_->getLocation().toVec2d();
-                    leftUpPosition_ = Vec2d(cameraPosition_.getBlockX(),cameraPosition_.getBlockY());
-                    leftUpPosition_.add((int)std::floor(-MaterialMatrix::MAX_COLUMN/2),(int)std::floor(MaterialMatrix::MAX_ROW*0.618));
-                    int x = leftUpPosition_.getBlockX();
-                    int y = leftUpPosition_.getBlockY()-1;
+                    Vec2d leftUpPosition(cameraPosition_.getBlockX(),cameraPosition_.getBlockY());
+                    leftUpPosition.add((int)std::floor(-MaterialMatrix::MAX_COLUMN/2),(int)std::floor(MaterialMatrix::MAX_ROW*0.618));
+                    int x = leftUpPosition.getBlockX();
+                    int y = leftUpPosition.getBlockY()-1;
                     for(int i = 0; i < MaterialMatrix::MAX_COLUMN; i++) {
                         for (int j = 0; j < MaterialMatrix::MAX_ROW; j++) {
                             for (int k = 0; k <= 1; k++) {
@@ -85,6 +85,14 @@ std::function<void(RefPtr<Weather>)> WorldViewModel::getBinderWeather() {
 
 void WorldViewModel::setNotificationWeatherChanged(const std::function<void()> &notificationWeatherChanged) {
     notificationWeatherChanged_ = notificationWeatherChanged;
+}
+
+void WorldViewModel::update() {
+    auto world = getWorld();
+    cameraPosition_ = player_->getLocation().toVec2d();
+    leftUpPosition_ = Vec2d(cameraPosition_.getBlockX(),cameraPosition_.getBlockY());
+    leftUpPosition_.add((int)std::floor(-MaterialMatrix::MAX_COLUMN/2),(int)std::floor(MaterialMatrix::MAX_ROW*0.618));
+
 }
 
 //void WorldViewModel::setNotificationMaterialMatrixUpdated(const std::function<void()> &notificationMaterialMatrixUpdated) {
