@@ -97,7 +97,7 @@ public:
 		textures[Material::AIR] = nullptr;
 		SDL_FreeSurface(pic);
 		tempString = TEXTURES_PATH;
-		tempString.append("block/azalea_top.png");
+		tempString.append("block/grass_block_side.png");
 		pic = IMG_Load(tempString.c_str());
 		textures[Material::GRASS] = SDL_CreateTextureFromSurface(renderer, pic);
 		SDL_FreeSurface(pic);
@@ -107,7 +107,7 @@ public:
 		textures[Material::BED_ROCK] = SDL_CreateTextureFromSurface(renderer, pic);
 		SDL_FreeSurface(pic);
 		tempString = TEXTURES_PATH;
-		tempString.append("painting/water.png");
+		tempString.append("block/mywater.png");
 		pic = IMG_Load(tempString.c_str());
 		textures[Material::WATER] = SDL_CreateTextureFromSurface(renderer, pic);
 		SDL_FreeSurface(pic);
@@ -209,9 +209,7 @@ private:
 class WorldView {
 public:
 	WorldView() : windowWidth(1280), windowHeight(768), blockSize(32), renderer(nullptr), blockTexture(nullptr), backgroundTexture(nullptr), environmentTexture(nullptr), gui(GUI::HOME) {}
-	void display();//display the graph, including world and player
 	void drawMap();//draw the map as location as the center
-	void draw();//draw the graph on the renderer
 	void drawPlayer(int action);
 	void drawRain(double v);
 	void drawBackground();

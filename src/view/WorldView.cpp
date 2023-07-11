@@ -1,94 +1,6 @@
 #include "view/WorldView.h"
 
-void WorldView::display() {
-	//SDL_Init(SDL_INIT_EVERYTHING);
-	//SDL_Surface* pic = nullptr, * screen = nullptr;
-	//SDL_Window* window = SDL_CreateWindow("FlatCraft", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_SHOWN);//create window
-	//renderer = SDL_CreateRenderer(window, -1, 0);
-	//SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-	//blockTexture = new BlockTexture(renderer);
-	//backgroundTexture = new BackgroundTexture(renderer);
-	//environmentTexture = new EnvironmentTexture(renderer);
-	//guiTexture = new GuiTexture(renderer);
-	//characterTexture = new CharacterTexture(renderer);
-	////	PlayerController* playerController = &PlayerController::instance_;
-	//SDL_Event my_event;
-	//KeyState keyState;
-	//Vec2d clickPosition;
-	//int mx, my;
-	//while (!graphFinish) {
-	//	calculate();
-	//	while (SDL_PollEvent(&my_event) != 0) {
-	//		SDL_GetMouseState(&mx, &my);
-	//		clickPosition.setX(cameraPosition_.getX() + (mx - 640.0) / 32);
-	//		clickPosition.setY(cameraPosition_.getY() - (my - 768 * 0.618) / 32);
-	//		playerController->setClickPosition(clickPosition);
-	//		/*std::cout << clickPosition.getX() << "  " << clickPosition.getY() << std::endl;*/
-	//		if (my_event.type == SDL_QUIT) {
-	//			graphFinish = true;
-	//		}
-	//		else if (my_event.type == SDL_KEYDOWN || my_event.type == SDL_KEYUP) {
-	//			if (my_event.type == SDL_KEYDOWN)
-	//				keyState = KeyState::DOWN;
-	//			else
-	//				keyState = KeyState::UP;
-	//			switch (my_event.key.keysym.sym) {
-	//			case SDLK_w: {
-	//				playerController->setKeyState(Key::UP, keyState);
-	//				break;
-	//			}
-	//			case SDLK_s: {
-	//				playerController->setKeyState(Key::DOWN, keyState);
-	//				break;
-	//			}
-	//			case SDLK_a: {
-	//				playerController->setKeyState(Key::LEFT, keyState);
-	//				break;
-	//			}
-	//			case SDLK_d: {
-	//				playerController->setKeyState(Key::RIGHT, keyState);
-	//				break;
-	//			}
-	//			case SDLK_SPACE: {
-	//				playerController->setKeyState(Key::SPACE, keyState);
-	//				break;
-	//			}
-	//			case SDLK_LSHIFT:
-	//			case SDLK_RSHIFT: {
-	//				playerController->setKeyState(Key::SHIFT, keyState);
-	//				break;
-	//			}
-	//			case SDLK_LCTRL:
-	//			case SDLK_RCTRL: {
-	//				playerController->setKeyState(Key::CTRL, keyState);
-	//				break;
-	//			}
 
-	//			}
-	//		}
-	//		else if (my_event.type == SDL_MOUSEBUTTONDOWN || my_event.type == SDL_MOUSEBUTTONUP) {
-	//			if (my_event.type == SDL_MOUSEBUTTONDOWN)
-	//				keyState = KeyState::DOWN;
-	//			else
-	//				keyState = KeyState::UP;
-	//			if (SDL_BUTTON_LEFT == my_event.button.button) {
-	//				playerController->setKeyState(Key::LEFT_CLICK, keyState);
-	//				//SDL_GetMouseState(&mx, &my);
-	//				//std::cout << mx << " " << my << std::endl;
-
-	//			}
-	//			else if (SDL_BUTTON_RIGHT == my_event.button.button) {
-	//				playerController->setKeyState(Key::RIGHT_CLICK, keyState);
-	//			}
-
-	//		}
-	//	}
-	//	//clear before image in renderer
-	//	SDL_RenderClear(renderer);
-	//	draw();
-	//	SDL_RenderPresent(renderer); //output image
-	//}
-}
 
 void WorldView::drawHome() {
 	//SDL_Texture* texture;
@@ -100,21 +12,7 @@ void WorldView::drawHome() {
 	//SDL_RenderCopy(renderer, texture, NULL, &rect);
 }
 
-void WorldView::draw() {
-	//switch (gui) {
-	//case GUI::HOME:
-	//	//		drawHome();
-	//	//		break;
-	//case GUI::GAME:
 
-	//	drawBackground();
-	//	drawRain();
-	//	drawMap();
-	//	drawPlayer();
-	//	drawItemBar();
-	//	break;
-	//}
-}
 
 void WorldView::drawItemBar() {
 	//SDL_Texture* texture;
@@ -207,7 +105,7 @@ void WorldView::drawBackground() {
 	double k = 1.0 * abs(ticks - 12000) / 12000;
 	k = 0.2;
 	while (rect.y < 770) {
-		value = (255 - (int)wy) / 192;
+		value = (255 - (int)wy) / 255;
 		r = int(135 + value * 120);
 		g = int(206 + value * 49);
 		b = int(235 + value * 20);
@@ -284,15 +182,19 @@ void WorldView::drawMap() {
 	int i, j;
 	SDL_Rect tempRect = leftUpRect;
 	Material material;
+	static SDL_Rect srcRect = {0, 0, 16, 16};
+	
 	for (i = 0; i < 42; i++) {
 		tempRect.y = leftUpRect.y;
 		for (j = 0; j < 28; j++) {
 			material = materials_[i][j][1];
 			texture = backgroundTexture->getTexture(material);
-			SDL_RenderCopy(renderer, texture, NULL, &tempRect);
+			SDL_RenderCopy(renderer, texture, &srcRect, &tempRect);
 			material = materials_[i][j][0];
+			if(i == 23 && j == 14)
+			material = Material::WATER;
 			texture = blockTexture->getTexture(material);
-			SDL_RenderCopy(renderer, texture, NULL, &tempRect);
+			SDL_RenderCopy(renderer, texture, &srcRect, &tempRect);
 			tempRect.y += blockSize;
 		}
 		tempRect.x += blockSize;
