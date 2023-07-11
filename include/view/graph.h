@@ -32,9 +32,11 @@ public:
     PlayerView &getPlayerView();
 
 private:
+	int mx, my;
 	SDL_Renderer* renderer_ = nullptr;
 	WorldView worldView_;
 	PlayerView playerView_;
+	SDL_Rect mouseBlockRect_;
 
 };
 

@@ -46,6 +46,7 @@ public:
     Vec2d* binderVelocity_;
     bool* binderSneak_;
     double* binderBreakingProgress_;
+    bool isDigging;
 };
 
 #endif

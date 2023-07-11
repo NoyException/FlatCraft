@@ -69,7 +69,9 @@ std::function<void()> PlayerView::getNotificationCurrentSlotChanged() {
 
 //TODO: 实现！
 std::function<void()> PlayerView::getNotificationBreakingProgressChanged() {
-    return [&]() {};
+    return [&]() {
+        isDigging = true;
+    };
 }
 
 //TODO: 实现！

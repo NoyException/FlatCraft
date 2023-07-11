@@ -88,23 +88,23 @@ void World::getEntities(std::vector<Entity*> &entities, bool (*filter)(const Ent
 }
 
 void World::init() {
-    WorldGenerator generator;
-    generator.generate(*this);
-//    for(int i=-128;i<=128;i++){
-//        for(int j=0;j<256;j++){
-//            int hash = (i<<11)^(j<<1);
-//            Material m;
-//            if(j==0) m = Material::BED_ROCK;
-//            else if(j<48) m = Material::STONE;
-//            else if(j<63) m = Material::DIRT;
-//            else if(j==63) m = Material::GRASS;
-//            else m = Material::AIR;
-//            if(m==Material::GRASS && i%2) m=Material::STONE;
-//            blocks_[hash] = std::make_unique<Block>(m,Location(name_,i,j),false);
-//            blocks_[hash^1] = std::make_unique<Block>(m,Location(name_,i,j),true);
-//        }
-//    }
-//    setBlock(5,64, true,Material::DIRT);
+    //WorldGenerator generator;
+    //generator.generate(*this);
+    for(int i=-128;i<=128;i++){
+        for(int j=0;j<256;j++){
+            int hash = (i<<11)^(j<<1);
+            Material m;
+            if(j==0) m = Material::BED_ROCK;
+            else if(j<48) m = Material::STONE;
+            else if(j<63) m = Material::DIRT;
+            else if(j==63) m = Material::GRASS;
+            else m = Material::AIR;
+            if(m==Material::GRASS && i%2) m=Material::STONE;
+            blocks_[hash] = std::make_unique<Block>(m,Location(name_,i,j),false);
+            blocks_[hash^1] = std::make_unique<Block>(m,Location(name_,i,j),true);
+        }
+    }
+    setBlock(5,64, true,Material::DIRT);
 }
 
 std::unique_ptr<RayTraceResult> World::rayTrace(const Vec2d& startPoint, const Vec2d &direction,

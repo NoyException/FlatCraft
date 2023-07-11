@@ -19,11 +19,10 @@ void Window::start() {
 	SDL_Event my_event;
 	KeyState keyState;
 	Vec2d clickPosition;
-	int mx, my;
 	while (!graphFinish) {
+		SDL_GetMouseState(&mx, &my);
 		worldView_.calculate();
 		while (SDL_PollEvent(&my_event) != 0) {
-			SDL_GetMouseState(&mx, &my);
 			clickPosition.setX(worldView_.binderCameraPosition_->getX() + (mx - 640.0) / 32);
 			clickPosition.setY(worldView_.binderCameraPosition_->getY() - (my - 768 * 0.618) / 32);
 			playerView_.commandChangeCursorPosition_(clickPosition);
@@ -103,6 +102,14 @@ void Window::draw() {
 	worldView_.drawBackground();
 	worldView_.drawRain(playerView_.binderVelocity_->getX());
 	worldView_.drawMap();
+	if (playerView_.isDigging) {
+		if (*playerView_.binderBreakingProgress_ < 0.1)
+			playerView_.isDigging = false;
+		mouseBlockRect_.x = (worldView_.leftUpRect.x + (mx- worldView_.leftUpRect.x)/32*32);
+		mouseBlockRect_.y = (worldView_.leftUpRect.y + (my- worldView_.leftUpRect.y)/32*32);
+		mouseBlockRect_.w = mouseBlockRect_.h = 32;
+		worldView_.drawCrack(*playerView_.binderBreakingProgress_, &mouseBlockRect_);
+	}
 	worldView_.drawPlayer(3);
 	worldView_.drawItemBar();
 }

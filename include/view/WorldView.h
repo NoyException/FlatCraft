@@ -111,15 +111,30 @@ public:
 		pic = IMG_Load(tempString.c_str());
 		textures[Material::WATER] = SDL_CreateTextureFromSurface(renderer, pic);
 		SDL_FreeSurface(pic);
+		cracks.resize(10);
+		MYLOAD("block/destroy_stage_0.png", cracks[0]);
+		MYLOAD("block/destroy_stage_1.png", cracks[1]);
+		MYLOAD("block/destroy_stage_2.png", cracks[2]);
+		MYLOAD("block/destroy_stage_3.png", cracks[3]);
+		MYLOAD("block/destroy_stage_4.png", cracks[4]);
+		MYLOAD("block/destroy_stage_5.png", cracks[5]);
+		MYLOAD("block/destroy_stage_6.png", cracks[6]);
+		MYLOAD("block/destroy_stage_7.png", cracks[7]);
+		MYLOAD("block/destroy_stage_8.png", cracks[8]);
+		MYLOAD("block/destroy_stage_9.png", cracks[9]);
 	}
 	inline SDL_Texture* getTexture(Material material) {
 		if (textures.find(material) == textures.end())
 			return textures[Material::STONE];
 		return textures[material];
 	}
+	SDL_Texture* getCrack(int process) {
+		return cracks[process];
+	}
 private:
 	std::unordered_map<Material, SDL_Texture*> textures;
 	SDL_Renderer* renderer;
+	std::vector<SDL_Texture*> cracks;
 };
 
 class BackgroundTexture {//store the texutre of some background blocks to save time
@@ -215,6 +230,7 @@ public:
 	void drawBackground();
 	void drawItemBar();
 	void drawHome();
+	void drawCrack(double process, SDL_Rect* rect);
 
 	void setBinderCameraPosition(const std::function<void(RefPtr<Vec2d>)>& binder);
 

@@ -206,6 +206,8 @@ void WorldView::drawMap() {
 }
 
 void WorldView::drawRain(double v) {
+	if (*binderWeather_ == Weather::CLEAR)
+		return;
 	SDL_Texture* texture = environmentTexture->getRain();
 	SDL_Rect rect;
 	SDL_Rect rainRect;
@@ -230,6 +232,13 @@ void WorldView::drawRain(double v) {
 	if (rainX > 300 || rainX < -300)
 		rainX = 0;
 	SDL_RenderCopy(renderer, texture, &rainRect, &rect);
+}
+
+void WorldView::drawCrack(double process, SDL_Rect* rect) {
+	int theProcess = (int)(process * 10);
+	SDL_Texture* texture = blockTexture->getCrack(theProcess);
+	SDL_RenderCopy(renderer, texture, NULL, rect);
+
 }
 
 void WorldView::setBinderCameraPosition(const std::function<void(RefPtr<Vec2d>)>& binder) {
