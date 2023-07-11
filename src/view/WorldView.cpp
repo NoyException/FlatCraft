@@ -358,7 +358,7 @@ void WorldView::setBinderWeather(const std::function<Weather()>& binder) {
 //TODO: 实现！
 std::function<void()> WorldView::getNotificationWeatherChanged() {
 	return [&]() {
-
+		
 		//这里的代码将在Model通知该View天气发生改变
 	};
 }
