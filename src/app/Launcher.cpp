@@ -17,10 +17,10 @@ void Launcher::start() {
     game_->createSave("testSave3");
     //game_->loadSave()
     playerViewModel_ = new PlayerViewModel(game_->getPlayer());
-    Binder::bindPlayer(*window_->getPlayerView(), *playerViewModel_);
+    Binder::bindPlayer(window_->getPlayerView(), *playerViewModel_);
 
     worldViewModel_ = new WorldViewModel(game_->getPlayer());
-    Binder::bindWorld(*window_->getWorldView(), *worldViewModel_);
+    Binder::bindWorld(window_->getWorldView(), *worldViewModel_);
     std::cout << "Game starting" << std::endl;
     game_->start();
     std::cout << "Game started" << std::endl;

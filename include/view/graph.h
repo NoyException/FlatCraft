@@ -8,29 +8,31 @@ void control();
 
 class DestroyBlock {
 public:
-	DestroyBlock() : flag(false), x(0), y(0), progress(0) {}
-	inline void setFlag(bool flag) { this->flag = flag;  }
-	inline void setXY(int x, int y) { this->x = x, this->y = y; }
-	inline void setProgress(int progress) { this->progress = progress; }
-	inline bool getFlag() { return flag; }
-	inline int getX() const { return x; }
-	inline int getY() const { return y; }
-	inline int getProgress() const { return progress; }
+	DestroyBlock() : flag_(false), x_(0), y_(0), progress_(0) {}
+	inline void setFlag(bool flag) { this->flag_ = flag;  }
+	inline void setXY(int x, int y) { this->x_ = x, this->y_ = y; }
+	inline void setProgress(int progress) { this->progress_ = progress; }
+	inline bool getFlag() { return flag_; }
+	inline int getX() const { return x_; }
+	inline int getY() const { return y_; }
+	inline int getProgress() const { return progress_; }
 private:
-	bool flag;//true means a block is being destroied
-	int x, y;//the world coordinate of the block
-	int progress;//the progress of destroying the block, from 0 to 100
+	bool flag_;//true means a block is being destroied
+	int x_, y_;//the world coordinate of the block
+	int progress_;//the progress of destroying the block, from 0 to 100
 };
 
 class Window {
 public:
-
 	void start();
-
 	void draw();
 
+    WorldView &getWorldView();
+
+    PlayerView &getPlayerView();
+
 private:
-	SDL_Renderer* renderer;
+	SDL_Renderer* renderer_ = nullptr;
 	WorldView worldView_;
 	PlayerView playerView_;
 

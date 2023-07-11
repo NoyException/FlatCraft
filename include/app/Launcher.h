@@ -21,8 +21,7 @@ public:
 private:
     void test();
     FlatCraft* game_ = nullptr;
-    PlayerView* playerView_ = nullptr;
-    WorldView* worldView_ = nullptr;
+    Window* window_ = nullptr;
     PlayerViewModel* playerViewModel_ = nullptr;
     std::thread* viewThread_ = nullptr;
     WorldViewModel* worldViewModel_ = nullptr;

@@ -7,14 +7,14 @@ void Window::start() {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	SDL_Surface* pic = nullptr, * screen = nullptr;
 	SDL_Window* window = SDL_CreateWindow("FlatCraft", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1280, 768, SDL_WINDOW_SHOWN);//create window
-	renderer = SDL_CreateRenderer(window, -1, 0);
-	worldView_.setRenderer(renderer);
-	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-	worldView_.blockTexture = new BlockTexture(renderer);
-	worldView_.backgroundTexture = new BackgroundTexture(renderer);
-	worldView_.environmentTexture = new EnvironmentTexture(renderer);
-	worldView_.guiTexture = new GuiTexture(renderer);
-	worldView_.characterTexture = new CharacterTexture(renderer);
+	renderer_ = SDL_CreateRenderer(window, -1, 0);
+	worldView_.setRenderer(renderer_);
+	SDL_SetRenderDrawBlendMode(renderer_, SDL_BLENDMODE_BLEND);
+	worldView_.blockTexture = new BlockTexture(renderer_);
+	worldView_.backgroundTexture = new BackgroundTexture(renderer_);
+	worldView_.environmentTexture = new EnvironmentTexture(renderer_);
+	worldView_.guiTexture = new GuiTexture(renderer_);
+	worldView_.characterTexture = new CharacterTexture(renderer_);
 
 	SDL_Event my_event;
 	KeyState keyState;
@@ -36,36 +36,36 @@ void Window::start() {
 				else
 					keyState = KeyState::UP;
 				switch (my_event.key.keysym.sym) {
-				case SDLK_w: {
+                    case SDLK_w: {
 
-					break;
-				}
-				case SDLK_s: {
+                        break;
+                    }
+                    case SDLK_s: {
 
-					break;
-				}
-				case SDLK_a: {
+                        break;
+                    }
+                    case SDLK_a: {
 
-					break;
-				}
-				case SDLK_d: {
+                        break;
+                    }
+                    case SDLK_d: {
 
-					break;
-				}
-				case SDLK_SPACE: {
+                        break;
+                    }
+                    case SDLK_SPACE: {
 
-					break;
-				}
-				case SDLK_LSHIFT:
-				case SDLK_RSHIFT: {
+                        break;
+                    }
+                    case SDLK_LSHIFT:
+                    case SDLK_RSHIFT: {
 
-					break;
-				}
-				case SDLK_LCTRL:
-				case SDLK_RCTRL: {
+                        break;
+                    }
+                    case SDLK_LCTRL:
+                    case SDLK_RCTRL: {
 
-					break;
-				}
+                        break;
+                    }
 
 				}
 			}
@@ -87,9 +87,9 @@ void Window::start() {
 			}
 		}
 		//clear before image in renderer
-		SDL_RenderClear(renderer);
+		SDL_RenderClear(renderer_);
 		draw();
-		SDL_RenderPresent(renderer); //output image
+		SDL_RenderPresent(renderer_); //output image
 	}
 }
 
@@ -100,5 +100,13 @@ void Window::draw() {
 	//worldView_.drawMap();
 	//worldView_.drawPlayer();
 	//worldView_.drawItemBar();
+}
+
+WorldView &Window::getWorldView() {
+    return worldView_;
+}
+
+PlayerView &Window::getPlayerView() {
+    return playerView_;
 }
 
