@@ -127,7 +127,6 @@ void Player::setSneaking(bool sneaking) {
 }
 
 void Player::tryToBreak(const Vec2d &position) {
-    bool resetBreakingProgress = true;
     auto world = getWorld();
     auto block = world->getBlock(position, true);
     Vec2d start = location_.toVec2d() + Vec2d(0,0.9);
@@ -137,27 +136,31 @@ void Player::tryToBreak(const Vec2d &position) {
                                [](Material){return true;}, [&](Entity* entity){
         return entity!=this;
     });
-    if(res!=nullptr && (res->getHitPoint()->toBlockLocation().toVec2d()-start).lengthSquared() <
+    if(res!=nullptr && res->getHitBlock()!=block && (res->getHitPoint()->toBlockLocation().toVec2d()-start).lengthSquared() <
                                (block->getLocation().toVec2d()-start).lengthSquared()) return;
 
     if (MaterialHelper::isAir(block->getMaterial()) || MaterialHelper::isLiquid(block->getMaterial()))
         block = world->getBlock(position, false);
-    if (block != nullptr) {
+    if (block != nullptr && !MaterialHelper::isAir(block->getMaterial())
+    && !MaterialHelper::isLiquid(block->getMaterial())) {
         if (block == lastBreaking_) {
             double hardness = MaterialHelper::getHardness(block->getMaterial());
+            std::cout<<hardness<<" "<<breakingProgress_<<std::endl;
             if (hardness > 0) breakingProgress_ += 0.05 / hardness;
             if (hardness == 0) breakingProgress_ = 1;
             if (hardness < 0) breakingProgress_ = 0;
             if (breakingProgress_ > 1.0) breakingProgress_ = 1.0;
-            if (breakingProgress_ == 1.0) {
+            if (breakingProgress_ >= 1.0) {
                 block->setMaterial(Material::AIR);
+                breakingProgress_ = 0;
             }
-            resetBreakingProgress = false;
-
             setDirection(direction);
-        } else lastBreaking_ = block;
+        }
+        else {
+            lastBreaking_ = block;
+            breakingProgress_ = 0;
+        }
     }
-    if(resetBreakingProgress) breakingProgress_ = 0;
 }
 
 int Player::getCurrentSlot() const {

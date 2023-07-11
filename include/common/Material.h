@@ -29,8 +29,9 @@ enum class MaterialFlag{
 
 class MaterialInfo{
 public:
-    static MaterialInfo deserialize(const nlohmann::json& json);
+    static MaterialInfo deserialize(const std::string& name, const nlohmann::json& json);
     int id_{};
+    std::string name_{};
     int maxStacks_{};
     double hardness_{};
     double antiExplosion_{};
@@ -44,6 +45,7 @@ class MaterialHelper{
 public:
     static void registerAllMaterials();
     static MaterialInfo *getInfo(Material material);
+    static std::string getName(Material material);
     static bool containsFlag(Material material, MaterialFlag flag);
     static bool isOccluded(Material material);
     static bool isSolid(Material material);

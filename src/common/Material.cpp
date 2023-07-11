@@ -7,7 +7,7 @@
 #include <fstream>
 #include "Material.h"
 
-MaterialInfo MaterialInfo::deserialize(const nlohmann::json &json) {
+MaterialInfo MaterialInfo::deserialize(const std::string& name, const nlohmann::json &json) {
     int id = json.at("id").get<int>();
     int maxStacks = json.at("max_stacks").get<int>();
     double hardness = json.at("hardness").get<double>();
@@ -24,6 +24,7 @@ MaterialInfo MaterialInfo::deserialize(const nlohmann::json &json) {
     for (const auto &item: tools){
         info.tools_.insert(item);
     }
+    info.name_ = name;
     return info;
 }
 
@@ -38,7 +39,7 @@ void MaterialHelper::registerMaterial(const std::string& name){
         std::string s((std::istreambuf_iterator<char> (in)), (std::istreambuf_iterator<char> ()));
         in.close();
         if(!s.empty()){
-            MaterialInfo info = MaterialInfo::deserialize(nlohmann::json::parse(s));
+            MaterialInfo info = MaterialInfo::deserialize(name, nlohmann::json::parse(s));
             byId.emplace(info.id_,std::move(info));
         }
     }
@@ -59,6 +60,10 @@ MaterialInfo *MaterialHelper::getInfo(Material material) {
     auto it = byId.find(static_cast<int>(material));
     if(it == byId.end()) return nullptr;
     return &it->second;
+}
+
+std::string MaterialHelper::getName(Material material) {
+    return getInfo(material)->name_;
 }
 
 bool MaterialHelper::containsFlag(Material material, MaterialFlag flag) {
