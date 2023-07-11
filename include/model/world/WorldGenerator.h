@@ -19,8 +19,6 @@ public:
     void generateTree(double start,int width,int treeSeed,World& world,double *noise);
     bool haveTree(double x,double *noise,int treeSeed);
     int *generateHash(int seed);
-
-private:;;
 };
 
 

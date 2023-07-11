@@ -88,9 +88,9 @@ void World::getEntities(std::vector<Entity*> &entities, bool (*filter)(const Ent
 }
 
 void World::init() {
-//    WorldGenerator generator;
-//    generator.generate(*this);
-    for(int i=-128;i<=128;i++){
+      WorldGenerator generator;
+      generator.generate(*this);
+    /*for(int i=-128;i<=128;i++){
         for(int j=0;j<256;j++){
             int hash = (i<<11)^(j<<1);
             Material m;
@@ -109,7 +109,7 @@ void World::init() {
             setBlock(i,j,true,Material::WATER);
             setBlock(i,j,false,Material::WATER);
         }
-    }
+    }*/
 //    setBlock(4,64, true,Material::DIRT);
 //    setBlock(4,64, false,Material::WATER);
 //    setBlock(5,64, true,Material::DIRT);
