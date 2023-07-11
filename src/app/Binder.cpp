@@ -17,7 +17,7 @@ void Binder::bindPlayer(PlayerView &view, PlayerViewModel &viewModel) {
     view.setCommandChangeCursorPosition(viewModel.getCommandChangeCursorPosition());
     view.setCommandChangeKeyState(viewModel.getCommandChangeKeyState());
     view.setCommandScrollMouseWheel(viewModel.getCommandScrollMouseWheel());
-    view.setBinderLocation(viewModel.getBinderLocation());
+    view.setBinderPosition(viewModel.getBinderPosition());
     view.setBinderDirection(viewModel.getBinderDirection());
     view.setBinderVelocity(viewModel.getBinderVelocity());
     view.setBinderCurrentSlot(viewModel.getBinderCurrentSlot());
