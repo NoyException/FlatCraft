@@ -18,7 +18,7 @@ public:
     void generateMaterial(double start,int width,int octaves, double persistence,double frequency,double amplitude ,int minY,Material,World& world);
     void generateTree(double start,int width,int treeSeed,World& world,double *noise);
     bool haveTree(double x,double *noise,int treeSeed);
-    int *generateHash(int seed);
+    int *generateHash(int seed)；
 };
 
 

@@ -135,9 +135,9 @@ void WorldGenerator::generateTree(double start,int width,int treeSeed,World& wor
 }
 
 bool WorldGenerator::haveTree(double x,double *noise,int treeSeed) {
-    int *hash= generateHash(treeSeed);
-    double addr = perlin(hash,x, 4,0.5,1,1.0,0);
-    if(addr>0.8) {
+    int *hash = generateHash(treeSeed);
+    double addr = perlin(hash, x, 4, 0.5, 1, 1.0, 0);
+    if (addr > 0.8) {
         return true;
     }
     return false;
