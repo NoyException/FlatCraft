@@ -4,7 +4,7 @@
 
 #include "model/world/World.h"
 #include "model/FlatCraft.h"
-#include "model/event/instance/normal/WorldEvent.h"
+#include "model/world/WorldGenerator.h"
 
 
 World::World(const std::string& name) : name_(name), ticks_(0), weather_(Weather::CLEAR) {
@@ -88,50 +88,23 @@ void World::getEntities(std::vector<Entity*> &entities, bool (*filter)(const Ent
 }
 
 void World::init() {
-    for(int i=-128;i<=128;i++){
-        for(int j=0;j<256;j++){
-            int hash = (i<<11)^(j<<1);
-            Material m;
-            if(j==0) m = Material::BED_ROCK;
-            else if(j<48) m = Material::STONE;
-            else if(j<63) m = Material::DIRT;
-            else if(j==63) m = Material::GRASS;
-            else m = Material::AIR;
-            if(m==Material::GRASS && i%2) m=Material::STONE;
-            blocks_[hash] = std::make_unique<Block>(m,Location(name_,i,j),false);
-            blocks_[hash^1] = std::make_unique<Block>(m,Location(name_,i,j),true);
-        }
-    }
-    setBlock(5,64, true,Material::DIRT);
-}
-
-bool isCloseToRay(const Vec2d& point, const Vec2d& startPoint, const Vec2d& direction, double maxDistance, double epsilon) {
-    // 如果direction是零向量，无法确定射线的方向，返回false
-    if (direction.getX() == 0 && direction.getY() == 0) {
-        return false;
-    }
-    // 计算点point到射线的垂足footPoint
-    // 先将射线方向单位化
-    Vec2d dir = direction;
-    dir.normalize();
-    // 然后计算点point到起点startPoint的向量
-    Vec2d vec = point - startPoint;
-    // 再计算点point在射线方向上的投影长度
-    double projLen = vec.getX() * dir.getX() + vec.getY() * dir.getY();
-    // 最后计算垂足footPoint的坐标
-    Vec2d footPoint(startPoint.getX() + projLen * dir.getX(), startPoint.getY() + projLen * dir.getY());
-
-    // 判断垂足footPoint是否在射线上，即投影长度projLen是否大于等于零且小于等于maxDistance
-    if (projLen >= -epsilon && projLen <= maxDistance+epsilon) {
-        // 计算点point到垂足footPoint的距离
-        double dist = (point.getX() - footPoint.getX()) * (point.getX() - footPoint.getX()) + (point.getY() - footPoint.getY()) * (point.getY() - footPoint.getY());
-        // 判断距离是否小于等于epsilon
-        if (dist <= epsilon*epsilon) {
-            return true;
-        }
-    }
-    // 其他情况返回false
-    return false;
+    WorldGenerator generator;
+    generator.generate(*this);
+//    for(int i=-128;i<=128;i++){
+//        for(int j=0;j<256;j++){
+//            int hash = (i<<11)^(j<<1);
+//            Material m;
+//            if(j==0) m = Material::BED_ROCK;
+//            else if(j<48) m = Material::STONE;
+//            else if(j<63) m = Material::DIRT;
+//            else if(j==63) m = Material::GRASS;
+//            else m = Material::AIR;
+//            if(m==Material::GRASS && i%2) m=Material::STONE;
+//            blocks_[hash] = std::make_unique<Block>(m,Location(name_,i,j),false);
+//            blocks_[hash^1] = std::make_unique<Block>(m,Location(name_,i,j),true);
+//        }
+//    }
+//    setBlock(5,64, true,Material::DIRT);
 }
 
 std::unique_ptr<RayTraceResult> World::rayTrace(const Vec2d& startPoint, const Vec2d &direction,
@@ -248,6 +221,8 @@ void World::run() {
     if(isRunning()) return;
     task_ = FlatCraft::getInstance()->getScheduler()->runTaskTimer([&](){
         ticks_++;
+        ValueChangedNotification notification(this,Field::WORLD_TICKS,ticks_);
+        EventManager::callEvent(notification);
     },0,0);
 }
 
@@ -278,6 +253,8 @@ void World::setWeather(Weather weather) {
     WorldWeatherChangeEvent event(this, weather);
     EventManager::callEvent(event);
     if(event.isCanceled()) return;
+    ValueChangedNotification notification(this,Field::WORLD_WEATHER,weather);
+    EventManager::callEvent(notification);
     weather_ = weather;
 }
 
