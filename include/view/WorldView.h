@@ -218,24 +218,27 @@ public:
 	void drawItemBar();
 	void drawHome();
 
-	void setBinderCameraPosition(const std::function<Vec2d()>& binder);
+	void setBinderCameraPosition(const std::function<void(RefPtr<Vec2d>)>& binder);
 
-	void setBinderLeftUpPosition(const std::function<Vec2d()>& binder);
+	void setBinderLeftUpPosition(const std::function<void(RefPtr<Vec2d>)>& binder);
 
-	void setBinderMaterialMatrix(const std::function<void(MaterialMatrix&)>& binder);
+	void setBinderMaterialMatrix(const std::function<void(RefPtr<MaterialMatrix>)>& binder);
 
-	void setBinderTicks(const std::function<double()>& binder);
+	void setBinderTicks(const std::function<void(RefPtr<long long>)>& binder);
 
-	void setBinderWeather(const std::function<Weather()>& binder);
+	void setBinderWeather(const std::function<void(RefPtr<Weather>)>& binder);
 
 	std::function<void()> getNotificationWeatherChanged();
 	
-private:
+	void setRenderer(SDL_Renderer* renderer) {
+		this->renderer = renderer;
+	}
+
 	inline void getWorldXY(int x, int y, double& wX, double& wY) {
 		wX = cameraPosition_.getX() + (x - 640.0) / 32;
 		wY = cameraPosition_.getY() - (y - 768 * 0.618) / 32;
 	}
-	inline void calculate();
+	void calculate();
 
 	int windowWidth, windowHeight;//pixel
 	int blockSize;//pixel
@@ -252,11 +255,11 @@ private:
 	long long ticks;
 	Weather weather_;
 	GUI gui;
-	std::function<Vec2d()> binderCameraPosition_;
-	std::function<Vec2d()> binderLeftUpPosition_;
-	std::function<double()> binderTricks_;
-	std::function<void(MaterialMatrix&)> binderMaterialMatrix_;
-	std::function<Weather()> binderWeather_;
+	Vec2d* binderCameraPosition_;
+	Vec2d* binderLeftUpPosition_;
+	long long* binderTricks_;
+	MaterialMatrix* binderMaterialMatrix_;
+	Weather* binderWeather_;
 
 };
 

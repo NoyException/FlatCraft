@@ -15,7 +15,7 @@ void Window::start() {
 	worldView_.environmentTexture = new EnvironmentTexture(renderer);
 	worldView_.guiTexture = new GuiTexture(renderer);
 	worldView_.characterTexture = new CharacterTexture(renderer);
-	
+
 	SDL_Event my_event;
 	KeyState keyState;
 	Vec2d clickPosition;
@@ -37,33 +37,33 @@ void Window::start() {
 					keyState = KeyState::UP;
 				switch (my_event.key.keysym.sym) {
 				case SDLK_w: {
-					
+
 					break;
 				}
 				case SDLK_s: {
-					
+
 					break;
 				}
 				case SDLK_a: {
-					
+
 					break;
 				}
 				case SDLK_d: {
-					
+
 					break;
 				}
 				case SDLK_SPACE: {
-					
+
 					break;
 				}
 				case SDLK_LSHIFT:
 				case SDLK_RSHIFT: {
-					
+
 					break;
 				}
 				case SDLK_LCTRL:
 				case SDLK_RCTRL: {
-					
+
 					break;
 				}
 
@@ -75,13 +75,13 @@ void Window::start() {
 				else
 					keyState = KeyState::UP;
 				if (SDL_BUTTON_LEFT == my_event.button.button) {
-					
+
 					//SDL_GetMouseState(&mx, &my);
 					//std::cout << mx << " " << my << std::endl;
 
 				}
 				else if (SDL_BUTTON_RIGHT == my_event.button.button) {
-					
+
 				}
 
 			}
@@ -96,8 +96,8 @@ void Window::start() {
 void Window::draw() {
 	worldView_.calculate();
 	worldView_.drawBackground();
-	worldView_.drawRain(playerView_.binderVelocity_->getX());
-	worldView_.drawMap();
+	//worldView_.drawRain(playerView_.binderVelocity_->getX());
+	//worldView_.drawMap();
 	//worldView_.drawPlayer();
 	//worldView_.drawItemBar();
 }

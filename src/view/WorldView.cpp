@@ -91,13 +91,13 @@ void WorldView::display() {
 }
 
 void WorldView::drawHome() {
-	SDL_Texture* texture;
-	texture = guiTexture->getHome();
-	SDL_Rect rect;
-	rect.x = rect.y = 0;
-	rect.w = 1280;
-	rect.h = 768;
-	SDL_RenderCopy(renderer, texture, NULL, &rect);
+	//SDL_Texture* texture;
+	//texture = guiTexture->getHome();
+	//SDL_Rect rect;
+	//rect.x = rect.y = 0;
+	//rect.w = 1280;
+	//rect.h = 768;
+	//SDL_RenderCopy(renderer, texture, NULL, &rect);
 }
 
 void WorldView::draw() {
@@ -185,7 +185,6 @@ void WorldView::calculate() {
 	leftUpRect = rect;
 	leftUpRect.x = rect.x - blockSize * ci;
 	leftUpRect.y = rect.y + blockSize * (cj);
-
 }
 void WorldView::drawBackground() {
 	/*std::string tempString = TEXTURES_PATH;
@@ -194,33 +193,33 @@ void WorldView::drawBackground() {
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, pic);*/
 	//SDL_FreeSurface(pic);
 
-	SDL_Rect rect = leftUpRect;
-	double wx = 0, wy = 0;
-	rect.w = 1400;
-	rect.h = 32;
-	getWorldXY(rect.x, rect.y, wx, wy);
-	double value;
-	int r, g, b;
-	double k = 1.0 * abs(ticks - 12000) / 12000;
-	k = 0.2;
-	while (rect.y < 770) {
-		value = (255 - (int)wy) / 192;
-		r = int(135 + value * 120);
-		g = int(206 + value * 49);
-		b = int(235 + value * 20);
-		r = r > 255 ? 255 : r;
-		g = g > 255 ? 255 : g;
-		b = b > 255 ? 255 : b;
-		//if (wy < 64) {
-		//	r = g = b = 0;
-		//}
-		SDL_SetRenderDrawColor(renderer, r, g, b, 255);
-		SDL_RenderFillRect(renderer, &rect);
-		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255 * k);
-		SDL_RenderFillRect(renderer, &rect);
-		rect.y += 32;
-		wy--;
-	}
+	//SDL_Rect rect = leftUpRect;
+	//double wx = 0, wy = 0;
+	//rect.w = 1400;
+	//rect.h = 32;
+	//getWorldXY(rect.x, rect.y, wx, wy);
+	//double value;
+	//int r, g, b;
+	//double k = 1.0 * abs(ticks - 12000) / 12000;
+	//k = 0.2;
+	//while (rect.y < 770) {
+	//	value = (255 - (int)wy) / 192;
+	//	r = int(135 + value * 120);
+	//	g = int(206 + value * 49);
+	//	b = int(235 + value * 20);
+	//	r = r > 255 ? 255 : r;
+	//	g = g > 255 ? 255 : g;
+	//	b = b > 255 ? 255 : b;
+	//	//if (wy < 64) {
+	//	//	r = g = b = 0;
+	//	//}
+	//	SDL_SetRenderDrawColor(renderer, r, g, b, 255);
+	//	SDL_RenderFillRect(renderer, &rect);
+	//	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255 * k);
+	//	SDL_RenderFillRect(renderer, &rect);
+	//	rect.y += 32;
+	//	wy--;
+	//}
 
 
 }
@@ -284,51 +283,51 @@ void WorldView::drawPlayer() {
 }
 
 void WorldView::drawMap() {
-	SDL_Texture* texture;
-	int i, j;
-	SDL_Rect tempRect = leftUpRect;
-	Material material;
-	for (i = 0; i < 42; i++) {
-		tempRect.y = leftUpRect.y;
-		for (j = 0; j < 28; j++) {
-
-			material = ( * binderMaterialMatrix_)[i][j][1];
-			texture = backgroundTexture->getTexture(material);
-			SDL_RenderCopy(renderer, texture, NULL, &tempRect);
-			material = ( * binderMaterialMatrix_)[i][j][0];
-			texture = blockTexture->getTexture(material);
-			SDL_RenderCopy(renderer, texture, NULL, &tempRect);
-			tempRect.y += blockSize;
-		}
-		tempRect.x += blockSize;
-	}
+	//SDL_Texture* texture;
+	//int i, j;
+	//SDL_Rect tempRect = leftUpRect;
+	//Material material;
+	//for (i = 0; i < 42; i++) {
+	//	tempRect.y = leftUpRect.y;
+	//	for (j = 0; j < 28; j++) {
+	//		material = materials_[i][j][1];
+	//		texture = backgroundTexture->getTexture(material);
+	//		SDL_RenderCopy(renderer, texture, NULL, &tempRect);
+	//		material = materials_[i][j][0];
+	//		texture = blockTexture->getTexture(material);
+	//		SDL_RenderCopy(renderer, texture, NULL, &tempRect);
+	//		tempRect.y += blockSize;
+	//	}
+	//	tempRect.x += blockSize;
+	//}
 }
 
-void WorldView::drawRain(double v) {
-	SDL_Texture* texture = environmentTexture->getRain();
-	SDL_Rect rect;
-	SDL_Rect rainRect;
-	static int rainY = -400;
-	static int rainX = 0;
-	if (v > 0)
-		rainX += 1;
-	else if (v < 0)
-		rainX -= 1;
-	rect.x = 0;
-	rect.y = rainY;
-	rect.w = 1280;
-	rect.h = 1000;
-	rainRect.x = 320 + rainX;
-	rainRect.y = 0;
-	rainRect.w = 1280;
-	rainRect.h = 768;
-	rainY += 2;
+void WorldView::drawRain() {
+	//SDL_Texture* texture = environmentTexture->getRain();
+	//SDL_Rect rect;
+	//SDL_Rect rainRect;
+	//static int rainY = -400;
+	//static int rainX = 0;
+	//double v = PlayerModel::instance_.velocity_.getX();//ËÙ¶È
+	//if (v > 0)
+	//	rainX += 1;
+	//else if (v < 0)
+	//	rainX -= 1;
+	//rect.x = 0;
+	//rect.y = rainY;
+	//rect.w = 1280;
+	//rect.h = 1000;
+	//rainRect.x = 320 + rainX;
+	//rainRect.y = 0;
+	//rainRect.w = 1280;
+	//rainRect.h = 768;
+	//rainY += 2;
 
-	if (rainY > 0)
-		rainY = -200;
-	if (rainX > 300 || rainX < -300)
-		rainX = 0;
-	SDL_RenderCopy(renderer, texture, &rainRect, &rect);
+	//if (rainY > 0)
+	//	rainY = -200;
+	//if (rainX > 300 || rainX < -300)
+	//	rainX = 0;
+	//SDL_RenderCopy(renderer, texture, &rainRect, &rect);
 }
 
 void WorldView::setBinderCameraPosition(const std::function<void(RefPtr<Vec2d>)>& binder) {

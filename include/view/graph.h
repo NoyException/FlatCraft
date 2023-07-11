@@ -22,7 +22,19 @@ private:
 	int progress;//the progress of destroying the block, from 0 to 100
 };
 
-//TODO: 建立PlayerView.h/cpp
+class Window {
+public:
+
+	void start();
+
+	void draw();
+
+private:
+	SDL_Renderer* renderer;
+	WorldView worldView_;
+	PlayerView playerView_;
+
+};
 
 
 #endif
