@@ -183,18 +183,22 @@ void WorldView::drawMap() {
 	SDL_Rect tempRect = leftUpRect;
 	Material material;
 	static SDL_Rect srcRect = {0, 0, 16, 16};
-	
+	static long long waterTick = 0;
+	if (*binderTicks_ - waterTick >= 2) {
+		waterTick = *binderTicks_;
+		srcRect.y += 16;
+		if (srcRect.y >= 498)
+			srcRect.y = 0;
+	}
 	for (i = 0; i < 42; i++) {
 		tempRect.y = leftUpRect.y;
 		for (j = 0; j < 28; j++) {
 			material = materials_[i][j][1];
 			texture = backgroundTexture->getTexture(material);
-			SDL_RenderCopy(renderer, texture, &srcRect, &tempRect);
+			SDL_RenderCopy(renderer, texture, material == Material::WATER? &srcRect: NULL, & tempRect);
 			material = materials_[i][j][0];
-			if(i == 23 && j == 14)
-			material = Material::WATER;
 			texture = blockTexture->getTexture(material);
-			SDL_RenderCopy(renderer, texture, &srcRect, &tempRect);
+			SDL_RenderCopy(renderer, texture, material == Material::WATER ? &srcRect : NULL, &tempRect);
 			tempRect.y += blockSize;
 		}
 		tempRect.x += blockSize;
