@@ -12,7 +12,7 @@ class EntityViewModel {
 public:
     explicit EntityViewModel(Entity* entity);
 
-    std::function<void(RefPtr<Vec2d>)> getBinderLocation();
+    std::function<void(RefPtr<Vec2d>)> getBinderPosition();
     std::function<void(RefPtr<Vec2d>)> getBinderDirection();
     std::function<void(RefPtr<Vec2d>)> getBinderVelocity();
 

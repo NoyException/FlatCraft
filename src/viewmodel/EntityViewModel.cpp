@@ -28,7 +28,7 @@ EntityViewModel::EntityViewModel(Entity *entity) : entity_(entity) {
     });
 }
 
-std::function<void(RefPtr<Vec2d>)> EntityViewModel::getBinderLocation() {
+std::function<void(RefPtr<Vec2d>)> EntityViewModel::getBinderPosition() {
     return [&](RefPtr<Vec2d> ptr){
         ptr.pointTo(position_);
     };
