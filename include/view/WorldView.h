@@ -212,8 +212,8 @@ public:
 	void display();//display the graph, including world and player
 	void drawMap();//draw the map as location as the center
 	void draw();//draw the graph on the renderer
-	void drawPlayer();
-	void drawRain();
+	void drawPlayer(int action);
+	void drawRain(double v);
 	void drawBackground();
 	void drawItemBar();
 	void drawHome();
@@ -234,9 +234,9 @@ public:
 		this->renderer = renderer;
 	}
 
-	inline void getWorldXY(int x, int y, double& wX, double& wY) {
-		wX = cameraPosition_.getX() + (x - 640.0) / 32;
-		wY = cameraPosition_.getY() - (y - 768 * 0.618) / 32;
+	void getWorldXY(int x, int y, double& wX, double& wY) {
+		wX = binderCameraPosition_->getX() + (x - 640.0) / 32;
+		wY = binderCameraPosition_->getY() - (y - 768 * 0.618) / 32;
 	}
 	void calculate();
 
@@ -257,7 +257,7 @@ public:
 	GUI gui;
 	Vec2d* binderCameraPosition_;
 	Vec2d* binderLeftUpPosition_;
-	long long* binderTricks_;
+	long long* binderTicks_;
 	MaterialMatrix* binderMaterialMatrix_;
 	Weather* binderWeather_;
 
