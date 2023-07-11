@@ -24,7 +24,7 @@ friction_(true), gravity_(true){
         }
         else {
             if(gravity_){
-                velocity_.add(0, -0.02);
+                velocity_.add(0, -0.025);
             }
         }
         velocity_.adjust();
@@ -102,8 +102,7 @@ void Entity::move(const Vec2d &v) {
     dv.adjust();
     auto aabb = getBoundingBox();
     Vec2d start = location_.toVec2d()+Vec2d(0,aabb.getHeight()/2);
-    auto res = getWorld()->rayTrace(start,dv,dv.length(),aabb.getWidth()/2,aabb.getHeight()/2,false,
-                                   [](Material material){return true;},[](Entity* entity){return false;});
+    auto res = getWorld()->rayTrace(start,dv,dv.length(),aabb.getWidth()/2,aabb.getHeight()/2);
     if(res==nullptr){
        location_.add(dv);
     }
@@ -160,8 +159,7 @@ bool Entity::isCollided(BoundingBox::Face face) const {
     }
     if(abs(d-std::round(d))>0.000001) return false;
     Vec2d start = location_.toVec2d() + Vec2d(0,aabb.getHeight()/2);
-    auto res = getWorld()->rayTrace(start,dir,0.000001,aabb.getWidth()/2,aabb.getHeight()/2,false,
-                                    [](Material material){return true;},[](Entity* entity){return false;});
+    auto res = getWorld()->rayTrace(start,dir,0.000001,aabb.getWidth()/2,aabb.getHeight()/2);
     return res!= nullptr;
 }
 
