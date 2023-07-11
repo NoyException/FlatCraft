@@ -13,7 +13,7 @@ file(GLOB_RECURSE SRC_LIST
         )
 
 # 指定生成目标
-add_executable(${PROJECT_NAME} ${SRC_LIST})
+add_executable(${PROJECT_NAME} ${SRC_LIST} "view/PlayerView.cpp")
 
 target_link_libraries(${PROJECT_NAME} PRIVATE third_party)
 # 指定安装图片资源到目录
