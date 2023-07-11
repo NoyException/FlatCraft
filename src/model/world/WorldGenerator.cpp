@@ -138,8 +138,10 @@ bool WorldGenerator::haveTree(double x,double *noise,int treeSeed) {
     int *hash = generateHash(treeSeed);
     double addr = perlin(hash, x, 4, 0.5, 1, 1.0, 0);
     if (addr > 0.8) {
+        delete []hash;
         return true;
     }
+    delete[] hash;
     return false;
 }
 
