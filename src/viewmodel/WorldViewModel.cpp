@@ -89,9 +89,9 @@ void WorldViewModel::setNotificationWeatherChanged(const std::function<void()> &
 
 void WorldViewModel::update() {
     auto world = getWorld();
-    Vec2d cameraPosition = player_->getLocation().toVec2d();
-    Vec2d leftUpPosition(cameraPosition.getBlockX(),cameraPosition.getBlockY());
-    leftUpPosition.add((int)std::floor(-MaterialMatrix::MAX_COLUMN/2),(int)std::floor(MaterialMatrix::MAX_ROW*0.618));
+    cameraPosition_ = player_->getLocation().toVec2d();
+    leftUpPosition_ = Vec2d(cameraPosition_.getBlockX(),cameraPosition_.getBlockY());
+    leftUpPosition_.add((int)std::floor(-MaterialMatrix::MAX_COLUMN/2),(int)std::floor(MaterialMatrix::MAX_ROW*0.618));
 
 }
 

@@ -4,29 +4,29 @@
 
 #include "app/Launcher.h"
 #include "model/event/events.h"
+#include "view/graph.h"
 
 void Launcher::init() {
     MaterialHelper::registerAllMaterials();
 //    CommandType::init();
     game_ = FlatCraft::getInstance();
+    window_ = new Window();
 }
 
 void Launcher::start() {
     game_->createSave("testSave3");
     //game_->loadSave()
-    playerView_ = new PlayerView();
     playerViewModel_ = new PlayerViewModel(game_->getPlayer());
-    Binder::bindPlayer(*playerView_, *playerViewModel_);
+    Binder::bindPlayer(*window_->getPlayerView(), *playerViewModel_);
 
-    worldView_ = new WorldView();
     worldViewModel_ = new WorldViewModel(game_->getPlayer());
-    Binder::bindWorld(*worldView_, *worldViewModel_);
+    Binder::bindWorld(*window_->getWorldView(), *worldViewModel_);
     std::cout << "Game starting" << std::endl;
     game_->start();
     std::cout << "Game started" << std::endl;
 
     viewThread_ = new std::thread([&](){
-        worldView_->display();
+        window_->start();
     });
 
     while(!graphFinish){
@@ -40,12 +40,11 @@ void Launcher::stop() {
     std::cout << "Game ended" << std::endl;
     game_->stop();
     delete worldViewModel_;
-    delete worldView_;
     delete playerViewModel_;
-    delete playerView_;
 }
 
 void Launcher::end() {
+    delete window_;
 }
 
 void Launcher::test() {
