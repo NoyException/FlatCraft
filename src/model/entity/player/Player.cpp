@@ -73,9 +73,7 @@ void Player::control() {
 
         auto aabb = getBoundingBox();
         Vec2d start = location_.toVec2d() + Vec2d(velocity_.getX(),aabb.getHeight()/2);
-        auto res = getWorld()->rayTrace(start,{0,-1},0.5,aabb.getWidth()/2,aabb.getHeight()/2,false,
-                                        [](Material material){return MaterialHelper::isOccluded(material);},
-                                        [](Entity* entity){return false;});
+        auto res = getWorld()->rayTrace(start,{0,-1},0.5,aabb.getWidth()/2,aabb.getHeight()/2);
         if(res==nullptr)
             velocity_.setX(0);
     }
@@ -134,9 +132,8 @@ void Player::tryToBreak(const Vec2d &position) {
     Vec2d direction = position - location_.toVec2d();
     //判断是否能挖到
     auto res = world->rayTrace(start, direction, 6, 0, 0, false,
-                               [](Material material){return MaterialHelper::isOccluded(material);}, [&](Entity* entity){
-        return entity!=this;
-    });
+                               [](Block* block){return MaterialHelper::isOccluded(block->getMaterial());},
+                               [&](Entity* entity){return entity!=this;});
     if(res!=nullptr && res->getHitBlock()!=block && (res->getHitPoint()->toBlockLocation().toVec2d()-start).lengthSquared() <
                                (block->getLocation().toVec2d()-start).lengthSquared()) return;
 

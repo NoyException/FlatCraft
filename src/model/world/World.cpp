@@ -118,8 +118,8 @@ void World::init() {
 
 std::unique_ptr<RayTraceResult> World::rayTrace(const Vec2d& startPoint, const Vec2d &direction,
                                                 double maxDistance, double xSize, double ySize, bool hitBackground,
-                                                const std::function<bool(Material)>& blockFilter,
-                                                const std::function<bool(Entity *)>& entityFilter) const {
+                                                const std::function<bool(Block*)>& blockFilter,
+                                                const std::function<bool(Entity*)>& entityFilter) const {
     if(direction.getX()==0 && direction.getY()==0) return nullptr;
     Vec2d dir = direction;
     dir.normalize();
@@ -199,7 +199,7 @@ std::unique_ptr<RayTraceResult> World::rayTrace(const Vec2d& startPoint, const V
             //if(!isCloseToRay(Vec2d(x,y),startPoint,dir,maxDistance+xSize+ySize,xSize+ySize)) continue;
             for(int front = 1; front>0 || (front>=0 && hitBackground); front--){
                 auto block = getBlock(x,y,front);
-                if(blockFilter(block->getMaterial()) && !MaterialHelper::isAir(block->getMaterial())){
+                if(blockFilter(block) && !MaterialHelper::isAir(block->getMaterial())){
                     auto res = block->getBoundingBox().rayTrace(startPoint, dir, maxDistance, xSize, ySize);
                     if(res.has_value()){
                         double len = (res->hitPoint-startPoint).lengthSquared();
@@ -221,8 +221,8 @@ std::unique_ptr<RayTraceResult> World::rayTrace(const Vec2d& startPoint, const V
 
 std::unique_ptr<RayTraceResult> World::rayTrace(const Location &location, const Vec2d &direction,
                                                 double maxDistance, double xSize, double ySize, bool hitBackground,
-                                                const std::function<bool(Material)>& blockFilter,
-                                                const std::function<bool(Entity *)>& entityFilter) const {
+                                                const std::function<bool(Block*)>& blockFilter,
+                                                const std::function<bool(Entity*)>& entityFilter) const {
     return rayTrace(location.toVec2d(), direction, maxDistance, xSize, ySize, hitBackground, blockFilter, entityFilter);
 }
 
