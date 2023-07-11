@@ -133,7 +133,10 @@ void Player::tryToBreak(const Vec2d &position) {
     Vec2d start = location_.toVec2d() + Vec2d(0,0.9);
     Vec2d direction = position - location_.toVec2d();
     //判断是否能挖到
-    auto res = world->rayTrace(start, direction, 6, 0, 0, false, [](Material){return true;}, [](Entity*){return true;});
+    auto res = world->rayTrace(start, direction, 6, 0, 0, false,
+                               [](Material){return true;}, [&](Entity* entity){
+        return entity!=this;
+    });
     if(res!=nullptr && (res->getHitPoint()->toBlockLocation().toVec2d()-start).lengthSquared() <
                                (block->getLocation().toVec2d()-start).lengthSquared()) return;
 
