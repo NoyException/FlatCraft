@@ -134,15 +134,17 @@ void WorldView::drawPlayer(int action) {
 	rect.y = 0.618 * windowHeight - playerSize * 0.8;
 	rect.w = rect.h = playerSize * 0.8;
 	rect.w = playerSize;
-
-
-
+	static int lastAction = 0;
 	static bool change = false;
-	static long long lastTicks = ticks;
-	if (ticks - lastTicks > 7) {
+	static long long lastTicks = 0;
+	if (*binderTicks_ - lastTicks > 4) {
 		change = !change;
-		lastTicks = ticks;
+		lastTicks = *binderTicks_;
 	}
+	if (lastAction < 2) {
+		change = true;
+	}
+	lastAction = action;
 	switch (action) {
 	case 0:
 		texture = characterTexture->right;
@@ -158,8 +160,18 @@ void WorldView::drawPlayer(int action) {
 		break;
 	case 4:
 		texture = characterTexture->rightRun;
+		if (change)
+			texture = characterTexture->right;
 		break;
 	case 5:
+		texture = characterTexture->leftRun;
+		if (change)
+			texture = characterTexture->left;
+		break;
+	case 6:
+		texture = characterTexture->rightRun;
+		break;
+	case 7:
 		texture = characterTexture->leftRun;
 		break;
 	}

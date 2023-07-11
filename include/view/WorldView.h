@@ -111,6 +111,8 @@ public:
 		pic = IMG_Load(tempString.c_str());
 		textures[Material::WATER] = SDL_CreateTextureFromSurface(renderer, pic);
 		SDL_FreeSurface(pic);
+		MYLOAD("block/oak_log.png", textures[Material::LOG]);
+		MYLOAD("block/azalea_leaves.png", textures[Material::LEAVES]);
 		cracks.resize(10);
 		MYLOAD("block/destroy_stage_0.png", cracks[0]);
 		MYLOAD("block/destroy_stage_1.png", cracks[1]);
@@ -125,7 +127,7 @@ public:
 	}
 	inline SDL_Texture* getTexture(Material material) {
 		if (textures.find(material) == textures.end())
-			return textures[Material::STONE];
+			return textures[Material::BED_ROCK];
 		return textures[material];
 	}
 	SDL_Texture* getCrack(int process) {

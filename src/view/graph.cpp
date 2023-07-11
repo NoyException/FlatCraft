@@ -115,7 +115,16 @@ void Window::draw() {
 }
 
 void Window::drawPlayer() {
-	worldView_.drawPlayer(3);
+	int action = 0;//idle
+	if (*playerView_.binderBreakingProgress_ != 0)
+		action = 2;//dig or attack
+	if (playerView_.binderVelocity_->getX() != 0)
+		action = 4;//run
+	if (playerView_.binderVelocity_->getY() != 0)
+		action = 6;//jump
+	if (playerView_.binderDirection_->getX() < 0)
+		action++;//left
+	worldView_.drawPlayer(action);
 }
 
 WorldView &Window::getWorldView() {

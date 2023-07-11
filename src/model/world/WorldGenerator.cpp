@@ -91,7 +91,8 @@ void WorldGenerator::generateMaterial(double start,int width,int octaves, double
         }
     }
     if(a==Material::STONE){
-        double newNoiseArray[width];
+        //double* newNoiseArray = new double[width];
+        double newNoiseArray[300];
         for(int i=0;i<=width;i++){
             if(noiseArray[i]+1>62){
                 world.setBlock(start+i,noiseArray[i]+1, true,Material::GRASS);
@@ -108,6 +109,7 @@ void WorldGenerator::generateMaterial(double start,int width,int octaves, double
                 world.setBlock(start+i,noiseArray[i]-j, false,Material::DIRT);
             }
         }
+        //delete[] newNoiseArray;
     }
     generateTree(start,width,2,world,noiseArray);
     delete[] noiseArray;
