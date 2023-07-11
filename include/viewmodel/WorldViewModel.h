@@ -24,7 +24,6 @@ public:
 //    void setNotificationMaterialMatrixUpdated(const std::function<void()> &notificationMaterialMatrixUpdated);
 private:
     [[nodiscard]] World* getWorld() const;
-    void update();
     Player* player_;
 
     std::function<void()> notificationWeatherChanged_;
