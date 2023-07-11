@@ -110,8 +110,12 @@ void Window::draw() {
 		mouseBlockRect_.w = mouseBlockRect_.h = 32;
 		worldView_.drawCrack(*playerView_.binderBreakingProgress_, &mouseBlockRect_);
 	}
-	worldView_.drawPlayer(3);
+	drawPlayer();
 	worldView_.drawItemBar();
+}
+
+void Window::drawPlayer() {
+	worldView_.drawPlayer(3);
 }
 
 WorldView &Window::getWorldView() {
