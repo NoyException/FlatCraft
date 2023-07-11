@@ -41,7 +41,7 @@ void Player::control() {
     //走路
     bool onGround = isOnGround();
     double dx = onGround ? 0.2 : 0.05;
-    if(sprinting_) dx*=1.5;
+    if(sprinting_) dx*=1.3;
     if(sneaking_) dx*=0.3;
     bool stopSprinting;
     if(walkingDirection_<0){
@@ -74,7 +74,8 @@ void Player::control() {
         auto aabb = getBoundingBox();
         Vec2d start = location_.toVec2d() + Vec2d(velocity_.getX(),aabb.getHeight()/2);
         auto res = getWorld()->rayTrace(start,{0,-1},0.5,aabb.getWidth()/2,aabb.getHeight()/2,false,
-                                        [](Material material){return true;},[](Entity* entity){return false;});
+                                        [](Material material){return MaterialHelper::isOccluded(material);},
+                                        [](Entity* entity){return false;});
         if(res==nullptr)
             velocity_.setX(0);
     }
@@ -82,7 +83,7 @@ void Player::control() {
 }
 
 void Player::jump() {
-    if(isOnGround()) velocity_.setY(0.2);
+    if(isOnGround()) velocity_.setY(0.25);
 }
 
 BoundingBox Player::getBoundingBox() const {
@@ -133,7 +134,7 @@ void Player::tryToBreak(const Vec2d &position) {
     Vec2d direction = position - location_.toVec2d();
     //判断是否能挖到
     auto res = world->rayTrace(start, direction, 6, 0, 0, false,
-                               [](Material){return true;}, [&](Entity* entity){
+                               [](Material material){return MaterialHelper::isOccluded(material);}, [&](Entity* entity){
         return entity!=this;
     });
     if(res!=nullptr && res->getHitBlock()!=block && (res->getHitPoint()->toBlockLocation().toVec2d()-start).lengthSquared() <

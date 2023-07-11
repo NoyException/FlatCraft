@@ -15,9 +15,6 @@ void FlatCraft::start() {
     scheduler_.runTaskTimer([&](){
         ticks_++;
     },0,0);
-    scheduler_.runTaskLater([&](){
-        std::cout<<"ticks:"<<ticks_<<std::endl;
-    },199);
     scheduler_.start();
 }
 
