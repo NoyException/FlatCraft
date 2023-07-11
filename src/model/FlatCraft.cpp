@@ -92,7 +92,6 @@ void FlatCraft::loadWorld(const std::string &name) {
         }
         std::cout<<"failed"<<std::endl;
     }
-    in.close();
     createWorld(name);
 }
 
@@ -110,9 +109,11 @@ void FlatCraft::loadWorlds() {
 void FlatCraft::saveWorld(const std::string &name) {
     World* world = getWorld(name);
     if(world!= nullptr){
+        std::cout<<"saving world "<<name<<"..."<<std::endl;
         std::ofstream out(save_+"/world/"+name+".dat");
         out<<world->serialize().dump();
         out.close();
+        std::cout<<"done"<<std::endl;
     }
 }
 

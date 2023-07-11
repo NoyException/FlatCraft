@@ -14,7 +14,9 @@ World::World(const std::string& name) : name_(name), ticks_(0), weather_(Weather
 nlohmann::json World::serialize() const {
     nlohmann::json json({
         {"name",name_},
-        {"ticks",ticks_}
+        {"ticks",ticks_},
+        {"seed",seed_},
+        {"weather",static_cast<int>(weather_)}
     });
     nlohmann::json blocks;
     for(int i=-128;i<=128;i++) {
@@ -33,6 +35,8 @@ nlohmann::json World::serialize() const {
 World World::deserialize(const nlohmann::json &json) {
     World world(json.at("name").get<std::string>());
     world.ticks_ = json.at("ticks").get<long long>();
+    world.seed_ = json.at("seed").get<int>();
+    world.weather_ = static_cast<Weather>(json.at("weather").get<int>());
     auto blocks = json.at("blocks");
     for(int i=-128;i<=128;i++) {
         for (int j = 0; j < 256; j++) {
