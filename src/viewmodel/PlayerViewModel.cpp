@@ -3,11 +3,15 @@
 //
 
 #include "PlayerViewModel.h"
+#include "model/FlatCraft.h"
 
 PlayerViewModel::PlayerViewModel(Player *player) : EntityViewModel(player), states_(), scrollY_(0) {
     for (auto &item: states_){
         item = KeyState::UP;
     }
+    FlatCraft::getInstance()->getScheduler()->runTaskTimer([&](){
+        control();
+    },1,0);
 }
 
 Player *PlayerViewModel::getPlayer() {
@@ -17,14 +21,12 @@ Player *PlayerViewModel::getPlayer() {
 std::function<void(Key, KeyState)> PlayerViewModel::getCommandChangeKeyState() {
     return [&](Key key, KeyState state){
         states_[static_cast<int>(key)] = state;
-        control();
     };
 }
 
 std::function<void(double)> PlayerViewModel::getCommandScrollMouseWheel() {
     return [&](double scrollY){
         scrollY_ = scrollY;
-        control();
         notificationCurrentSlotChanged_();
     };
 }
@@ -32,7 +34,6 @@ std::function<void(double)> PlayerViewModel::getCommandScrollMouseWheel() {
 std::function<void(const Vec2d &)> PlayerViewModel::getCommandChangeCursorPosition() {
     return [&](const Vec2d &v){
         cursorPosition_ = v;
-        control();
     };
 }
 
@@ -111,7 +112,8 @@ void PlayerViewModel::control() {
             notificationBreakingProgressChanged_();
     }
     //TODO: 滚轮滚动
-
+    //
+    player->control();
 }
 
 void PlayerViewModel::setNotificationSneakingStateChanged(const std::function<void()> &notificationSneakingStateChanged) {

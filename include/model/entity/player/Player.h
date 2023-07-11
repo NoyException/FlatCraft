@@ -42,6 +42,8 @@ public:
     void jump();
 
     void tryToBreak(const Vec2d& position);
+
+    friend class PlayerViewModel;
 private:
     void control();
     Task* task_;

@@ -9,9 +9,6 @@
 Player::Player(const Location &spawnLocation) : LivingEntity(spawnLocation),
 currentSlot_(0), cursor_(Material::AIR), lastBreaking_(nullptr), breakingProgress_(0),
 walkingDirection_(0), sprinting_(false), sneaking_(false), flying_(false){
-    task_ = FlatCraft::getInstance()->getScheduler()->runTaskTimer([&](){
-        control();
-    },0,0);
 
     EventManager::registerListener(EventType::ENTITY_TELEPORT_EVENT,EventPriority::MONITOR,[&](EventInstance* event){
         auto e = dynamic_cast<EntityTeleportEvent*>(event);
