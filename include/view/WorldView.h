@@ -87,7 +87,7 @@ public:
 		textures[Material::STONE] = SDL_CreateTextureFromSurface(renderer, pic);
 		SDL_FreeSurface(pic);
 		tempString = TEXTURES_PATH;
-		tempString.append("block/rooted_dirt.png");
+		tempString.append("block/dirt.png");
 		pic = IMG_Load(tempString.c_str());
 		textures[Material::DIRT] = SDL_CreateTextureFromSurface(renderer, pic);
 		SDL_FreeSurface(pic);
@@ -132,7 +132,7 @@ public:
 		textures[Material::STONE] = SDL_CreateTextureFromSurface(renderer, pic);
 		SDL_FreeSurface(pic);
 		tempString = TEXTURES_PATH;
-		tempString.append("behind/rooted_dirt.png");
+		tempString.append("behind/dirt.png");
 		pic = IMG_Load(tempString.c_str());
 		textures[Material::DIRT] = SDL_CreateTextureFromSurface(renderer, pic);
 		SDL_FreeSurface(pic);

@@ -193,10 +193,10 @@ void WorldView::drawMap() {
 	for (i = 0; i < 42; i++) {
 		tempRect.y = leftUpRect.y;
 		for (j = 0; j < 28; j++) {
-			material = materials_[i][j][1];
+			material = materials_[i][j][0];
 			texture = backgroundTexture->getTexture(material);
 			SDL_RenderCopy(renderer, texture, material == Material::WATER? &srcRect: NULL, & tempRect);
-			material = materials_[i][j][0];
+			material = materials_[i][j][1];
 			texture = blockTexture->getTexture(material);
 			SDL_RenderCopy(renderer, texture, material == Material::WATER ? &srcRect : NULL, &tempRect);
 			tempRect.y += blockSize;
