@@ -12,14 +12,15 @@ class WorldGenerator {
 public:
     static double lerp(double a, double b, double t);
     static double grad(int hash, double x);
-    double noise(double x);
-    double perlin(double x, int octaves, double persistence,double amplitude,double frequency,int minY);
+    double noise(double x,int *hash);
+    double perlin(int *hash,double x, int octaves, double persistence,double amplitude,double frequency,int minY);
     void generate(World& world);
-    void getHash(int x);
     void generateMaterial(double start,int width,int octaves, double persistence,double frequency,double amplitude ,int minY,Material,World& world);
-private:
-    int Hash[256];
-    int seed=10;
+    void generateTree(double start,int width,int treeSeed,World& world,double *noise);
+    bool haveTree(double x,double *noise,int treeSeed);
+    int *generateHash(int seed);
+
+private:;;
 };
 
 
