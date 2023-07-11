@@ -134,14 +134,13 @@ bool isCloseToRay(const Vec2d& point, const Vec2d& startPoint, const Vec2d& dire
     return false;
 }
 
-std::unique_ptr<RayTraceResult> World::rayTrace(const Location &location, const Vec2d &direction,
-                                                double maxDistance, double xSize, double ySize,
+std::unique_ptr<RayTraceResult> World::rayTrace(const Vec2d& startPoint, const Vec2d &direction,
+                                                double maxDistance, double xSize, double ySize, bool hitBackground,
                                                 const std::function<bool(Material)>& blockFilter,
                                                 const std::function<bool(Entity *)>& entityFilter) const {
     if(direction.getX()==0 && direction.getY()==0) return nullptr;
     Vec2d dir = direction;
     dir.normalize();
-    Vec2d startPoint = location.toVec2d();
     std::optional<Vec2d> closestPoint = std::nullopt;
     double minDistance = maxDistance*maxDistance+1;
     Entity* hitEntity = nullptr;
@@ -216,17 +215,19 @@ std::unique_ptr<RayTraceResult> World::rayTrace(const Location &location, const 
 
             //判断(x+0.5,y+0.5)是否在
             //if(!isCloseToRay(Vec2d(x,y),startPoint,dir,maxDistance+xSize+ySize,xSize+ySize)) continue;
-            auto block = getBlock(x,y,true);
-            if(blockFilter(block->getMaterial()) && !MaterialHelper::isAir(block->getMaterial())){
-                auto res = block->getBoundingBox().rayTrace(startPoint, dir, maxDistance, xSize, ySize);
-                if(res.has_value()){
-                    double len = (res->hitPoint-startPoint).lengthSquared();
-                    if(len < minDistance){
-                        minDistance = len;
-                        closestPoint = res->hitPoint;
-                        hitEntity = nullptr;
-                        hitBlock = block;
-                        hitFace = res->hitFace;
+            for(int front = 1; front>0 || (front>=0 && hitBackground); front--){
+                auto block = getBlock(x,y,front);
+                if(blockFilter(block->getMaterial()) && !MaterialHelper::isAir(block->getMaterial())){
+                    auto res = block->getBoundingBox().rayTrace(startPoint, dir, maxDistance, xSize, ySize);
+                    if(res.has_value()){
+                        double len = (res->hitPoint-startPoint).lengthSquared();
+                        if(len < minDistance){
+                            minDistance = len;
+                            closestPoint = res->hitPoint;
+                            hitEntity = nullptr;
+                            hitBlock = block;
+                            hitFace = res->hitFace;
+                        }
                     }
                 }
             }
@@ -234,6 +235,13 @@ std::unique_ptr<RayTraceResult> World::rayTrace(const Location &location, const 
     }
     if(!closestPoint.has_value()) return nullptr;
     return std::make_unique<RayTraceResult>(Location{name_,closestPoint->getX(),closestPoint->getY()},hitEntity,hitBlock,hitFace);
+}
+
+std::unique_ptr<RayTraceResult> World::rayTrace(const Location &location, const Vec2d &direction,
+                                                double maxDistance, double xSize, double ySize, bool hitBackground,
+                                                const std::function<bool(Material)>& blockFilter,
+                                                const std::function<bool(Entity *)>& entityFilter) const {
+    return rayTrace(location.toVec2d(), direction, maxDistance, xSize, ySize, hitBackground, blockFilter, entityFilter);
 }
 
 void World::run() {

@@ -100,16 +100,15 @@ void Entity::move() {
 void Entity::move(const Vec2d &v) {
     Vec2d dv = v;
     dv.adjust();
-    Location start = location_;
     auto aabb = getBoundingBox();
-    start.add(0,aabb.getHeight()/2);
-    auto res = getWorld()->rayTrace(start,dv,dv.length(),aabb.getWidth()/2,aabb.getHeight()/2,
+    Vec2d start = location_.toVec2d()+Vec2d(0,aabb.getHeight()/2);
+    auto res = getWorld()->rayTrace(start,dv,dv.length(),aabb.getWidth()/2,aabb.getHeight()/2,false,
                                    [](Material material){return true;},[](Entity* entity){return false;});
     if(res==nullptr){
        location_.add(dv);
     }
     else{
-        auto dv2 = res->getHitPoint()->toVec2d()-start.toVec2d();
+        auto dv2 = res->getHitPoint()->toVec2d()-start;
         if(dv2.lengthSquared()<dv.lengthSquared()){
             switch (res->getHitFace()) {
                 case BoundingBox::Face::LEFT:
@@ -160,9 +159,8 @@ bool Entity::isCollided(BoundingBox::Face face) const {
             break;
     }
     if(abs(d-std::round(d))>0.000001) return false;
-    Location start = location_;
-    start.add(0,aabb.getHeight()/2);
-    auto res = getWorld()->rayTrace(start,dir,0.000001,aabb.getWidth()/2,aabb.getHeight()/2,
+    Vec2d start = location_.toVec2d() + Vec2d(0,aabb.getHeight()/2);
+    auto res = getWorld()->rayTrace(start,dir,0.000001,aabb.getWidth()/2,aabb.getHeight()/2,false,
                                     [](Material material){return true;},[](Entity* entity){return false;});
     return res!= nullptr;
 }

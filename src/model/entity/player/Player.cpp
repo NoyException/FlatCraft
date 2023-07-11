@@ -72,9 +72,8 @@ void Player::control() {
     if(onGround && sneaking_ && std::abs(velocity_.getX())<0.1){
 
         auto aabb = getBoundingBox();
-        Location start = location_;
-        start.add(velocity_.getX(),aabb.getHeight()/2);
-        auto res = getWorld()->rayTrace(start,{0,-1},0.5,aabb.getWidth()/2,aabb.getHeight()/2,
+        Vec2d start = location_.toVec2d() + Vec2d(velocity_.getX(),aabb.getHeight()/2);
+        auto res = getWorld()->rayTrace(start,{0,-1},0.5,aabb.getWidth()/2,aabb.getHeight()/2,false,
                                         [](Material material){return true;},[](Entity* entity){return false;});
         if(res==nullptr)
             velocity_.setX(0);
@@ -131,6 +130,13 @@ void Player::tryToBreak(const Vec2d &position) {
     bool resetBreakingProgress = true;
     auto world = getWorld();
     auto block = world->getBlock(position, true);
+    Vec2d start = location_.toVec2d() + Vec2d(0,0.9);
+    Vec2d direction = position - location_.toVec2d();
+    //判断是否能挖到
+    auto res = world->rayTrace(start, direction, 6, 0, 0, false, [](Material){return true;}, [](Entity*){return true;});
+    if(res!=nullptr && (res->getHitPoint()->toBlockLocation().toVec2d()-start).lengthSquared() <
+                               (block->getLocation().toVec2d()-start).lengthSquared()) return;
+
     if (MaterialHelper::isAir(block->getMaterial()) || MaterialHelper::isLiquid(block->getMaterial()))
         block = world->getBlock(position, false);
     if (block != nullptr) {
@@ -145,7 +151,7 @@ void Player::tryToBreak(const Vec2d &position) {
             }
             resetBreakingProgress = false;
 
-            setDirection(position - location_.toVec2d());
+            setDirection(direction);
         } else lastBreaking_ = block;
     }
     if(resetBreakingProgress) breakingProgress_ = 0;

@@ -37,7 +37,7 @@ private:
 
 template<class T>
 template<class V>
-ValueChangedNotification<T>::ValueChangedNotification(T *obj, Field field, const V &oldValue, const V &newValue)
+ValueChangedNotification<T>::ValueChangedNotification(T *obj, Field field, const V &newValue)
         : EventInstance(EventType::VALUE_CHANGED_NOTIFICATION), object_(obj), field_(field),
         newValue_(std::make_any<V>(newValue)){}
 

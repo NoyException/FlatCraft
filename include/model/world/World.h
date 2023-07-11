@@ -30,8 +30,12 @@ public:
     [[nodiscard]] Block* getBlock(int x, int y, bool front) const;
     [[nodiscard]] Block* getBlock(const Vec2d& v, bool front) const;
     [[nodiscard]] Block* getBlock(const Location& location, bool front) const;
+    std::unique_ptr<RayTraceResult> rayTrace(const Vec2d& startPoint, const Vec2d& direction,
+                                             double maxDistance, double xSize, double ySize, bool hitBackground,
+                                             const std::function<bool(Material)>& blockFilter,
+                                             const std::function<bool(Entity*)>& entityFilter) const;
     std::unique_ptr<RayTraceResult> rayTrace(const Location& location, const Vec2d& direction,
-                                             double maxDistance, double xSize, double ySize,
+                                             double maxDistance, double xSize, double ySize, bool hitBackground,
                                              const std::function<bool(Material)>& blockFilter,
                                              const std::function<bool(Entity*)>& entityFilter) const;
 private:
