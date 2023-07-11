@@ -143,7 +143,7 @@ void Player::tryToBreak(const Vec2d &position) {
     && !MaterialHelper::isLiquid(block->getMaterial())) {
         if (block == lastBreaking_) {
             double hardness = MaterialHelper::getHardness(block->getMaterial());
-            std::cout<<hardness<<" "<<breakingProgress_<<std::endl;
+//            std::cout<<hardness<<" "<<breakingProgress_<<std::endl;
             if (hardness > 0) breakingProgress_ += 0.05 / hardness;
             if (hardness == 0) breakingProgress_ = 1;
             if (hardness < 0) breakingProgress_ = 0;

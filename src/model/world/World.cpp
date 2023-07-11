@@ -88,8 +88,9 @@ void World::getEntities(std::vector<Entity*> &entities, bool (*filter)(const Ent
 }
 
 void World::init() {
-      WorldGenerator generator;
-      generator.generate(*this);
+    seed_ = (int)(rand_.nextInt()%INT_MAX);
+    WorldGenerator generator;
+    generator.generate(*this);
     /*for(int i=-128;i<=128;i++){
         for(int j=0;j<256;j++){
             int hash = (i<<11)^(j<<1);
@@ -285,4 +286,8 @@ std::unique_ptr<RayTraceResult> World::rayTrace(const Location &location, const 
                                                 const std::function<bool(Block*)>& blockFilter,
                                                 const std::function<bool(Entity*)>& entityFilter) const {
     return rayTrace(location.toVec2d(), direction, maxDistance, xSize, ySize, hitBackground, blockFilter, entityFilter);
+}
+
+int World::getSeed() const {
+    return seed_;
 }

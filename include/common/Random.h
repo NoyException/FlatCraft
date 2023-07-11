@@ -5,16 +5,25 @@
 #ifndef FLATCRAFT_RANDOM_H
 #define FLATCRAFT_RANDOM_H
 
-#include <random>
-
 class Random {
 public:
     Random();
-    explicit Random(int seed);
+    explicit Random(unsigned long long seed);
+protected:
+    unsigned int next(int bits);
+public:
+    unsigned int nextInt();
+    unsigned int nextInt(unsigned int bound);
+    unsigned long long nextLongLong();
+    bool nextBool();
+    float nextFloat();
     double nextDouble();
 private:
-    std::mt19937 gen_;
-    std::uniform_real_distribution<> dis_;
+    static constexpr unsigned long long MULTIPLIER = 0x5DEECE66DLL;
+    static constexpr unsigned long long ADDEND = 0xBLL;
+    static constexpr unsigned long long MASK = (1LL << 48) - 1;
+    static constexpr double DOUBLE_UNIT = 0x1.0p-53;
+    unsigned long long seed_;
 };
 
 

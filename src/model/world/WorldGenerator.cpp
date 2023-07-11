@@ -5,16 +5,13 @@
 #include "model/world/WorldGenerator.h"
 #include "common.h"
 #include <algorithm>
-#include <random>
 
 
 int *WorldGenerator::generateHash(int seed) {
-    srand(seed);
+    Random rnd(seed);
     int *hash = new int[256];
     for(int j=0;j<256;j++){
-        int random = rand();
-        random = random % 256;
-        hash[j]=random;
+        hash[j]=(int) rnd.nextInt(256);
     }
     return hash;
 }
@@ -72,41 +69,42 @@ void WorldGenerator::generate(World &world) {
         }
     }
     generateMaterial(-128,256,4,0.5,1.0,4,66,Material::STONE,world);//world.chunk
-    std::cout<<std::endl;
 }
 
 
 void WorldGenerator::generateMaterial(double start,int width,int octaves, double persistence, double frequency,double amplitude,int minY,
                                       Material a,World& world){
-    int *hash=generateHash(1);
+    int *hash=generateHash(world.seed_);
     auto *noiseArray = new double[width];
     for(int i=0;i<width;i++) {
         double x = (double) i / 32.0;
         noiseArray[i] = perlin(hash,x, octaves, persistence, amplitude, frequency, minY);
     }
+    int startX = std::floor(start);
     for(int i=0;i<=width;i++){
         for(int j=0;j<noiseArray[i];j++){
-            world.setBlock(start+i,j, true,a);
-            world.setBlock(start+i,j, false,a);
+            world.setBlock(startX+i,j, true,a);
+            world.setBlock(startX+i,j, false,a);
         }
     }
     if(a==Material::STONE){
         //double* newNoiseArray = new double[width];
         double newNoiseArray[300];
         for(int i=0;i<=width;i++){
-            if(noiseArray[i]+1>62){
-                world.setBlock(start+i,noiseArray[i]+1, true,Material::GRASS);
-                world.setBlock(start+i,noiseArray[i]+1, false,Material::GRASS);
+            int noise = std::floor(noiseArray[i]);
+            if(noise+1>62){
+                world.setBlock(startX+i,noise+1, true,Material::GRASS);
+                world.setBlock(startX+i,noise+1, false,Material::GRASS);
             }else{
-                world.setBlock(start+i,noiseArray[i]+1, true,Material::DIRT);
-                world.setBlock(start+i,noiseArray[i]+1, false,Material::DIRT);
+                world.setBlock(startX+i,noise+1, true,Material::DIRT);
+                world.setBlock(startX+i,noise+1, false,Material::DIRT);
             }
 
             double x = (double) i / ((double) width);
             newNoiseArray[i] = perlin(hash,x, octaves, persistence, 0.5, frequency, 5);
             for(int j=0;j<newNoiseArray[i];j++){
-                world.setBlock(start+i,noiseArray[i]-j, true,Material::DIRT);
-                world.setBlock(start+i,noiseArray[i]-j, false,Material::DIRT);
+                world.setBlock(startX+i,noise-j, true,Material::DIRT);
+                world.setBlock(startX+i,noise-j, false,Material::DIRT);
             }
         }
         //delete[] newNoiseArray;
@@ -116,12 +114,13 @@ void WorldGenerator::generateMaterial(double start,int width,int octaves, double
 }
 
 void WorldGenerator::generateTree(double start,int width,int treeSeed,World& world,double *noise) {
-    int treeAddress=start;
+    int startX = std::floor(start);
+    int treeAddress=startX;
     for(int i=0;i<=width;i++){
         double x = (double) i / 32.0;
         if(haveTree(x,noise,treeSeed)&& (start+i> treeAddress + 5) && (noise[i]>63)){
-            treeAddress=start+i;
-            for(int j=noise[i]+2;j<noise[i]+12;j++){
+            treeAddress=startX+i;
+            for(int j=(int)std::floor(noise[i])+2;j<noise[i]+12;j++){
                 //world.setBlock(start+i,j, true,Material::LOG);
                 if(j>noise[i]+7){
                     for(int m=treeAddress-1;m<treeAddress+2;m++){
@@ -129,7 +128,7 @@ void WorldGenerator::generateTree(double start,int width,int treeSeed,World& wor
                     }
                 }
                 if(j<noise[i]+10){
-                    world.setBlock(start+i,j, false,Material::LOG);
+                    world.setBlock(startX+i,j, false,Material::LOG);
                 }
             }
         }
@@ -139,12 +138,8 @@ void WorldGenerator::generateTree(double start,int width,int treeSeed,World& wor
 bool WorldGenerator::haveTree(double x,double *noise,int treeSeed) {
     int *hash = generateHash(treeSeed);
     double addr = perlin(hash, x, 4, 0.5, 1, 1.0, 0);
-    if (addr > 0.8) {
-        delete []hash;
-        return true;
-    }
-    delete[] hash;
-    return false;
+    delete []hash;
+    return addr > 0.8;
 }
 
 

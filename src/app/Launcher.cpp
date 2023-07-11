@@ -14,7 +14,11 @@ void Launcher::init() {
 }
 
 void Launcher::start() {
-    game_->createSave("testSave3");
+    std::string saveName = "testSave4";
+    if(game_->existsSave(saveName)){
+        game_->loadSave(saveName);
+    }
+    else game_->createSave(saveName);
     //game_->loadSave()
     playerViewModel_ = new PlayerViewModel(game_->getPlayer());
     Binder::bindPlayer(window_->getPlayerView(), *playerViewModel_);

@@ -79,6 +79,7 @@ void FlatCraft::loadPlayer() {
 
 void FlatCraft::loadWorld(const std::string &name) {
     std::ifstream in(save_+"/world/"+name+".dat");
+    std::cout<<"found world save "<<name<<std::endl;
     if(in.is_open()){
         std::cout<<"loading world "<<name<<"..."<<std::endl;
         std::string s((std::istreambuf_iterator<char> (in)), (std::istreambuf_iterator<char> ()));
@@ -91,6 +92,7 @@ void FlatCraft::loadWorld(const std::string &name) {
         }
         std::cout<<"failed"<<std::endl;
     }
+    in.close();
     createWorld(name);
 }
 
@@ -98,7 +100,9 @@ void FlatCraft::loadWorlds() {
     for(const auto& it : std::filesystem::directory_iterator(save_+"/world")){
         auto name = it.path().filename();
         if(name.extension()==".dat"){
-            loadWorld(name.u8string());
+            auto str = name.u8string();
+            str = str.substr(0,str.length()-4);
+            loadWorld(str);
         }
     }
 }
@@ -135,7 +139,14 @@ void FlatCraft::createSave(const std::string &name) {
     std::filesystem::create_directories(save_+"/world");
     createWorld("main_world");
     loadPlayer();
-    player_->teleport(Location("main_world",0,64));
+    auto world = getWorld("main_world");
+    for(int i=255;i>=0;i--){
+        if(MaterialHelper::isOccluded(world->getBlock(-1,i,true)->getMaterial()) ||
+        MaterialHelper::isOccluded(world->getBlock(0,i,true)->getMaterial())){
+            player_->teleport(Location(*world,0,i+1));
+            break;
+        }
+    }
 }
 
 void FlatCraft::savePlayer() {
