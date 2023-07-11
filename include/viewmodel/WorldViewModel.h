@@ -13,19 +13,27 @@ class WorldViewModel {
 public:
     explicit WorldViewModel(Player *player);
 
-    std::function<Vec2d()> getBinderCameraPosition();
-    std::function<Vec2d()> getBinderLeftUpPosition();
-    std::function<void(MaterialMatrix&)> getBinderMaterialMatrix();
-    std::function<double()> getBinderTicks();
-    std::function<Weather()> getBinderWeather();
+    std::function<void(RefPtr<Vec2d>)> getBinderCameraPosition();
+    std::function<void(RefPtr<Vec2d>)> getBinderLeftUpPosition();
+    std::function<void(RefPtr<MaterialMatrix>)> getBinderMaterialMatrix();
+    std::function<void(RefPtr<long long>)> getBinderTicks();
+    std::function<void(RefPtr<Weather>)> getBinderWeather();
 
     void setNotificationWeatherChanged(const std::function<void()> &notificationWeatherChanged);
     //传入的lambda将在matrix需要更新时调用
 //    void setNotificationMaterialMatrixUpdated(const std::function<void()> &notificationMaterialMatrixUpdated);
 private:
     [[nodiscard]] World* getWorld() const;
+    void update();
     Player* player_;
+
     std::function<void()> notificationWeatherChanged_;
+
+    Vec2d cameraPosition_;
+    Vec2d leftUpPosition_;
+    MaterialMatrix matrix_;
+    long long ticks_;
+    Weather weather_;
 //    std::function<void()> notificationMaterialMatrixUpdated_;
 };
 

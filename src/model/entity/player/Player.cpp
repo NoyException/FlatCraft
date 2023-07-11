@@ -158,3 +158,7 @@ int Player::getCurrentSlot() const {
 double Player::getBreakingProgress() const {
     return breakingProgress_;
 }
+
+void Player::stopBreaking() {
+    breakingProgress_ = 0;
+}

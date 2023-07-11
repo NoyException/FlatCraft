@@ -12,9 +12,9 @@ class EntityViewModel {
 public:
     explicit EntityViewModel(Entity* entity);
 
-    std::function<Vec2d()> getBinderLocation();
-    std::function<Vec2d()> getBinderDirection();
-    std::function<Vec2d()> getBinderVelocity();
+    std::function<void(RefPtr<Vec2d>)> getBinderLocation();
+    std::function<void(RefPtr<Vec2d>)> getBinderDirection();
+    std::function<void(RefPtr<Vec2d>)> getBinderVelocity();
 
     void setNotificationLocationChanged(const std::function<void()> &notification);
     void setNotificationDirectionChanged(const std::function<void()> &notification);
@@ -22,6 +22,7 @@ public:
 
 protected:
     Entity* entity_;
+    Vec2d position_;
 
 private:
     std::function<void()> notificationLocationChanged_;

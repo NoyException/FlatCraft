@@ -7,6 +7,7 @@
 
 #include "precomp.h"
 
+#include "RefPtr.h"
 #include "json.hpp"
 #include "Vec2d.h"
 #include "BoundingBox.h"

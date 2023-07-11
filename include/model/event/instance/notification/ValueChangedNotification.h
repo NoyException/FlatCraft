@@ -8,47 +8,53 @@
 #include "../../EventType.h"
 #include "../EventInstance.h"
 
+enum class Field{
+    ENTITY_POSITION,
+    ENTITY_DIRECTION,
+    ENTITY_VELOCITY,
+    WORLD_TICKS,
+    WORLD_WEATHER,
+};
+
+template<class T>
 class ValueChangedNotification : public EventInstance{
 public:
-    template<class T>
-    ValueChangedNotification(const std::string &key, const T &oldValue, const T &newValue);
+    template<class V>
+    ValueChangedNotification(T* obj, Field field, const V &newValue);
 
-    [[nodiscard]] const std::string &getKey() const;
+    [[nodiscard]] T* getObject() const;
 
-    template<class T>
-    [[nodiscard]] const T &getOldValue() const;
+    [[nodiscard]] Field getField() const;
 
-    template<class T>
-    [[nodiscard]] const T &getNewValue() const;
+    template<class V>
+    [[nodiscard]] V getNewValue() const;
 
-protected:
-    template<class T>
-    ValueChangedNotification(const Event *event, const std::string &key,
-                             const T &oldValue, const T &newValue);
 private:
-    std::string key_;
-    std::any oldValue_;
+    T* object_;
+    Field field_;
     std::any newValue_;
 };
 
 template<class T>
-ValueChangedNotification::ValueChangedNotification(const std::string &key, const T &oldValue, const T &newValue)
-: ValueChangedNotification(EventType::VALUE_NOTIFICATION_EVENT, key, oldValue, newValue){}
+template<class V>
+ValueChangedNotification<T>::ValueChangedNotification(T *obj, Field field, const V &oldValue, const V &newValue)
+        : EventInstance(EventType::VALUE_CHANGED_NOTIFICATION), object_(obj), field_(field),
+        newValue_(std::make_any<V>(newValue)){}
 
 template<class T>
-ValueChangedNotification::ValueChangedNotification(const Event *event, const std::string &key,
-                                                   const T &oldValue, const T &newValue) :
-                                     EventInstance(event), key_(key),
-                                     oldValue_(std::make_any<T>(oldValue)), newValue_(std::make_any<T>(newValue)) {}
-
-template<class T>
-const T &ValueChangedNotification::getOldValue() const {
-    return std::any_cast<T>(oldValue_);
+T* ValueChangedNotification<T>::getObject() const{
+    return object_;
 }
 
 template<class T>
-const T &ValueChangedNotification::getNewValue() const {
-    return std::any_cast<T>(newValue_);
+Field ValueChangedNotification<T>::getField() const {
+    return field_;
+}
+
+template<class T>
+template<class V>
+V ValueChangedNotification<T>::getNewValue() const {
+    return std::any_cast<V>(newValue_);
 }
 
 #endif //FLATCRAFT_VALUECHANGEDNOTIFICATION_H

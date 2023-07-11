@@ -11,6 +11,7 @@
 
 class Entity {
 public:
+    friend class EntityViewModel;
     explicit Entity(const Location& spawnLocation, const Vec2d& direction = {1,0});
     virtual ~Entity();
     [[nodiscard]] virtual nlohmann::json serialize() const;

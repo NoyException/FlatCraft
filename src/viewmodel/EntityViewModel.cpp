@@ -6,38 +6,43 @@
 #include "model/event/events.h"
 
 EntityViewModel::EntityViewModel(Entity *entity) : entity_(entity) {
-    EventManager::registerListener(EventType::ENTITY_LOCATION_CHANGED_NOTIFICATION, EventPriority::MONITOR,
-                                   [&](EventInstance *event){
-                                       auto entity = dynamic_cast<EntityNotification*>(event)->getEntity();
-                                       if(entity == entity_) notificationLocationChanged_();
-                                   });
-    EventManager::registerListener(EventType::ENTITY_LOCATION_CHANGED_NOTIFICATION, EventPriority::MONITOR,
-                                   [&](EventInstance *event){
-                                       auto entity = dynamic_cast<EntityNotification*>(event)->getEntity();
-                                       if(entity == entity_) notificationDirectionChanged_();
-                                   });
-    EventManager::registerListener(EventType::ENTITY_VELOCITY_CHANGED_NOTIFICATION, EventPriority::MONITOR,
-                                   [&](EventInstance *event){
-                                       auto entity = dynamic_cast<EntityNotification*>(event)->getEntity();
-                                       if(entity == entity_) notificationVelocityChanged_();
-                                   });
+
+    EventManager::registerListener(EventType::VALUE_CHANGED_NOTIFICATION, EventPriority::MONITOR,[&](EventInstance *event) {
+        auto e = dynamic_cast<ValueChangedNotification<Entity> *>(event);
+        if (e != nullptr && e->getObject() == entity_) {
+            switch (e->getField()) {
+                case Field::ENTITY_POSITION:
+                    position_ = entity_->getLocation().toVec2d();
+                    notificationLocationChanged_();
+                    break;
+                case Field::ENTITY_DIRECTION:
+                    notificationDirectionChanged_();
+                    break;
+                case Field::ENTITY_VELOCITY:
+                    notificationVelocityChanged_();
+                    break;
+                default:
+                    break;
+            }
+        }
+    });
 }
 
-std::function<Vec2d()> EntityViewModel::getBinderLocation() {
-    return [&](){
-        return entity_->getLocation().toVec2d();
+std::function<void(RefPtr<Vec2d>)> EntityViewModel::getBinderLocation() {
+    return [&](RefPtr<Vec2d> ptr){
+        ptr.pointTo(position_);
     };
 }
 
-std::function<Vec2d()> EntityViewModel::getBinderDirection() {
-    return [&](){
-        return entity_->getDirection();
+std::function<void(RefPtr<Vec2d>)> EntityViewModel::getBinderDirection() {
+    return [&](RefPtr<Vec2d> ptr){
+        ptr.pointTo(entity_->direction_);
     };
 }
 
-std::function<Vec2d()> EntityViewModel::getBinderVelocity() {
-    return [&](){
-        return entity_->getVelocity();
+std::function<void(RefPtr<Vec2d>)> EntityViewModel::getBinderVelocity() {
+    return [&](RefPtr<Vec2d> ptr){
+        ptr.pointTo(entity_->velocity_);
     };
 }
 
