@@ -45,6 +45,7 @@ private:
     Task* task_ = nullptr;
     long long ticks_;
     Weather weather_;
+    Random rand_{};
     std::string name_;
     std::set<Entity*> entities_;
     std::unordered_map<int, std::unique_ptr<Block>> blocks_;

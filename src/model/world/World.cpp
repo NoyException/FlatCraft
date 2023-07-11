@@ -116,6 +116,67 @@ void World::init() {
 //    setBlock(6,64, false,Material::DIRT);
 }
 
+void World::run() {
+    if(isRunning()) return;
+    task_ = FlatCraft::getInstance()->getScheduler()->runTaskTimer([&](){
+        ticks_++;
+        ValueChangedNotification notification(this,Field::WORLD_TICKS,ticks_);
+        EventManager::callEvent(notification);
+        if(ticks_%1200==0){
+            if(rand_.nextDouble()<0.2){
+                switch (weather_) {
+                    case Weather::CLEAR:
+                        if(rand_.nextDouble()<0.2)
+                            setWeather(Weather::THUNDERSTORM);
+                        else
+                            setWeather(Weather::RAIN);
+                        break;
+                    case Weather::RAIN:
+                        setWeather(Weather::CLEAR);
+                        break;
+                    case Weather::THUNDERSTORM:
+                        if(rand_.nextDouble()<0.4)
+                            setWeather(Weather::CLEAR);
+                        else
+                            setWeather(Weather::RAIN);
+                }
+            }
+        }
+    },0,0);
+}
+
+void World::stop() {
+    if(!isRunning()) return;
+    task_->cancel();
+    task_ = nullptr;
+}
+
+bool World::isRunning() const {
+    return task_!= nullptr;
+}
+
+long long World::getTicks() const {
+    return ticks_;
+}
+
+void World::setBlock(int x, int y, bool front, Material material) {
+    int hash = (x<<11)^(y<<1)^front;
+    blocks_[hash] = std::make_unique<Block>(material,Location(name_,x,y),front);
+}
+
+Weather World::getWeather() const {
+    return weather_;
+}
+
+void World::setWeather(Weather weather) {
+    WorldWeatherChangeEvent event(this, weather);
+    EventManager::callEvent(event);
+    if(event.isCanceled()) return;
+    ValueChangedNotification notification(this,Field::WORLD_WEATHER,weather);
+    EventManager::callEvent(notification);
+    weather_ = weather;
+}
+
 std::unique_ptr<RayTraceResult> World::rayTrace(const Vec2d& startPoint, const Vec2d &direction,
                                                 double maxDistance, double xSize, double ySize, bool hitBackground,
                                                 const std::function<bool(Block*)>& blockFilter,
@@ -225,46 +286,3 @@ std::unique_ptr<RayTraceResult> World::rayTrace(const Location &location, const 
                                                 const std::function<bool(Entity*)>& entityFilter) const {
     return rayTrace(location.toVec2d(), direction, maxDistance, xSize, ySize, hitBackground, blockFilter, entityFilter);
 }
-
-void World::run() {
-    if(isRunning()) return;
-    task_ = FlatCraft::getInstance()->getScheduler()->runTaskTimer([&](){
-        ticks_++;
-        ValueChangedNotification notification(this,Field::WORLD_TICKS,ticks_);
-        EventManager::callEvent(notification);
-    },0,0);
-}
-
-void World::stop() {
-    if(!isRunning()) return;
-    task_->cancel();
-    task_ = nullptr;
-}
-
-bool World::isRunning() const {
-    return task_!= nullptr;
-}
-
-long long World::getTicks() const {
-    return ticks_;
-}
-
-void World::setBlock(int x, int y, bool front, Material material) {
-    int hash = (x<<11)^(y<<1)^front;
-    blocks_[hash] = std::make_unique<Block>(material,Location(name_,x,y),front);
-}
-
-Weather World::getWeather() const {
-    return weather_;
-}
-
-void World::setWeather(Weather weather) {
-    WorldWeatherChangeEvent event(this, weather);
-    EventManager::callEvent(event);
-    if(event.isCanceled()) return;
-    ValueChangedNotification notification(this,Field::WORLD_WEATHER,weather);
-    EventManager::callEvent(notification);
-    weather_ = weather;
-}
-
-
