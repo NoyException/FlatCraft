@@ -22,6 +22,7 @@
 #include <optional>
 #include <thread>
 #include <mutex>
+#include <shared_mutex>
 #include <conio.h>
 #include <random>
 
