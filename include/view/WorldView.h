@@ -173,6 +173,8 @@ public:
 		pic = IMG_Load(tempString.c_str());
 		textures[Material::WATER] = SDL_CreateTextureFromSurface(renderer, pic);
 		SDL_FreeSurface(pic);
+		MYLOAD("block/oak_log.png", textures[Material::LOG]);
+		MYLOAD("block/azalea_leaves.png", textures[Material::LEAVES]);
 
 	}
 	inline SDL_Texture* getTexture(Material material) {
