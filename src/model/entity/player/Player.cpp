@@ -23,18 +23,22 @@ walkingDirection_(0), sprinting_(false), sneaking_(false), flying_(false){
     });
 }
 
-Player::~Player() {
-    task_->cancel();
-}
+Player::~Player() = default;
 
-nlohmann::json Player::serialize() const {
-    return std::move(LivingEntity::serialize());
+Player::Player(const nlohmann::json &json) : LivingEntity(json),
+cursor_(json.at("cursor")), currentSlot_(0), lastBreaking_(nullptr), breakingProgress_(0),
+walkingDirection_(0), sprinting_(false), sneaking_(false), flying_(false){
+
 }
 
 std::unique_ptr<Player> Player::deserialize(const nlohmann::json &json) {
-    auto player = std::make_unique<Player>(Location::deserialize(json.at("location")));
-    player->health_ = json.at("health").get<double>();
-    return std::move(player);
+    return std::make_unique<Player>(json);
+}
+
+std::unique_ptr<nlohmann::json> Player::serialize() const {
+    auto json = LivingEntity::serialize();
+    json->merge_patch(nlohmann::json{{"cursor",*cursor_.serialize()}});
+    return json;
 }
 
 void Player::control() {

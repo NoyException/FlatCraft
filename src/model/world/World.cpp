@@ -11,8 +11,27 @@ World::World(const std::string& name) : name_(name), ticks_(0), weather_(Weather
     init();
 }
 
-nlohmann::json World::serialize() const {
-    nlohmann::json json({
+World::World(const nlohmann::json &json) : World(json.at("name").get<std::string>()) {
+    ticks_ = json.at("ticks").get<long long>();
+    seed_ = json.at("seed").get<int>();
+    weather_ = static_cast<Weather>(json.at("weather").get<int>());
+    auto blocks = json.at("blocks");
+    for(int i=-128;i<=128;i++) {
+        for (int j = 0; j < 256; j++) {
+            for(int k = 0; k <= 1; k++) {
+                std::stringstream ss;
+                ss << i << "_" << j << "_" << k;
+                Block block = Block::deserialize(Location(name_, i, j),
+                                                 k,blocks.at(ss.str()));
+                int hash = (i << 11) ^ (j << 1) ^ k;
+                blocks_[hash] = std::make_unique<Block>(block);
+            }
+        }
+    }
+}
+
+std::unique_ptr<nlohmann::json> World::serialize() const {
+    auto json = std::make_unique<nlohmann::json>(nlohmann::json::initializer_list_t{
         {"name",name_},
         {"ticks",ticks_},
         {"seed",seed_},
@@ -28,29 +47,12 @@ nlohmann::json World::serialize() const {
             }
         }
     }
-    json.emplace("blocks",std::move(blocks));
-    return std::move(json);
+    json->emplace("blocks",std::move(blocks));
+    return json;
 }
 
-World World::deserialize(const nlohmann::json &json) {
-    World world(json.at("name").get<std::string>());
-    world.ticks_ = json.at("ticks").get<long long>();
-    world.seed_ = json.at("seed").get<int>();
-    world.weather_ = static_cast<Weather>(json.at("weather").get<int>());
-    auto blocks = json.at("blocks");
-    for(int i=-128;i<=128;i++) {
-        for (int j = 0; j < 256; j++) {
-            for(int k = 0; k <= 1; k++) {
-                std::stringstream ss;
-                ss << i << "_" << j << "_" << k;
-                Block block = Block::deserialize(Location(world.name_, i, j),
-                                                 k,blocks.at(ss.str()));
-                int hash = (i << 11) ^ (j << 1) ^ k;
-                world.blocks_[hash] = std::make_unique<Block>(block);
-            }
-        }
-    }
-    return std::move(world);
+std::unique_ptr<World> World::deserialize(const nlohmann::json &json) {
+    return std::make_unique<World>(json);
 }
 
 std::string World::getName() const {

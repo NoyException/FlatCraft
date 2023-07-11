@@ -14,7 +14,8 @@ public:
     friend class EntityViewModel;
     explicit Entity(const Location& spawnLocation, const Vec2d& direction = {1,0});
     virtual ~Entity();
-    [[nodiscard]] virtual nlohmann::json serialize() const;
+    explicit Entity(const nlohmann::json& json);
+    [[nodiscard]] virtual std::unique_ptr<nlohmann::json> serialize() const;
     [[nodiscard]] Location getLocation() const;
     [[nodiscard]] World* getWorld() const;
     void teleport(const Location& location);
@@ -29,6 +30,7 @@ public:
     [[nodiscard]] bool isOnGround() const;
     [[nodiscard]] bool isCollided(BoundingBox::Face face) const;
     [[nodiscard]] virtual BoundingBox getBoundingBox() const;
+    //void remove();
 protected:
     Location location_;
     Vec2d direction_;

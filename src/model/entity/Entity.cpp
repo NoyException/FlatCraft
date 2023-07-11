@@ -52,6 +52,22 @@ Entity::~Entity() {
     physicsTask_->cancel();
 }
 
+Entity::Entity(const nlohmann::json &json) :
+Entity(Location{json.at("location")},Vec2d{json.at("direction")}) {
+    velocity_ = Vec2d{json.at("velocity")};
+    gravity_ = json.at("gravity").get<bool>();
+    friction_ = json.at("friction").get<bool>();
+}
+
+std::unique_ptr<nlohmann::json> Entity::serialize() const {
+    return std::make_unique<nlohmann::json>(nlohmann::json::initializer_list_t{
+        {"location",location_.serialize()},
+        {"direction",direction_.serialize()},
+        {"velocity",velocity_.serialize()},
+        {"gravity",gravity_},
+        {"friction",friction_}});
+}
+
 Location Entity::getLocation() const {
     return location_;
 }
@@ -129,10 +145,6 @@ void Entity::move(const Vec2d &v) {
     EventManager::callEvent(notification);
     ValueChangedNotification notification2(this,Field::ENTITY_VELOCITY,velocity_);
     EventManager::callEvent(notification2);
-}
-
-nlohmann::json Entity::serialize() const {
-    return {{"location",location_.serialize()}};
 }
 
 bool Entity::isCollided(BoundingBox::Face face) const {

@@ -15,8 +15,9 @@ public:
     explicit Player(const Location& spawnLocation);
     Player(const Player& another) = delete;
     ~Player() override;
-    [[nodiscard]] nlohmann::json serialize() const override;
+    explicit Player(const nlohmann::json& json);
     static std::unique_ptr<Player> deserialize(const nlohmann::json& json);
+    [[nodiscard]] std::unique_ptr<nlohmann::json> serialize() const override;
     [[nodiscard]] BoundingBox getBoundingBox() const override;
 
     [[nodiscard]] int getCurrentSlot() const;
@@ -48,7 +49,6 @@ public:
     friend class PlayerViewModel;
 private:
     void control();
-    Task* task_;
     //只能是-1 0 1
     int walkingDirection_;
     bool sprinting_;

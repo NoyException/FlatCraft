@@ -85,8 +85,8 @@ void FlatCraft::loadWorld(const std::string &name) {
         std::string s((std::istreambuf_iterator<char> (in)), (std::istreambuf_iterator<char> ()));
         in.close();
         if(!s.empty()){
-            World world = World::deserialize(nlohmann::json::parse(s));
-            worlds_.emplace(name,std::make_unique<World>(std::move(world)));
+            auto world = World::deserialize(nlohmann::json::parse(s));
+            worlds_.emplace(name,std::move(world));
             std::cout<<"done"<<std::endl;
             return;
         }
@@ -111,7 +111,7 @@ void FlatCraft::saveWorld(const std::string &name) {
     if(world!= nullptr){
         std::cout<<"saving world "<<name<<"..."<<std::endl;
         std::ofstream out(save_+"/world/"+name+".dat");
-        out<<world->serialize().dump();
+        out<<world->serialize()->dump();
         out.close();
         std::cout<<"done"<<std::endl;
     }
@@ -153,7 +153,7 @@ void FlatCraft::createSave(const std::string &name) {
 void FlatCraft::savePlayer() {
     std::ofstream out(save_+"/player.dat");
     if(out.is_open()){
-        out<<player_->serialize().dump();
+        out<<player_->serialize()->dump();
         out.close();
     }
 }

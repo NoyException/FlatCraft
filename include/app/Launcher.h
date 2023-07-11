@@ -23,8 +23,8 @@ private:
     FlatCraft* game_ = nullptr;
     Window* window_ = nullptr;
     PlayerViewModel* playerViewModel_ = nullptr;
-    std::thread* viewThread_ = nullptr;
     WorldViewModel* worldViewModel_ = nullptr;
+    std::thread* viewThread_ = nullptr;
 };
 
 

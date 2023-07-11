@@ -16,8 +16,9 @@ public:
     friend class Entity;
     friend class WorldGenerator;
     explicit World(const std::string& name);
-    [[nodiscard]] nlohmann::json serialize() const;
-    static World deserialize(const nlohmann::json& json);
+    explicit World(const nlohmann::json& json);
+    [[nodiscard]] std::unique_ptr<nlohmann::json> serialize() const;
+    static std::unique_ptr<World> deserialize(const nlohmann::json& json);
     void run();
     void stop();
     [[nodiscard]] bool isRunning() const;
