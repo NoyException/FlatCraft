@@ -1,0 +1,8 @@
+{
+  "id": 18,
+  "flags": ["OCCLUDED"],
+  "max_stacks": 64,
+  "hardness": 0.2,
+  "anti_explosion": 0.2,
+  "tools": ["shears"]
+}

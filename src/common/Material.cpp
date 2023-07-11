@@ -51,6 +51,8 @@ void MaterialHelper::registerAllMaterials(){
     registerMaterial("grass");
     registerMaterial("water");
     registerMaterial("bedrock");
+    registerMaterial("log");
+    registerMaterial("leaves");
 }
 
 MaterialInfo *MaterialHelper::getInfo(Material material) {

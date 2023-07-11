@@ -16,6 +16,8 @@ enum class Material : int {
     DIRT = 3,
     BED_ROCK = 7,
     WATER = 9,
+    LOG = 17,
+    LEAVES = 18
 };
 
 enum class MaterialFlag{
