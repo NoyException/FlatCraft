@@ -329,30 +329,28 @@ void WorldView::drawRain() {
 	//SDL_RenderCopy(renderer, texture, &rainRect, &rect);
 }
 
-void WorldView::setBinderCameraPosition(const std::function<Vec2d()>& binder) {
-	binderCameraPosition_ = binder;
-	
-	//cameraPosition_ = binderCameraPosition_();
+void WorldView::setBinderCameraPosition(const std::function<void(RefPtr<Vec2d>)>& binder) {
+	binder(binderCameraPosition_);
 }
 
 
-void WorldView::setBinderLeftUpPosition(const std::function<Vec2d()>& binder) {
-	binderLeftUpPosition_ = binder;
+void WorldView::setBinderLeftUpPosition(const std::function<void(RefPtr<Vec2d>)>& binder) {
+	binder(binderLeftUpPosition_);
 }
 
 
-void WorldView::setBinderTicks(const std::function<double()>& binder) {
-	binderTricks_ = binder;
+void WorldView::setBinderTicks(const std::function<void(RefPtr<long long>)>& binder) {
+	binder(binderTricks_);
 }
 
 
-void WorldView::setBinderMaterialMatrix(const std::function<void(MaterialMatrix&)>& binder) {
-	binderMaterialMatrix_ = binder;
+void WorldView::setBinderMaterialMatrix(const std::function<void(RefPtr<MaterialMatrix>)>& binder) {
+	binder(binderMaterialMatrix_);
 }
 
 
-void WorldView::setBinderWeather(const std::function<Weather()>& binder) {
-	binderWeather_ = binder;
+void WorldView::setBinderWeather(const std::function<void(RefPtr<Weather>)>& binder) {
+	binder(binderWeather_);
 }
 
 //TODO:  µœ÷£°

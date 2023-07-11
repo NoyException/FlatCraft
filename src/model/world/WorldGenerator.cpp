@@ -73,7 +73,7 @@ void WorldGenerator::generate(World &world) {
 
 void WorldGenerator::generateMaterial(double start,int width,int octaves, double persistence, double frequency,double amplitude,int minY,
                                       Material a,World& world){
-    double noiseArray[width];
+    double* noiseArray = new double[width];
     for(int i=0;i<width;i++) {
         double x = (double) i / 32.0;
         noiseArray[i] = perlin(x, octaves, persistence, amplitude, frequency, minY);
@@ -85,7 +85,7 @@ void WorldGenerator::generateMaterial(double start,int width,int octaves, double
         }
     }
     if(a==Material::STONE){
-        double newNoiseArray[width];
+        double* newNoiseArray = new double[width];
         for(int i=0;i<=width;i++){
             world.setBlock(start+i,noiseArray[i]+1, true,Material::GRASS);
             world.setBlock(start+i,noiseArray[i]+1, false,Material::GRASS);
@@ -96,5 +96,9 @@ void WorldGenerator::generateMaterial(double start,int width,int octaves, double
                 world.setBlock(start+i,noiseArray[i]-j, false,Material::DIRT);
             }
         }
+        delete[] newNoiseArray;
     }
+
+    delete[] noiseArray;
+    
 }
