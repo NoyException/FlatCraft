@@ -32,6 +32,7 @@ public:
     [[nodiscard]] virtual BoundingBox getBoundingBox() const;
     //void remove();
 protected:
+    virtual void run();
     Location location_;
     Vec2d direction_;
     Vec2d velocity_;

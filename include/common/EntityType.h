@@ -11,6 +11,7 @@ enum class EntityType : int{
     PIG,
     ZOMBIE,
     CREEPER,
+    DROPPED_ITEM,
 };
 
 

@@ -45,6 +45,7 @@ WorldViewModel::WorldViewModel(Player *player) : player_(player) {
             }
         }
     });
+    weather_ = getWorld()->getWeather();
 }
 
 World *WorldViewModel::getWorld() const {

@@ -45,6 +45,7 @@ friction_(true), gravity_(true){
         if(velocity_.getY()>0 && isCollided(BoundingBox::Face::TOP)) velocity_.setY(0);
         if(velocity_.getY()<0 && onGround) velocity_.setY(0);
         move();
+        run();
     },0,0);
 }
 
@@ -200,3 +201,5 @@ bool Entity::hasFriction() const {
 bool Entity::hasGravity() const {
     return gravity_;
 }
+
+void Entity::run() {}
