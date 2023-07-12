@@ -14,6 +14,8 @@ enum class Field{
     ENTITY_VELOCITY,
     WORLD_TICKS,
     WORLD_WEATHER,
+    DROPPED_ITEM_ITEMSTACK,
+    DROPPED_ITEM_STATE,
 };
 
 template<class T>

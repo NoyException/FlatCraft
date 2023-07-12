@@ -15,6 +15,8 @@ public:
     explicit ItemStack(const nlohmann::json &json);
     [[nodiscard]] std::unique_ptr<nlohmann::json> serialize() const;
 
+    [[nodiscard]] MaterialStack toMaterialStack() const;
+
     [[nodiscard]] Item *getItem() const;
     void setItem(Item *item);
 

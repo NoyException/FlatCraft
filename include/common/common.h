@@ -15,7 +15,7 @@
 #include "Material.h"
 #include "EntityType.h"
 #include "MaterialMatrix.h"
-#include "InventorySlot.h"
+#include "MaterialStack.h"
 #include "Weather.h"
 
 enum class Key : int{

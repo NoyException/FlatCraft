@@ -57,3 +57,7 @@ int ItemStack::getAmount() const {
 void ItemStack::setAmount(int amount) {
     amount_ = amount;
 }
+
+MaterialStack ItemStack::toMaterialStack() const {
+    return MaterialStack{getMaterial(),amount_};
+}
