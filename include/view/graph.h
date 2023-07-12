@@ -77,6 +77,8 @@ public:
 
 	void drawGame();
 
+	void guiControl();
+
 private:
 	int mx_, my_;
 	SDL_Event my_event_;

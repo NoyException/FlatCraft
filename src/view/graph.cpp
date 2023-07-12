@@ -89,8 +89,13 @@ void Window::start() {
 		//clear before image in renderer
 		SDL_RenderClear(renderer_);
 		draw();
+		guiControl();
 		SDL_RenderPresent(renderer_); //output image
 	}
+}
+
+void Window::guiControl() {
+
 }
 
 void Window::draw() {
@@ -103,6 +108,8 @@ void Window::draw() {
 		break;
 	}
 }
+
+
 
 void Window::drawGame() {
 	//static long long a = 0;
