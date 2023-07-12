@@ -10,10 +10,13 @@
 
 class DroppedItem : public Entity {
 public:
+    DroppedItem(const Location& spawnLocation, std::unique_ptr<ItemStack>&& itemStack);
     [[nodiscard]] ItemStack* getItemStack() const;
-    void setItemStack(std::unique_ptr<ItemStack> &itemStack);
+    void setItemStack(std::unique_ptr<ItemStack> &&itemStack);
     [[nodiscard]] long long getTicksLived() const;
+    void pickUpBy(Entity* entity);
     void remove() override;
+    void notifyDisplayed() override;
 protected:
     void run() override;
 private:

@@ -107,11 +107,15 @@ double Location::distanceSquared(const Location &another) const {
 }
 
 double Location::distance(const Location &another) const {
-    return sqrt(distanceSquared(another));
+    return std::sqrt(distanceSquared(another));
 }
 
 Location Location::toBlockLocation() const {
     return {world_, (double)getBlockX(), (double)getBlockY()};
+}
+
+Location Location::toBlockCenterLocation() const {
+    return {world_, (double)getBlockX()+0.5, (double)getBlockY()+0.5};
 }
 
 std::string Location::getRawWorld() const {

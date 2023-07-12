@@ -11,11 +11,13 @@
 
 class Entity {
 public:
+    friend class FlatCraft;
     friend class EntityViewModel;
     explicit Entity(const Location& spawnLocation, const Vec2d& direction = {1,0});
     virtual ~Entity();
     explicit Entity(const nlohmann::json& json);
     [[nodiscard]] virtual std::unique_ptr<nlohmann::json> serialize() const;
+    [[nodiscard]] int getId() const;
     [[nodiscard]] Location getLocation() const;
     [[nodiscard]] World* getWorld() const;
     void teleport(const Location& location);
@@ -31,8 +33,10 @@ public:
     [[nodiscard]] bool isCollided(BoundingBox::Face face) const;
     [[nodiscard]] virtual BoundingBox getBoundingBox() const;
     virtual void remove();
+    virtual void notifyDisplayed();
 protected:
     virtual void run();
+    int id_;
     Location location_;
     Vec2d direction_;
     Vec2d velocity_;

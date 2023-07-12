@@ -55,7 +55,7 @@ private:
     bool sneaking_;
     int currentSlot_;
     bool flying_;
-    ItemStack cursor_;
+    std::unique_ptr<ItemStack> cursor_;
     Inventory inventory_;
     Block *lastBreaking_;
     double breakingProgress_;

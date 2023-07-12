@@ -7,7 +7,7 @@
 #include "model/event/instance/normal/EntityTeleportEvent.h"
 
 Player::Player(const Location &spawnLocation) : LivingEntity(spawnLocation),
-currentSlot_(0), cursor_(Material::AIR), lastBreaking_(nullptr), breakingProgress_(0),
+currentSlot_(0), cursor_(nullptr), lastBreaking_(nullptr), breakingProgress_(0),
 walkingDirection_(0), sprinting_(false), sneaking_(false), flying_(false){
 
     EventManager::registerListener<EntityTeleportEvent>(EventPriority::MONITOR,[&](EntityTeleportEvent* event){
@@ -25,9 +25,11 @@ walkingDirection_(0), sprinting_(false), sneaking_(false), flying_(false){
 Player::~Player() = default;
 
 Player::Player(const nlohmann::json &json) : LivingEntity(json),
-cursor_(json.at("cursor")), currentSlot_(0), lastBreaking_(nullptr), breakingProgress_(0),
+cursor_(nullptr), currentSlot_(0), lastBreaking_(nullptr), breakingProgress_(0),
 walkingDirection_(0), sprinting_(false), sneaking_(false), flying_(false){
-
+    if(json.contains("cursor")){
+        cursor_ = std::make_unique<ItemStack>(json.at("cursor"));
+    }
 }
 
 std::unique_ptr<Player> Player::deserialize(const nlohmann::json &json) {
@@ -36,7 +38,8 @@ std::unique_ptr<Player> Player::deserialize(const nlohmann::json &json) {
 
 std::unique_ptr<nlohmann::json> Player::serialize() const {
     auto json = LivingEntity::serialize();
-    json->merge_patch(nlohmann::json{{"cursor",*cursor_.serialize()}});
+    if(cursor_!=nullptr)
+        json->merge_patch(nlohmann::json{{"cursor",*cursor_->serialize()}});
     return json;
 }
 
@@ -152,7 +155,8 @@ void Player::tryToBreak(const Vec2d &position) {
             if (hardness < 0) breakingProgress_ = 0;
             if (breakingProgress_ > 1.0) breakingProgress_ = 1.0;
             if (breakingProgress_ >= 1.0) {
-                block->setMaterial(Material::AIR);
+                block->breakBy(this);
+//block->setMaterial(Material::AIR);
                 breakingProgress_ = 0;
             }
             setDirection(direction);

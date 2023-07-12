@@ -13,6 +13,7 @@
 
 class FlatCraft {
 public:
+    friend class Entity;
     void start();
     void stop();
     void createWorld(const std::string& name);
@@ -22,14 +23,22 @@ public:
     void createSave(const std::string &name);
     [[nodiscard]] World* getWorld(const std::string& name) const;
     Player* getPlayer();
+    Entity* getEntity(int id);
     Scheduler* getScheduler();
     EventManager* getEventManager();
+    template<class T, typename... Args>
+    T* createEntity(Args&&... args);
     static FlatCraft* getInstance();
     friend std::unique_ptr<FlatCraft> std::make_unique<FlatCraft>(void);
 private:
     FlatCraft();
+    void destroyEntity(Entity* entity);
+
     void loadPlayer();
     void savePlayer();
+
+    void loadEntities();
+    void saveEntities();
 
     void loadWorld(const std::string& name);
     void loadWorlds();
@@ -38,11 +47,21 @@ private:
     //name->World
     std::map<std::string,std::unique_ptr<World>> worlds_;
     std::unique_ptr<Player> player_;
+    std::unordered_map<int,std::unique_ptr<Entity>> entities_;
     Scheduler scheduler_;
+    int nextEntityId_;
     long long ticks_;
     EventManager eventManager_;
     std::string save_;
     static std::unique_ptr<FlatCraft> instance;
 };
 
+template<class T, typename... Args>
+T* FlatCraft::createEntity(Args&&... args) {
+    T* t = new T(std::forward<Args>(args)...);
+    entities_[nextEntityId_] = std::unique_ptr<T>(t);
+    t->id_ = nextEntityId_;
+    nextEntityId_++;
+    return t;
+}
 #endif //FLATCRAFT_FLATCRAFT_H

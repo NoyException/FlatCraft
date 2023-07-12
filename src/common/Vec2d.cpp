@@ -137,6 +137,16 @@ double Vec2d::length() const {
     return sqrt(x_*x_+y_*y_);
 }
 
+double Vec2d::distanceSquared(const Vec2d &another) const {
+    double dx = x_-another.x_;
+    double dy = y_-another.y_;
+    return dx*dx + dy*dy;
+}
+
+double Vec2d::distance(const Vec2d &another) const {
+    return std::sqrt(distanceSquared(another));
+}
+
 bool Vec2d::isLeft(const Vec2d &start, const Vec2d &direction) const {
     // 如果叉积大于0，说明在直线的左侧
     return (*this - start).crossProduct(direction) > 0;
@@ -162,7 +172,6 @@ void Vec2d::rotate(double angle, const Vec2d &center) {
 }
 
 const double Vec2d::epsilon = 0.000001;
-
 
 
 

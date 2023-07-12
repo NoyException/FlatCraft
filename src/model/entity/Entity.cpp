@@ -85,8 +85,8 @@ void Entity::teleport(const Location &location) {
     World* oldWorld = targetLocation.getWorld();
     location_ = targetLocation;
     if(targetLocation.getWorld()!=oldWorld){
-        if(oldWorld != nullptr) oldWorld->notifyTeleported(*this);
-        targetLocation.getWorld()->notifyTeleported(*this);
+        if(oldWorld != nullptr) oldWorld->notifyEntityLeave(this);
+        targetLocation.getWorld()->notifyEntityJoin(this);
     }
     ValueChangedNotification notification(this,Field::ENTITY_POSITION,location_.toVec2d());
     EventManager::callEvent(notification);
@@ -204,4 +204,14 @@ bool Entity::hasGravity() const {
 
 void Entity::run() {}
 
-void Entity::remove() {}
+void Entity::remove() {
+    FlatCraft::getInstance()->getScheduler()->runTask([&](){
+        FlatCraft::getInstance()->destroyEntity(this);
+    });
+}
+
+int Entity::getId() const {
+    return id_;
+}
+
+void Entity::notifyDisplayed() {}

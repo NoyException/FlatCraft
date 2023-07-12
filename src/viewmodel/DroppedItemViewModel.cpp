@@ -6,14 +6,14 @@
 
 DroppedItemViewModel::DroppedItemViewModel(DroppedItem *droppedItem) :
 EntityViewModel(droppedItem), materialStack_(droppedItem->getItemStack()->toMaterialStack()) {
-    listener_ = EventManager::registerListener<ValueChangedNotification<DroppedItem>>(EventPriority::MONITOR,[&](auto event){
+    listener_ = EventManager::registerListener<ValueChangedNotification<DroppedItem>>(EventPriority::MONITOR,[&](ValueChangedNotification<DroppedItem>* event){
         if(event->getObject()==droppedItem){
             if(event->getField()==Field::DROPPED_ITEM_ITEMSTACK){
                 materialStack_ = droppedItem->getItemStack()->toMaterialStack();
                 notificationMaterialStackChanged_();
             }
             if(event->getField()==Field::DROPPED_ITEM_STATE){
-                if(true) notificationPickedUp_();
+                if(event->getNewValue<int>()==1) notificationPickedUp_();
                 else notificationDisappeared_();
             }
         }

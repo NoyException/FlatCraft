@@ -3,6 +3,7 @@
 //
 
 #include "model/world/Block.h"
+#include "model/world/World.h"
 
 Block::Block(Material material, const Location& location, bool front) :
         material_(material), location_(location), front_(front) {
@@ -44,4 +45,11 @@ BoundingBox Block::getBoundingBox() const {
     double y = location_.getBlockY();
     if(MaterialHelper::isAir(material_)) return {x,y,x,y};
     return {x,y,x+1,y+1};
+}
+
+void Block::breakBy(Entity *entity) {
+    location_.getWorld()->dropItem(
+            location_.toBlockCenterLocation().toVec2d(),
+            std::make_unique<ItemStack>(material_));
+    setMaterial(Material::AIR);
 }

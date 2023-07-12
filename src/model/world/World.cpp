@@ -5,6 +5,7 @@
 #include "model/world/World.h"
 #include "model/FlatCraft.h"
 #include "model/world/WorldGenerator.h"
+#include "model/entity/entities.h"
 
 
 World::World(const std::string& name) : name_(name), ticks_(0), weather_(Weather::CLEAR) {
@@ -74,11 +75,16 @@ Block* World::getBlock(const Location &location, bool front) const {
     return getBlock(location.getBlockX(), location.getBlockY(), front);
 }
 
-void World::notifyTeleported(Entity &entity) {
-    if(entity.getLocation().getRawWorld()==name_)
-        entities_.insert(&entity);
-    else
-        entities_.erase(&entity);
+void World::notifyEntityJoin(Entity *entity) {
+    entities_.insert(entity);
+    auto player = FlatCraft::getInstance()->getPlayer();
+    if(player->getWorld()==this){
+        entity->notifyDisplayed();
+    }
+}
+
+void World::notifyEntityLeave(Entity *entity) {
+    entities_.erase(entity);
 }
 
 void World::getEntities(std::vector<Entity*> &entities) const {
@@ -87,10 +93,16 @@ void World::getEntities(std::vector<Entity*> &entities) const {
     }
 }
 
-void World::getEntities(std::vector<Entity*> &entities, bool (*filter)(const Entity &)) const {
+void World::getEntities(std::vector<Entity*> &entities, const std::function<bool(Entity&)>& filter) const {
     for (const auto &item: entities_){
         if(filter(*item)) entities.push_back(item);
     }
+}
+
+void World::getEntitiesNearby(std::vector<Entity *> &entities, const Vec2d& position, double r) const {
+    getEntities(entities, [&](const Entity& entity){
+        return entity.getLocation().toVec2d().distanceSquared(position)<=r*r;
+    });
 }
 
 void World::init() {
@@ -297,3 +309,11 @@ std::unique_ptr<RayTraceResult> World::rayTrace(const Location &location, const 
 int World::getSeed() const {
     return seed_;
 }
+
+void World::dropItem(const Vec2d &position, std::unique_ptr<ItemStack>&& itemStack) {
+    auto item = FlatCraft::getInstance()->createEntity<DroppedItem>(
+            Location(*this,position.getX(),position.getY()), std::move(itemStack));
+    notifyEntityJoin(item);
+}
+
+

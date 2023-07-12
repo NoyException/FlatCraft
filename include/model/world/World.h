@@ -11,10 +11,13 @@
 #include "RayTraceResult.h"
 #include "model/event/events.h"
 
+class ItemStack;
+
 class World {
 public:
     friend class Entity;
     friend class WorldGenerator;
+    friend class FlatCraft;
     explicit World(const std::string& name);
     explicit World(const nlohmann::json& json);
     [[nodiscard]] std::unique_ptr<nlohmann::json> serialize() const;
@@ -28,10 +31,12 @@ public:
     void setWeather(Weather weather);
     [[nodiscard]] std::string getName() const;
     void getEntities(std::vector<Entity*>& entities) const;
-    void getEntities(std::vector<Entity*>& entities, bool(*filter)(const Entity&)) const;
+    void getEntities(std::vector<Entity*>& entities, const std::function<bool(Entity&)>& filter) const;
+    void getEntitiesNearby(std::vector<Entity*>& entities, const Vec2d& position, double r) const;
     [[nodiscard]] Block* getBlock(int x, int y, bool front) const;
     [[nodiscard]] Block* getBlock(const Vec2d& v, bool front) const;
     [[nodiscard]] Block* getBlock(const Location& location, bool front) const;
+    void dropItem(const Vec2d& position, std::unique_ptr<ItemStack>&& itemStack);
     std::unique_ptr<RayTraceResult> rayTrace(const Vec2d& startPoint, const Vec2d& direction,
                                              double maxDistance, double xSize, double ySize, bool hitBackground = false,
                                              const std::function<bool(Block*)>& blockFilter = [](Block* block){return MaterialHelper::isOccluded(block->getMaterial());},
@@ -40,9 +45,11 @@ public:
                                              double maxDistance, double xSize, double ySize, bool hitBackground,
                                              const std::function<bool(Block*)>& blockFilter,
                                              const std::function<bool(Entity*)>& entityFilter) const;
+
 private:
     void init();
-    void notifyTeleported(Entity& entity);
+    void notifyEntityJoin(Entity* entity);
+    void notifyEntityLeave(Entity* entity);
     void setBlock(int x, int y, bool front, Material material);
     Task* task_ = nullptr;
     int seed_;

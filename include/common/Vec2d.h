@@ -43,6 +43,8 @@ public:
     [[nodiscard]] Vec2d midPoint(const Vec2d& another) const;
     [[nodiscard]] double lengthSquared() const;
     [[nodiscard]] double length() const;
+    [[nodiscard]] double distanceSquared(const Vec2d& another) const;
+    [[nodiscard]] double distance(const Vec2d& another) const;
     [[nodiscard]] bool isLeft(const Vec2d& start, const Vec2d& direction) const;
     void rotate(double angle);
     void rotate(double angle ,const Vec2d& center);

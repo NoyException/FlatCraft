@@ -32,6 +32,7 @@ public:
     [[nodiscard]] int getBlockX() const;
     [[nodiscard]] int getBlockY() const;
     [[nodiscard]] Location toBlockLocation() const;
+    [[nodiscard]] Location toBlockCenterLocation() const;
     void setWorld(const World &world);
     void setX(double x);
     void setY(double y);

@@ -60,6 +60,7 @@ void FlatCraft::loadSave(const std::string &name) {
     save_ = name;
     loadWorlds();
     loadPlayer();
+    loadEntities();
 }
 
 void FlatCraft::loadPlayer() {
@@ -75,6 +76,8 @@ void FlatCraft::loadPlayer() {
         }
     }
     player_ = std::make_unique<Player>(Location{"",0,64});
+    player_->id_ = nextEntityId_;
+    nextEntityId_++;
 }
 
 void FlatCraft::loadWorld(const std::string &name) {
@@ -127,6 +130,7 @@ void FlatCraft::save() {
     std::filesystem::create_directories(save_);
     std::filesystem::create_directories(save_+"/world");
     savePlayer();
+    saveEntities();
     saveWorlds();
 }
 
@@ -157,3 +161,25 @@ void FlatCraft::savePlayer() {
         out.close();
     }
 }
+
+Entity *FlatCraft::getEntity(int id) {
+    if(id==player_->id_) return player_.get();
+    auto it = entities_.find(id);
+    if(it==entities_.end()) return nullptr;
+    return it->second.get();
+}
+
+void FlatCraft::loadEntities() {
+
+}
+
+void FlatCraft::saveEntities() {
+
+}
+
+void FlatCraft::destroyEntity(Entity *entity) {
+    auto world = entity->getWorld();
+    if(world!=nullptr) world->notifyEntityLeave(entity);
+    entities_.erase(entity->id_);
+}
+
