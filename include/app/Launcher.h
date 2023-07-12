@@ -9,6 +9,7 @@
 #include "Binder.h"
 #include "model/FlatCraft.h"
 #include "viewmodel/PlayerViewModel.h"
+#include "viewmodel/DroppedItemViewModel.h"
 #include "view/graph.h"
 
 class Launcher {
@@ -25,6 +26,7 @@ private:
     PlayerViewModel* playerViewModel_ = nullptr;
     WorldViewModel* worldViewModel_ = nullptr;
     std::thread* viewThread_ = nullptr;
+    std::list<DroppedItemViewModel*> droppedItemViewModels_;
 };
 
 

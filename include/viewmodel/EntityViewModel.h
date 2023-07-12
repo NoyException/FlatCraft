@@ -6,7 +6,7 @@
 #define FLATCRAFT_ENTITYVIEWMODEL_H
 
 #include "common.h"
-#include "model/entity/Entity.h"
+#include "model/entity/entities.h"
 
 class EntityViewModel {
 public:

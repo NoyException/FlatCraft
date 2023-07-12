@@ -19,6 +19,8 @@ public:
 
     static Event* NOTIFICATION_EVENT;
     static Event* VALUE_CHANGED_NOTIFICATION;
+    static Event* MODEL_CREATED_NOTIFICATION;
+    static Event* MODEL_DESTROYED_NOTIFICATION;
 };
 
 

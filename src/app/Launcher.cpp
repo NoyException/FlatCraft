@@ -3,8 +3,9 @@
 //
 
 #include "app/Launcher.h"
-#include "model/event/events.h"
 #include "view/graph.h"
+#include "model/event/events.h"
+#include "model/entity/entities.h"
 
 void Launcher::init() {
     MaterialHelper::registerAllMaterials();
@@ -25,6 +26,19 @@ void Launcher::start() {
 
     worldViewModel_ = new WorldViewModel(game_->getPlayer());
     Binder::bindWorld(window_->getWorldView(), *worldViewModel_);
+
+    EventManager::registerListener<ModelCreatedNotification<DroppedItem>>(EventPriority::MONITOR,[&](auto event){
+        auto item = event->getModel();
+        auto viewModel = new DroppedItemViewModel(item);
+        auto view = window_->createDroppedItemViewModel();
+        Binder::bind(*view,*viewModel);
+        droppedItemViewModels_.push_back(view);
+    });
+    EventManager::registerListener<ModelCreatedNotification<DroppedItem>>(EventPriority::MONITOR,[&](auto event){
+        droppedItemViewModels_.remove_if([&](DroppedItemViewModel& viewModel){
+            return viewModel.getDroppedItem() == event->getModel();
+        })
+    });
     std::cout << "Game starting" << std::endl;
     game_->start();
     std::cout << "Game started" << std::endl;
@@ -45,6 +59,9 @@ void Launcher::stop() {
     game_->stop();
     delete worldViewModel_;
     delete playerViewModel_;
+    for (auto &item: droppedItemViewModels_){
+        delete item;
+    }
 }
 
 void Launcher::end() {
