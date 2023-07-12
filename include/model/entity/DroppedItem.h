@@ -13,6 +13,9 @@ public:
     [[nodiscard]] ItemStack* getItemStack() const;
     void setItemStack(std::unique_ptr<ItemStack> &itemStack);
     [[nodiscard]] long long getTicksLived() const;
+    void remove() override;
+protected:
+    void run() override;
 private:
     std::unique_ptr<ItemStack> itemStack_;
     long long ticksLived_;

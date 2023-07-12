@@ -30,7 +30,7 @@ public:
     [[nodiscard]] bool isOnGround() const;
     [[nodiscard]] bool isCollided(BoundingBox::Face face) const;
     [[nodiscard]] virtual BoundingBox getBoundingBox() const;
-    //void remove();
+    virtual void remove();
 protected:
     virtual void run();
     Location location_;

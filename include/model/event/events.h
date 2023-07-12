@@ -12,5 +12,6 @@
 #include "instance/normal/WorldWeatherChangeEvent.h"
 #include "instance/notification/ValueChangedNotification.h"
 #include "instance/notification/ModelCreatedNotification.h"
+#include "instance/notification/ModelDestroyedNotification.h"
 
 #endif //FLATCRAFT_EVENTS_H

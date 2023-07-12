@@ -203,3 +203,5 @@ bool Entity::hasGravity() const {
 }
 
 void Entity::run() {}
+
+void Entity::remove() {}
