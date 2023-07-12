@@ -17,6 +17,12 @@ SDL_FreeSurface(pic);\
 
 class DroppedItemView : public EntityView {
 public:
+	DroppedItemView():itemState(ItemState::EXIST) {}
+	enum class ItemState {
+		EXIST,
+		PICKUP,
+		DISAPPEAR
+	};
 	void setBinderMaterialStack(const std::function<void(RefPtr<MaterialStack>)>& binder);
 
 	std::function<void()> getNotificationMaterialStackChanged();
@@ -25,7 +31,7 @@ public:
 
 private:
 	MaterialStack* binderMaterialStack;
-
+	ItemState itemState;
 };
 
 

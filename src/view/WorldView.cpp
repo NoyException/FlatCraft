@@ -254,6 +254,8 @@ void WorldView::drawRain(double v) {
 }
 
 void WorldView::drawCrack(double process, SDL_Rect* rect) {
+	if (process == 1)
+		process = 0.99;
 	int theProcess = (int)(process * 10);
 	SDL_Texture* texture = blockTexture->getCrack(theProcess);
 	SDL_RenderCopy(renderer, texture, NULL, rect);
