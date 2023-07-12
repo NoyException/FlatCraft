@@ -6,7 +6,7 @@
 #define FLATCRAFT_ENTITY_H
 
 #include "common.h"
-#include "Location.h"
+#include "model/Location.h"
 #include "model/scheduler/Task.h"
 
 class Entity {

@@ -173,7 +173,7 @@ std::optional<BoundingBoxRayTraceResult> BoundingBox::rayTrace(const Vec2d& star
 //         || (doubleEqual(startPoint.getY(),maxY_) && direction.getY()<0 && startPoint.getX()>minX_+epsilon && startPoint.getX()<maxX_-epsilon)
 //    )) return std::nullopt;
 
-        Vec2d dir = direction;
+    Vec2d dir = direction;
     dir.normalize();
     // 计算射线和边界框的四个交点
     std::optional<Vec2d> leftIntersect, rightIntersect, topIntersect, bottomIntersect;

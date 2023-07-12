@@ -6,7 +6,7 @@
 #define FLATCRAFT_RAYTRACERESULT_H
 
 #include "common.h"
-#include "Location.h"
+#include "model/Location.h"
 #include "model/entity/Entity.h"
 
 class RayTraceResult {

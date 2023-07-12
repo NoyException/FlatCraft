@@ -7,7 +7,7 @@
 
 #include "EntityEvent.h"
 #include "model/event/Cancelable.h"
-#include "Location.h"
+#include "model/Location.h"
 
 class EntityTeleportEvent : public EntityEvent, public Cancelable{
 public:

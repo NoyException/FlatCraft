@@ -2,7 +2,7 @@
 // Created by Noy on 2023/7/3.
 //
 
-#include "Location.h"
+#include "model/Location.h"
 #include "model/world/World.h"
 #include "model/FlatCraft.h"
 

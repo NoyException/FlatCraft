@@ -2,13 +2,13 @@
 int main(){
 //    std::cout<<(int)0.5<<" "<<(int)-0.5;
 //    return 0;
-    Random rand;
-    for (int i = 0; i < 10; ++i) {
-        double d = rand.nextDouble();
-        std::cout<<d<<std::endl;
-    }
-//    BoundingBox aabb(1,63,2,64);
-//    Vec2d v(0.2,0);
-//    auto res = aabb.rayTrace({0.44,64.9},v,v.length(),0.4,0.9);
-//    if(res.has_value()) std::cout<<res->hitPoint;
+//    Random rand;
+//    for (int i = 0; i < 10; ++i) {
+//        double d = rand.nextDouble();
+//        std::cout<<d<<std::endl;
+//    }
+    BoundingBox aabb(-32,65,-31,66);
+    Vec2d v(-0.9787321,0.2051422);
+    auto res = aabb.rayTrace({-28.214,66.9},v,6,0,0);
+    if(res.has_value()) std::cout<<res->hitPoint;
 }

@@ -132,7 +132,7 @@ void Player::tryToBreak(const Vec2d &position) {
     auto world = getWorld();
     auto block = world->getBlock(position, true);
     Vec2d start = location_.toVec2d() + Vec2d(0,0.9);
-    Vec2d direction = position - location_.toVec2d();
+    Vec2d direction = position - start;
     //判断是否能挖到
     auto res = world->rayTrace(start, direction, 6, 0, 0, false,
                                [](Block* block){return MaterialHelper::isOccluded(block->getMaterial());},
