@@ -10,6 +10,7 @@
 class WorldLoadedEvent : public WorldEvent{
 public:
     explicit WorldLoadedEvent(World* world);
+    static Event* getEventType();
 };
 
 

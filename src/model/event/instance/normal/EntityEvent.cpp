@@ -6,9 +6,7 @@
 #include "model/event/instance/normal/EntityEvent.h"
 #include "model/entity/Entity.h"
 
-EntityEvent::EntityEvent(Entity *entity) : EventInstance(EventType::ENTITY_EVENT), entity_(entity) {}
-
-EntityEvent::EntityEvent(const Event *event, Entity *entity) : EventInstance(event), entity_(entity) {}
+EntityEvent::EntityEvent(Entity *entity) : entity_(entity) {}
 
 Entity *EntityEvent::getEntity() {
     return entity_;
@@ -16,4 +14,8 @@ Entity *EntityEvent::getEntity() {
 
 const Entity *EntityEvent::getEntity() const {
     return entity_;
+}
+
+Event *EntityEvent::getEventType() {
+    return EventType::ENTITY_EVENT;
 }

@@ -9,6 +9,20 @@ Vec2d::Vec2d() : x_(0), y_(0) {}
 
 Vec2d::Vec2d(double x, double y) : x_(x), y_(y) {}
 
+Vec2d::Vec2d(const nlohmann::json &json) :
+Vec2d(json.at("x").get<double>(),json.at("y").get<double>()){}
+
+Vec2d Vec2d::deserialize(const nlohmann::json& json){
+    return Vec2d{json};
+}
+
+nlohmann::json Vec2d::serialize() const {
+    return nlohmann::json{
+            {"x",x_},
+            {"y",y_}
+    };
+}
+
 Vec2d &Vec2d::operator=(const Vec2d &another) = default;
 
 Vec2d Vec2d::operator+(const Vec2d &another) const {
@@ -148,6 +162,7 @@ void Vec2d::rotate(double angle, const Vec2d &center) {
 }
 
 const double Vec2d::epsilon = 0.000001;
+
 
 
 

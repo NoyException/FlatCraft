@@ -16,6 +16,7 @@ public:
     Location(std::string world, double x, double y);
     Location(const World &world, double x, double y);
     Location(const Location& location);
+    explicit Location(const nlohmann::json& json);
     static Location deserialize(const nlohmann::json& json);
     [[nodiscard]] nlohmann::json serialize() const;
     Location& operator=(const Location& another);

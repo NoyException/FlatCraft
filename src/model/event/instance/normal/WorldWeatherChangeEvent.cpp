@@ -7,7 +7,7 @@
 #include "model/world/World.h"
 
 WorldWeatherChangeEvent::WorldWeatherChangeEvent(World *world, Weather newWeather) :
-WorldEvent(EventType::WORLD_WEATHER_CHANGE_EVENT, world), Cancelable(), newWeather_(newWeather) {}
+WorldEvent(world), Cancelable(), newWeather_(newWeather) {}
 
 Weather WorldWeatherChangeEvent::getOldWeather() const {
     return getWorld()->getWeather();
@@ -19,4 +19,8 @@ Weather WorldWeatherChangeEvent::getNewWeather() const {
 
 void WorldWeatherChangeEvent::setNewWeather(Weather newWeather) {
     newWeather_ = newWeather;
+}
+
+Event *WorldWeatherChangeEvent::getEventType() {
+    return EventType::WORLD_WEATHER_CHANGE_EVENT;
 }

@@ -6,12 +6,16 @@
 #define FLATCRAFT_VEC2D_H
 
 #include <ostream>
+#include "json.hpp"
 
 class Vec2d {
 public:
     Vec2d();
     Vec2d(const Vec2d& another) = default;
     Vec2d(double x, double y);
+    explicit Vec2d(const nlohmann::json& json);
+    static Vec2d deserialize(const nlohmann::json& json);
+    [[nodiscard]] nlohmann::json serialize() const;
     Vec2d& operator=(const Vec2d& another);
     Vec2d operator+(const Vec2d& another) const;
     Vec2d operator-(const Vec2d& another) const;

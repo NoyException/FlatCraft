@@ -5,9 +5,7 @@
 #include "model/event/instance/notification/EntityNotification.h"
 #include "model/event/EventType.h"
 
-EntityNotification::EntityNotification(Entity *entity) : EventInstance(EventType::ENTITY_EVENT), entity_(entity) {}
-
-EntityNotification::EntityNotification(const Event *event, Entity *entity) : EventInstance(event), entity_(entity) {}
+EntityNotification::EntityNotification(Entity *entity) : entity_(entity) {}
 
 Entity *EntityNotification::getEntity() {
     return entity_;
@@ -15,4 +13,8 @@ Entity *EntityNotification::getEntity() {
 
 const Entity *EntityNotification::getEntity() const {
     return entity_;
+}
+
+Event *EntityNotification::getEventType() {
+    return EventType::NOTIFICATION_EVENT;
 }

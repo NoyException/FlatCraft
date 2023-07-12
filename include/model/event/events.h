@@ -5,6 +5,7 @@
 #ifndef FLATCRAFT_EVENTS_H
 #define FLATCRAFT_EVENTS_H
 
+#include "Listener.h"
 #include "EventManager.h"
 #include "instance/normal/EntityTeleportEvent.h"
 #include "instance/normal/WorldLoadedEvent.h"

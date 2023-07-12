@@ -16,11 +16,13 @@ public:
     friend class Entity;
     friend class WorldGenerator;
     explicit World(const std::string& name);
-    [[nodiscard]] nlohmann::json serialize() const;
-    static World deserialize(const nlohmann::json& json);
+    explicit World(const nlohmann::json& json);
+    [[nodiscard]] std::unique_ptr<nlohmann::json> serialize() const;
+    static std::unique_ptr<World> deserialize(const nlohmann::json& json);
     void run();
     void stop();
     [[nodiscard]] bool isRunning() const;
+    [[nodiscard]] int getSeed() const;
     [[nodiscard]] long long getTicks() const;
     [[nodiscard]] Weather getWeather() const;
     void setWeather(Weather weather);
@@ -43,6 +45,7 @@ private:
     void notifyTeleported(Entity& entity);
     void setBlock(int x, int y, bool front, Material material);
     Task* task_ = nullptr;
+    int seed_;
     long long ticks_;
     Weather weather_;
     Random rand_{};

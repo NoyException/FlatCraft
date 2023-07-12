@@ -79,13 +79,14 @@ void FlatCraft::loadPlayer() {
 
 void FlatCraft::loadWorld(const std::string &name) {
     std::ifstream in(save_+"/world/"+name+".dat");
+    std::cout<<"found world save "<<name<<std::endl;
     if(in.is_open()){
         std::cout<<"loading world "<<name<<"..."<<std::endl;
         std::string s((std::istreambuf_iterator<char> (in)), (std::istreambuf_iterator<char> ()));
         in.close();
         if(!s.empty()){
-            World world = World::deserialize(nlohmann::json::parse(s));
-            worlds_.emplace(name,std::make_unique<World>(std::move(world)));
+            auto world = World::deserialize(nlohmann::json::parse(s));
+            worlds_.emplace(name,std::move(world));
             std::cout<<"done"<<std::endl;
             return;
         }
@@ -98,7 +99,9 @@ void FlatCraft::loadWorlds() {
     for(const auto& it : std::filesystem::directory_iterator(save_+"/world")){
         auto name = it.path().filename();
         if(name.extension()==".dat"){
-            loadWorld(name.u8string());
+            auto str = name.u8string();
+            str = str.substr(0,str.length()-4);
+            loadWorld(str);
         }
     }
 }
@@ -106,9 +109,11 @@ void FlatCraft::loadWorlds() {
 void FlatCraft::saveWorld(const std::string &name) {
     World* world = getWorld(name);
     if(world!= nullptr){
+        std::cout<<"saving world "<<name<<"..."<<std::endl;
         std::ofstream out(save_+"/world/"+name+".dat");
-        out<<world->serialize().dump();
+        out<<world->serialize()->dump();
         out.close();
+        std::cout<<"done"<<std::endl;
     }
 }
 
@@ -135,13 +140,20 @@ void FlatCraft::createSave(const std::string &name) {
     std::filesystem::create_directories(save_+"/world");
     createWorld("main_world");
     loadPlayer();
-    player_->teleport(Location("main_world",0,64));
+    auto world = getWorld("main_world");
+    for(int i=255;i>=0;i--){
+        if(MaterialHelper::isOccluded(world->getBlock(-1,i,true)->getMaterial()) ||
+        MaterialHelper::isOccluded(world->getBlock(0,i,true)->getMaterial())){
+            player_->teleport(Location(*world,0,i+1));
+            break;
+        }
+    }
 }
 
 void FlatCraft::savePlayer() {
     std::ofstream out(save_+"/player.dat");
     if(out.is_open()){
-        out<<player_->serialize().dump();
+        out<<player_->serialize()->dump();
         out.close();
     }
 }

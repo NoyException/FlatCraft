@@ -2,7 +2,7 @@
 // Created by Noy on 2023/7/3.
 //
 
-#include "Location.h"
+#include "model/Location.h"
 #include "model/world/World.h"
 #include "model/FlatCraft.h"
 
@@ -11,6 +11,21 @@ Location::Location(std::string world, double x, double y) : world_(std::move(wor
 Location::Location(const World& world, double x, double y) : world_(world.getName()), x_(x), y_(y){}
 
 Location::Location(const Location &location) = default;
+
+Location::Location(const nlohmann::json &json) :
+Location(json.at("world").get<std::string>(),json.at("x").get<double>(),json.at("y").get<double>()) {}
+
+Location Location::deserialize(const nlohmann::json &json) {
+    return Location{json};
+}
+
+nlohmann::json Location::serialize() const {
+    return nlohmann::json{
+            {"world",world_},
+            {"x",x_},
+            {"y",y_}
+    };
+}
 
 Location &Location::operator=(const Location &another) = default;
 
@@ -101,22 +116,6 @@ Location Location::toBlockLocation() const {
 
 std::string Location::getRawWorld() const {
     return world_;
-}
-
-Location Location::deserialize(const nlohmann::json &json) {
-    return {
-        json.at("world").get<std::string>(),
-        json.at("x").get<double>(),
-        json.at("y").get<double>()
-    };
-}
-
-nlohmann::json Location::serialize() const {
-    return nlohmann::json{
-            {"world",world_},
-            {"x",x_},
-            {"y",y_}
-    };
 }
 
 Vec2d Location::toVec2d() const {

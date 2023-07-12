@@ -14,7 +14,11 @@ void Launcher::init() {
 }
 
 void Launcher::start() {
-    game_->createSave("testSave3");
+    std::string saveName = "testSave4";
+    if(game_->existsSave(saveName)){
+        game_->loadSave(saveName);
+    }
+    else game_->createSave(saveName);
     //game_->loadSave()
     playerViewModel_ = new PlayerViewModel(game_->getPlayer());
     Binder::bindPlayer(window_->getPlayerView(), *playerViewModel_);
@@ -49,11 +53,5 @@ void Launcher::end() {
 
 void Launcher::test() {
     FlatCraft::getInstance()->getScheduler()->runTask([](){
-        EventManager::registerListener(EventType::ENTITY_TELEPORT_EVENT,EventPriority::MONITOR,[](EventInstance* event){
-            std::cout<<"TELEPORTING"<<std::endl;
-        });
-        EventManager::registerListener(EventType::ENTITY_EVENT,EventPriority::MONITOR,[](EventInstance* event){
-            std::cout<<"ENTITY_EVENT"<<std::endl;
-        });
     });
 }

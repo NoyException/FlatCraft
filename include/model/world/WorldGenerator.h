@@ -19,6 +19,12 @@ public:
     void generateTree(double start,int width,int treeSeed,World& world,double *noise);
     bool haveTree(double x,double *noise,int treeSeed);
     int* generateHash(int seed);
+    void buildTree(int x,int y,World& world);
+    void buildLeaves(int x,int y,World& world);
+    void buildLog(int x,int y,World& world);
+   /* void generateMineral(double start,int width,int octaves, double persistence,double frequency,double amplitude ,int minY,Material,World& world,int hashSeed,int times);
+    bool haveMineral(double x,double *noise,int mineralSeed);
+*/
 };
 
 

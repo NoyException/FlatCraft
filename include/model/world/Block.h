@@ -8,7 +8,7 @@
 
 #include "common.h"
 #include "Material.h"
-#include "Location.h"
+#include "model/Location.h"
 #include "BlockData.h"
 
 enum class BlockFace : unsigned char{

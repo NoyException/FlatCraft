@@ -7,7 +7,7 @@
 
 #include "EntityEvent.h"
 #include "model/event/Cancelable.h"
-#include "Location.h"
+#include "model/Location.h"
 
 class EntityTeleportEvent : public EntityEvent, public Cancelable{
 public:
@@ -15,6 +15,7 @@ public:
     [[nodiscard]] Location getCurrentLocation() const;
     [[nodiscard]] Location getTargetLocation() const;
     void setTargetLocation(const Location& location);
+    static Event* getEventType();
 private:
     Location target_;
 };

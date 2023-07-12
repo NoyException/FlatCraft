@@ -4,10 +4,23 @@
 
 #include "model/item/ItemStack.h"
 
-ItemStack::ItemStack(Material material) : ItemStack(material, 1) {}
+ItemStack::ItemStack(Material material, int amount) :
+ItemStack(material, amount, ItemMeta::ofDefault(material)){}
 
-ItemStack::ItemStack(Material material, int amount) : item_(Item::of(material)),
-meta_(ItemMeta::ofDefault(item_)), amount_(amount) {}
+ItemStack::ItemStack(Material material, int amount, std::unique_ptr<ItemMeta> meta) :
+item_(Item::of(material)), amount_(amount), meta_(std::move(meta)){}
+
+ItemStack::ItemStack(const nlohmann::json &json) :
+ItemStack(static_cast<Material>(json.at("material").get<int>()),
+          json.at("amount").get<int>(),
+          std::make_unique<ItemMeta>(json.at("meta"))){}
+
+std::unique_ptr<nlohmann::json> ItemStack::serialize() const {
+    return std::make_unique<nlohmann::json>(nlohmann::json::initializer_list_t{
+            {"material",static_cast<int>(item_->getMaterial())},
+            {"amount",amount_},
+            {"meta",*meta_->serialize()}});
+}
 
 Item *ItemStack::getItem() const {
     return item_;

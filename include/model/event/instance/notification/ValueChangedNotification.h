@@ -29,6 +29,8 @@ public:
     template<class V>
     [[nodiscard]] V getNewValue() const;
 
+    static Event* getEventType();
+
 private:
     T* object_;
     Field field_;
@@ -36,9 +38,14 @@ private:
 };
 
 template<class T>
+Event *ValueChangedNotification<T>::getEventType() {
+    return EventType::VALUE_CHANGED_NOTIFICATION;
+}
+
+template<class T>
 template<class V>
 ValueChangedNotification<T>::ValueChangedNotification(T *obj, Field field, const V &newValue)
-        : EventInstance(EventType::VALUE_CHANGED_NOTIFICATION), object_(obj), field_(field),
+        : object_(obj), field_(field),
         newValue_(std::make_any<V>(newValue)){}
 
 template<class T>

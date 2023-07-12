@@ -10,10 +10,9 @@ Player::Player(const Location &spawnLocation) : LivingEntity(spawnLocation),
 currentSlot_(0), cursor_(Material::AIR), lastBreaking_(nullptr), breakingProgress_(0),
 walkingDirection_(0), sprinting_(false), sneaking_(false), flying_(false){
 
-    EventManager::registerListener(EventType::ENTITY_TELEPORT_EVENT,EventPriority::MONITOR,[&](EventInstance* event){
-        auto e = dynamic_cast<EntityTeleportEvent*>(event);
-        if(!e->isCanceled() && e->getEntity()==this){
-            auto target = e->getTargetLocation().getWorld();
+    EventManager::registerListener<EntityTeleportEvent>(EventPriority::MONITOR,[&](EntityTeleportEvent* event){
+        if(!event->isCanceled() && event->getEntity()==this){
+            auto target = event->getTargetLocation().getWorld();
             auto old = location_.getWorld();
             if(target!=old){
                 if(old != nullptr) old->stop();
@@ -23,18 +22,22 @@ walkingDirection_(0), sprinting_(false), sneaking_(false), flying_(false){
     });
 }
 
-Player::~Player() {
-    task_->cancel();
-}
+Player::~Player() = default;
 
-nlohmann::json Player::serialize() const {
-    return std::move(LivingEntity::serialize());
+Player::Player(const nlohmann::json &json) : LivingEntity(json),
+cursor_(json.at("cursor")), currentSlot_(0), lastBreaking_(nullptr), breakingProgress_(0),
+walkingDirection_(0), sprinting_(false), sneaking_(false), flying_(false){
+
 }
 
 std::unique_ptr<Player> Player::deserialize(const nlohmann::json &json) {
-    auto player = std::make_unique<Player>(Location::deserialize(json.at("location")));
-    player->health_ = json.at("health").get<double>();
-    return std::move(player);
+    return std::make_unique<Player>(json);
+}
+
+std::unique_ptr<nlohmann::json> Player::serialize() const {
+    auto json = LivingEntity::serialize();
+    json->merge_patch(nlohmann::json{{"cursor",*cursor_.serialize()}});
+    return json;
 }
 
 void Player::control() {
@@ -129,7 +132,7 @@ void Player::tryToBreak(const Vec2d &position) {
     auto world = getWorld();
     auto block = world->getBlock(position, true);
     Vec2d start = location_.toVec2d() + Vec2d(0,0.9);
-    Vec2d direction = position - location_.toVec2d();
+    Vec2d direction = position - start;
     //判断是否能挖到
     auto res = world->rayTrace(start, direction, 6, 0, 0, false,
                                [](Block* block){return MaterialHelper::isOccluded(block->getMaterial());},
@@ -143,7 +146,7 @@ void Player::tryToBreak(const Vec2d &position) {
     && !MaterialHelper::isLiquid(block->getMaterial())) {
         if (block == lastBreaking_) {
             double hardness = MaterialHelper::getHardness(block->getMaterial());
-            std::cout<<hardness<<" "<<breakingProgress_<<std::endl;
+//            std::cout<<hardness<<" "<<breakingProgress_<<std::endl;
             if (hardness > 0) breakingProgress_ += 0.05 / hardness;
             if (hardness == 0) breakingProgress_ = 1;
             if (hardness < 0) breakingProgress_ = 0;

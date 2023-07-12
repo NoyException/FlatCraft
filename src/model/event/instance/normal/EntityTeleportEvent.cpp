@@ -7,7 +7,7 @@
 #include "model/entity/Entity.h"
 
 EntityTeleportEvent::EntityTeleportEvent(Entity *entity, const Location &targetLocation) :
-EntityEvent(EventType::ENTITY_TELEPORT_EVENT, entity), Cancelable(), target_(targetLocation) {}
+EntityEvent(entity), Cancelable(), target_(targetLocation) {}
 
 Location EntityTeleportEvent::getCurrentLocation() const {
     return getEntity()->getLocation();
@@ -19,4 +19,8 @@ Location EntityTeleportEvent::getTargetLocation() const {
 
 void EntityTeleportEvent::setTargetLocation(const Location &location) {
     target_ = location;
+}
+
+Event *EntityTeleportEvent::getEventType() {
+    return EventType::ENTITY_TELEPORT_EVENT;
 }

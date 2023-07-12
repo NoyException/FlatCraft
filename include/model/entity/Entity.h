@@ -6,7 +6,7 @@
 #define FLATCRAFT_ENTITY_H
 
 #include "common.h"
-#include "Location.h"
+#include "model/Location.h"
 #include "model/scheduler/Task.h"
 
 class Entity {
@@ -14,7 +14,8 @@ public:
     friend class EntityViewModel;
     explicit Entity(const Location& spawnLocation, const Vec2d& direction = {1,0});
     virtual ~Entity();
-    [[nodiscard]] virtual nlohmann::json serialize() const;
+    explicit Entity(const nlohmann::json& json);
+    [[nodiscard]] virtual std::unique_ptr<nlohmann::json> serialize() const;
     [[nodiscard]] Location getLocation() const;
     [[nodiscard]] World* getWorld() const;
     void teleport(const Location& location);
@@ -29,7 +30,9 @@ public:
     [[nodiscard]] bool isOnGround() const;
     [[nodiscard]] bool isCollided(BoundingBox::Face face) const;
     [[nodiscard]] virtual BoundingBox getBoundingBox() const;
+    //void remove();
 protected:
+    virtual void run();
     Location location_;
     Vec2d direction_;
     Vec2d velocity_;
