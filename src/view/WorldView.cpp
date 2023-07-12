@@ -218,9 +218,16 @@ void WorldView::drawMap() {
 }
 
 void WorldView::drawRain(double v) {
-	if (*binderWeather_ == Weather::CLEAR)
-		return;
+	static int alpha = 255;
+	if ((*binderWeather_) == Weather::CLEAR) {
+		if (alpha > 0)
+			alpha--;
+	}
+	else if (alpha < 255)
+		alpha++;
+	//std::cout << (( * binderWeather_ )== Weather::CLEAR) << std::endl;
 	SDL_Texture* texture = environmentTexture->getRain();
+	SDL_SetTextureAlphaMod(texture, alpha);
 	SDL_Rect rect;
 	SDL_Rect rainRect;
 	static int rainY = -400;
@@ -280,7 +287,5 @@ void WorldView::setBinderWeather(const std::function<void(RefPtr<Weather>)>& bin
 //TODO: 实现！
 std::function<void()> WorldView::getNotificationWeatherChanged() {
 	return [&]() {
-		
-		//这里的代码将在Model通知该View天气发生改变
 	};
 }

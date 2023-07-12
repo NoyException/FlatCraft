@@ -227,7 +227,7 @@ private:
 
 class WorldView {
 public:
-	WorldView() : windowWidth(1280), windowHeight(768), blockSize(32), renderer(nullptr), blockTexture(nullptr), backgroundTexture(nullptr), environmentTexture(nullptr), gui(GUI::HOME) {}
+	WorldView() : windowWidth(1280), windowHeight(768), blockSize(32), renderer(nullptr), blockTexture(nullptr), backgroundTexture(nullptr), environmentTexture(nullptr), gui(GUI::HOME){}
 	void drawMap();//draw the map as location as the center
 	void drawPlayer(int action);
 	void drawRain(double v);
@@ -257,7 +257,6 @@ public:
 		wY = binderCameraPosition_->getY() - (y - 768 * 0.618) / 32;
 	}
 	void calculate();
-
 	int windowWidth, windowHeight;//pixel
 	int blockSize;//pixel
 	SDL_Renderer* renderer;
