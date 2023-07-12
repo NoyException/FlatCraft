@@ -18,6 +18,7 @@ public:
 
     void setNewWeather(Weather newWeather);
 
+    static Event* getEventType();
 private:
     Weather newWeather_;
 };

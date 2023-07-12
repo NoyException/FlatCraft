@@ -14,8 +14,7 @@ public:
     explicit EntityEvent(Entity* entity);
     Entity* getEntity();
     [[nodiscard]] const Entity* getEntity() const;
-protected:
-    EntityEvent(const Event* event, Entity* entity);
+    static Event* getEventType();
 private:
     Entity* entity_;
 };

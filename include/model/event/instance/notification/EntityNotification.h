@@ -15,6 +15,7 @@ public:
     explicit EntityNotification(Entity* entity);
     Entity* getEntity();
     [[nodiscard]] const Entity* getEntity() const;
+    static Event* getEventType();
 private:
     Entity* entity_;
 };

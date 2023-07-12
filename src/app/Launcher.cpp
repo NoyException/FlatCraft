@@ -53,11 +53,5 @@ void Launcher::end() {
 
 void Launcher::test() {
     FlatCraft::getInstance()->getScheduler()->runTask([](){
-        EventManager::registerListener(EventType::ENTITY_TELEPORT_EVENT,EventPriority::MONITOR,[](EventInstance* event){
-            std::cout<<"TELEPORTING"<<std::endl;
-        });
-        EventManager::registerListener(EventType::ENTITY_EVENT,EventPriority::MONITOR,[](EventInstance* event){
-            std::cout<<"ENTITY_EVENT"<<std::endl;
-        });
     });
 }

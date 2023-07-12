@@ -8,13 +8,32 @@
 #include "common.h"
 #include "Event.h"
 #include "EventType.h"
+#include "Listener.h"
 
 class EventManager {
 public:
-    static void callEvent(EventInstance& event);
-    static void registerListener(Event* event, EventPriority priority,
-                                 const std::function<void(EventInstance*)>& listener);
+    template<class E>
+    static void callEvent(E& event);
+
+    template<class E>
+    static Listener<E>* registerListener(EventPriority priority, std::function<void(E*)> listener);
+
+    static void unregisterListener(BaseListener* listener);
 private:
 };
+
+template<class E>
+void EventManager::callEvent(E &event) {
+    E::getEventType()->call(&event);
+}
+
+template<class E>
+Listener<E> *EventManager::registerListener(EventPriority priority, std::function<void(E *)> listener) {
+    Event *event = E::getEventType();
+    auto l = std::make_unique<Listener<E>>(event,priority,listener);
+    auto ptr = l.get();
+    event->listeners_[static_cast<int>(priority)].push_back(std::move(l));
+    return ptr;
+}
 
 #endif //FLATCRAFT_EVENTMANAGER_H

@@ -14,8 +14,7 @@ public:
     explicit WorldEvent(World* world);
     World* getWorld();
     [[nodiscard]] const World* getWorld() const;
-protected:
-    WorldEvent(const Event* event, World* world);
+    static Event* getEventType();
 private:
     World* world_;
 };

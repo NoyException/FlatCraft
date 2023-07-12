@@ -15,6 +15,7 @@ public:
     [[nodiscard]] Location getCurrentLocation() const;
     [[nodiscard]] Location getTargetLocation() const;
     void setTargetLocation(const Location& location);
+    static Event* getEventType();
 private:
     Location target_;
 };

@@ -18,6 +18,7 @@ enum class EventPriority : int{
 };
 
 class EventInstance;
+class BaseListener;
 
 /**
  * 享元模式，代表了一个抽象事件类型
@@ -31,7 +32,7 @@ public:
 private:
     void call(EventInstance* eventInstance, EventPriority priority) const;
     Event *parent_;
-    std::list<std::function<void(EventInstance*)>> listeners_[6];
+    std::list<std::unique_ptr<BaseListener>> listeners_[6];
 };
 
 #endif //FLATCRAFT_EVENT_H

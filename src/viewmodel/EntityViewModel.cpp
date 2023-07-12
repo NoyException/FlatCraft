@@ -6,11 +6,9 @@
 #include "model/event/events.h"
 
 EntityViewModel::EntityViewModel(Entity *entity) : entity_(entity) {
-
-    EventManager::registerListener(EventType::VALUE_CHANGED_NOTIFICATION, EventPriority::MONITOR,[&](EventInstance *event) {
-        auto e = dynamic_cast<ValueChangedNotification<Entity> *>(event);
-        if (e != nullptr && e->getObject() == entity_) {
-            switch (e->getField()) {
+    EventManager::registerListener<ValueChangedNotification<Entity>>(EventPriority::MONITOR, [&](auto *event) {
+        if (event != nullptr && event->getObject() == entity_) {
+            switch (event->getField()) {
                 case Field::ENTITY_POSITION:
                     position_ = entity_->getLocation().toVec2d();
                     notificationLocationChanged_();

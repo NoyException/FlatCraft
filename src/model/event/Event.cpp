@@ -3,6 +3,7 @@
 //
 
 #include "model/event/Event.h"
+#include "model/event/Listener.h"
 
 Event::Event(Event *parent) : parent_(parent) {
 
@@ -20,6 +21,6 @@ void Event::call(EventInstance *eventInstance) const{
 void Event::call(EventInstance *eventInstance, EventPriority priority) const {
     if(parent_ != nullptr) parent_->call(eventInstance, priority);
     for (const auto &listener: listeners_[static_cast<int>(priority)]){
-        listener(eventInstance);
+        listener->listen(eventInstance);
     }
 }

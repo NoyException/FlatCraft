@@ -4,10 +4,6 @@
 
 #include "model/event/instance/EventInstance.h"
 
-EventInstance::EventInstance(const Event *event) : event_(event) {
-
-}
-
-const Event *EventInstance::getEvent() const {
-    return event_;
+Event *EventInstance::getEventType() {
+    return nullptr;
 }

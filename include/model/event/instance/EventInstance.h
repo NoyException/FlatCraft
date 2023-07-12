@@ -6,7 +6,8 @@
 #define FLATCRAFT_EVENTINSTANCE_H
 
 #include "common.h"
-#include "model/event/Event.h"
+
+class Event;
 
 /**
  * 事件实例，在发生每个事件时都会构造一个对应的实例
@@ -14,11 +15,7 @@
 class EventInstance{
 public:
     virtual ~EventInstance() = default;
-    [[nodiscard]] const Event* getEvent() const;
-protected:
-    explicit EventInstance(const Event* event);
-private:
-    const Event *event_;
+    static Event* getEventType();
 };
 
 #endif //FLATCRAFT_EVENTINSTANCE_H

@@ -5,43 +5,40 @@
 #include "WorldViewModel.h"
 
 WorldViewModel::WorldViewModel(Player *player) : player_(player) {
-    EventManager::registerListener(EventType::VALUE_CHANGED_NOTIFICATION, EventPriority::MONITOR,[&](EventInstance *event){
-        auto e = dynamic_cast<ValueChangedNotification<World>*>(event);
+    EventManager::registerListener<ValueChangedNotification<World>>(EventPriority::MONITOR,[&](ValueChangedNotification<World>* event){
         auto world = getWorld();
-        if(e!= nullptr){
-            if(e->getObject()==world){
-                switch (e->getField()) {
-                    case Field::WORLD_TICKS:
-                        ticks_ = e->getNewValue<long long>();
-                        break;
-                    case Field::WORLD_WEATHER:
-                        weather_ = e->getNewValue<Weather>();
-                        notificationWeatherChanged_();
-                        break;
-                    default:
-                        break;
-                }
+        if(event->getObject()==world){
+            switch (event->getField()) {
+                case Field::WORLD_TICKS:
+                    ticks_ = event->getNewValue<long long>();
+                    break;
+                case Field::WORLD_WEATHER:
+                    weather_ = event->getNewValue<Weather>();
+                    notificationWeatherChanged_();
+                    break;
+                default:
+                    break;
             }
         }
-        else{
-            auto e2 = dynamic_cast<ValueChangedNotification<Entity>*>(event);
-            if(e2!= nullptr && e2->getObject() == player_ ){
-                if(e2->getField()==Field::ENTITY_POSITION){
-                    std::unique_lock<std::shared_mutex> lock(matrix_.getSharedMutex());
-                    cameraPosition_ = player_->getLocation().toVec2d();
-                    leftUpPosition_ = Vec2d(cameraPosition_.getBlockX(),cameraPosition_.getBlockY()) +
-                            Vec2d((int)std::floor(-MaterialMatrix::MAX_COLUMN/2),(int)std::floor(MaterialMatrix::MAX_ROW*0.618));
-                    int x = leftUpPosition_.getBlockX();
-                    int y = leftUpPosition_.getBlockY()-1;
-                    for(int i = 0; i < MaterialMatrix::MAX_COLUMN; i++) {
-                        for (int j = 0; j < MaterialMatrix::MAX_ROW; j++) {
-                            for (int k = 0; k <= 1; k++) {
-                                auto block = world->getBlock(x + i,y - j, k);
-                                if (block == nullptr)
-                                    matrix_[i][j][k] = Material::BED_ROCK;
-                                else
-                                    matrix_[i][j][k] = block->getMaterial();
-                            }
+    });
+    EventManager::registerListener<ValueChangedNotification<Entity>>(EventPriority::MONITOR,[&](ValueChangedNotification<Entity>* event){
+        if(event->getObject() == player_ ){
+            auto world = getWorld();
+            if(event->getField()==Field::ENTITY_POSITION){
+                std::unique_lock<std::shared_mutex> lock(matrix_.getSharedMutex());
+                cameraPosition_ = player_->getLocation().toVec2d();
+                leftUpPosition_ = Vec2d(cameraPosition_.getBlockX(),cameraPosition_.getBlockY()) +
+                                  Vec2d((int)std::floor(-MaterialMatrix::MAX_COLUMN/2),(int)std::floor(MaterialMatrix::MAX_ROW*0.618));
+                int x = leftUpPosition_.getBlockX();
+                int y = leftUpPosition_.getBlockY()-1;
+                for(int i = 0; i < MaterialMatrix::MAX_COLUMN; i++) {
+                    for (int j = 0; j < MaterialMatrix::MAX_ROW; j++) {
+                        for (int k = 0; k <= 1; k++) {
+                            auto block = world->getBlock(x + i,y - j, k);
+                            if (block == nullptr)
+                                matrix_[i][j][k] = Material::BED_ROCK;
+                            else
+                                matrix_[i][j][k] = block->getMaterial();
                         }
                     }
                 }

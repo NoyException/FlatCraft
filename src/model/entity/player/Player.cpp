@@ -10,10 +10,9 @@ Player::Player(const Location &spawnLocation) : LivingEntity(spawnLocation),
 currentSlot_(0), cursor_(Material::AIR), lastBreaking_(nullptr), breakingProgress_(0),
 walkingDirection_(0), sprinting_(false), sneaking_(false), flying_(false){
 
-    EventManager::registerListener(EventType::ENTITY_TELEPORT_EVENT,EventPriority::MONITOR,[&](EventInstance* event){
-        auto e = dynamic_cast<EntityTeleportEvent*>(event);
-        if(!e->isCanceled() && e->getEntity()==this){
-            auto target = e->getTargetLocation().getWorld();
+    EventManager::registerListener<EntityTeleportEvent>(EventPriority::MONITOR,[&](EntityTeleportEvent* event){
+        if(!event->isCanceled() && event->getEntity()==this){
+            auto target = event->getTargetLocation().getWorld();
             auto old = location_.getWorld();
             if(target!=old){
                 if(old != nullptr) old->stop();
