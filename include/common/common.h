@@ -28,6 +28,7 @@ enum class Key : int{
     CTRL,
     LEFT_CLICK,
     RIGHT_CLICK,
+    ESC,
 };
 
 enum class KeyState : bool{
