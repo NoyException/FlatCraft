@@ -16,24 +16,25 @@ void Window::start() {
 	worldView_.characterTexture = new CharacterTexture(renderer_);
 	guiTexture_ = new GuiTexture(renderer_);
 	KeyState keyState;
+	SDL_Event my_event;
 	Vec2d clickPosition;
 	while (!graphFinish) {
 		SDL_GetMouseState(&mx_, &my_);
 		worldView_.calculate();
-		while (SDL_PollEvent(&my_event_) != 0) {
+		while (SDL_PollEvent(&my_event) != 0) {
 			clickPosition.setX(worldView_.binderCameraPosition_->getX() + (mx_ - 640.0) / 32);
 			clickPosition.setY(worldView_.binderCameraPosition_->getY() - (my_ - 768 * 0.618) / 32);
 			playerView_.commandChangeCursorPosition_(clickPosition);
 			//std::cout << clickPosition.getX() << "  " << clickPosition.getY() << std::endl;
-			if (my_event_.type == SDL_QUIT) {
+			if (my_event.type == SDL_QUIT) {
 				graphFinish = true;
 			}
-			else if (my_event_.type == SDL_KEYDOWN || my_event_.type == SDL_KEYUP) {
-				if (my_event_.type == SDL_KEYDOWN)
+			else if (my_event.type == SDL_KEYDOWN || my_event.type == SDL_KEYUP) {
+				if (my_event.type == SDL_KEYDOWN)
 					keyState = KeyState::DOWN;
 				else
 					keyState = KeyState::UP;
-				switch (my_event_.key.keysym.sym) {
+				switch (my_event.key.keysym.sym) {
                     case SDLK_w: {
 						playerView_.commandChangeKeyState_(Key::UP, keyState);
                         break;
@@ -64,49 +65,75 @@ void Window::start() {
 						playerView_.commandChangeKeyState_(Key::CTRL, keyState);
                         break;
                     }
-
+					case SDLK_ESCAPE:
+						playerView_.commandChangeKeyState_(Key::ESC, keyState);
+						break;
 				}
 			}
-			else if (my_event_.type == SDL_MOUSEBUTTONDOWN || my_event_.type == SDL_MOUSEBUTTONUP) {
-				if (my_event_.type == SDL_MOUSEBUTTONDOWN)
+			else if (my_event.type == SDL_MOUSEBUTTONDOWN || my_event.type == SDL_MOUSEBUTTONUP) {
+				if (my_event.type == SDL_MOUSEBUTTONDOWN)
 					keyState = KeyState::DOWN;
 				else
 					keyState = KeyState::UP;
-				if (SDL_BUTTON_LEFT == my_event_.button.button) {
+				if (SDL_BUTTON_LEFT == my_event.button.button) {
 					playerView_.commandChangeKeyState_(Key::LEFT_CLICK, keyState);
 					//SDL_GetMouseState(&mx, &my);
 					//std::cout << mx << " " << my << std::endl;
 
 				}
-				else if (SDL_BUTTON_RIGHT == my_event_.button.button) {
+				else if (SDL_BUTTON_RIGHT == my_event.button.button) {
 					playerView_.commandChangeKeyState_(Key::RIGHT_CLICK, keyState);
 				}
 			}
-			else if (my_event_.type == SDL_MOUSEWHEEL) {
-				playerView_.commandScrollMouseWheel_(my_event_.wheel.y);
+			else if (my_event.type == SDL_MOUSEWHEEL) {
+				playerView_.commandScrollMouseWheel_(my_event.wheel.y);
 			}
-		}
+			my_event_ = my_event;
+		}//end for event
 		//clear before image in renderer
-		SDL_RenderClear(renderer_);
 		draw();
-		guiControl();
-		SDL_RenderPresent(renderer_); //output image
 	}
 }
 
 void Window::guiControl() {
+	switch (gui_) {
+	case GUI::GAME:
+		if (my_event_.key.keysym.sym == SDLK_ESCAPE && my_event_.type == SDL_KEYUP) {
+			gui_ = GUI::PAUSE;
+			my_event_.key.keysym.sym = SDLK_l;
+		}
+		break;
+	case GUI::PAUSE:
+			gui_ = GUI::ALREADYPAUSE;
+			my_event_.key.keysym.sym = SDLK_l;
+		break;
+	case GUI::ALREADYPAUSE:
+		if (my_event_.key.keysym.sym == SDLK_ESCAPE && my_event_.type == SDL_KEYUP) {
+			gui_ = GUI::GAME;
+			my_event_.key.keysym.sym = SDLK_l;
+		}
+		break;
 
+
+	}//end for switch
 }
 
 void Window::draw() {
+	
 	switch (gui_) {
 	case GUI::GAME:
+		SDL_RenderClear(renderer_);//clear
 		drawGame();
 		break;
 	case GUI::PAUSE:
+		SDL_RenderClear(renderer_);//clear
 		drawPause();
 		break;
+	case GUI::ALREADYPAUSE:
+		break;
 	}
+	guiControl();
+	SDL_RenderPresent(renderer_); //output image
 }
 
 

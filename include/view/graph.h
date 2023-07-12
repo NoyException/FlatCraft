@@ -9,7 +9,8 @@ extern bool graphFinish;
 enum class GUI : int {
 	HOME,
 	GAME,
-	PAUSE
+	PAUSE,
+	ALREADYPAUSE
 };
 
 class GuiTexture {
