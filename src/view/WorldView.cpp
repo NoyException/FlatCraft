@@ -221,12 +221,11 @@ void WorldView::drawRain(double v) {
 	if ((*binderWeather_) == Weather::CLEAR) {
 		if (weatherAlpha_ > 0)
 			weatherAlpha_--;
-		if (weatherAlpha_ == 0)
+		else
 			return;
 	}
 	else if (weatherAlpha_ < 255)//rain
 		weatherAlpha_++;
-	//std::cout << (( * binderWeather_ )== Weather::CLEAR) << std::endl;
 	SDL_Texture* texture = environmentTexture->getRain();
 	SDL_SetTextureAlphaMod(texture, weatherAlpha_);
 	SDL_Rect rect;

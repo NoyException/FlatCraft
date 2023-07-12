@@ -13,29 +13,27 @@ void Window::start() {
 	worldView_.blockTexture = new BlockTexture(renderer_);
 	worldView_.backgroundTexture = new BackgroundTexture(renderer_);
 	worldView_.environmentTexture = new EnvironmentTexture(renderer_);
-	worldView_.guiTexture = new GuiTexture(renderer_);
 	worldView_.characterTexture = new CharacterTexture(renderer_);
-
-	SDL_Event my_event;
+	guiTexture_ = new GuiTexture(renderer_);
 	KeyState keyState;
 	Vec2d clickPosition;
 	while (!graphFinish) {
-		SDL_GetMouseState(&mx, &my);
+		SDL_GetMouseState(&mx_, &my_);
 		worldView_.calculate();
-		while (SDL_PollEvent(&my_event) != 0) {
-			clickPosition.setX(worldView_.binderCameraPosition_->getX() + (mx - 640.0) / 32);
-			clickPosition.setY(worldView_.binderCameraPosition_->getY() - (my - 768 * 0.618) / 32);
+		while (SDL_PollEvent(&my_event_) != 0) {
+			clickPosition.setX(worldView_.binderCameraPosition_->getX() + (mx_ - 640.0) / 32);
+			clickPosition.setY(worldView_.binderCameraPosition_->getY() - (my_ - 768 * 0.618) / 32);
 			playerView_.commandChangeCursorPosition_(clickPosition);
 			//std::cout << clickPosition.getX() << "  " << clickPosition.getY() << std::endl;
-			if (my_event.type == SDL_QUIT) {
+			if (my_event_.type == SDL_QUIT) {
 				graphFinish = true;
 			}
-			else if (my_event.type == SDL_KEYDOWN || my_event.type == SDL_KEYUP) {
-				if (my_event.type == SDL_KEYDOWN)
+			else if (my_event_.type == SDL_KEYDOWN || my_event_.type == SDL_KEYUP) {
+				if (my_event_.type == SDL_KEYDOWN)
 					keyState = KeyState::DOWN;
 				else
 					keyState = KeyState::UP;
-				switch (my_event.key.keysym.sym) {
+				switch (my_event_.key.keysym.sym) {
                     case SDLK_w: {
 						playerView_.commandChangeKeyState_(Key::UP, keyState);
                         break;
@@ -69,23 +67,23 @@ void Window::start() {
 
 				}
 			}
-			else if (my_event.type == SDL_MOUSEBUTTONDOWN || my_event.type == SDL_MOUSEBUTTONUP) {
-				if (my_event.type == SDL_MOUSEBUTTONDOWN)
+			else if (my_event_.type == SDL_MOUSEBUTTONDOWN || my_event_.type == SDL_MOUSEBUTTONUP) {
+				if (my_event_.type == SDL_MOUSEBUTTONDOWN)
 					keyState = KeyState::DOWN;
 				else
 					keyState = KeyState::UP;
-				if (SDL_BUTTON_LEFT == my_event.button.button) {
+				if (SDL_BUTTON_LEFT == my_event_.button.button) {
 					playerView_.commandChangeKeyState_(Key::LEFT_CLICK, keyState);
 					//SDL_GetMouseState(&mx, &my);
 					//std::cout << mx << " " << my << std::endl;
 
 				}
-				else if (SDL_BUTTON_RIGHT == my_event.button.button) {
+				else if (SDL_BUTTON_RIGHT == my_event_.button.button) {
 					playerView_.commandChangeKeyState_(Key::RIGHT_CLICK, keyState);
 				}
 			}
-			else if (my_event.type == SDL_MOUSEWHEEL) {
-				playerView_.commandScrollMouseWheel_(my_event.wheel.y);
+			else if (my_event_.type == SDL_MOUSEWHEEL) {
+				playerView_.commandScrollMouseWheel_(my_event_.wheel.y);
 			}
 		}
 		//clear before image in renderer
@@ -96,22 +94,40 @@ void Window::start() {
 }
 
 void Window::draw() {
+	switch (gui_) {
+	case GUI::GAME:
+		drawGame();
+		break;
+	case GUI::PAUSE:
+		drawPause();
+		break;
+	}
+}
+
+void Window::drawGame() {
 	//static long long a = 0;
 	//a++;
 	//std::cout << a << std::endl;
 	worldView_.drawBackground();
 	worldView_.drawRain(playerView_.binderVelocity_->getX());
 	worldView_.drawMap();
+	//draw crack if isDigging
 	if (playerView_.isDigging) {
 		if (*playerView_.binderBreakingProgress_ < 0.1)
 			playerView_.isDigging = false;
-		mouseBlockRect_.x = (worldView_.leftUpRect.x + (mx- worldView_.leftUpRect.x)/32*32);
-		mouseBlockRect_.y = (worldView_.leftUpRect.y + (my- worldView_.leftUpRect.y)/32*32);
+		mouseBlockRect_.x = (worldView_.leftUpRect.x + (mx_- worldView_.leftUpRect.x)/32*32);
+		mouseBlockRect_.y = (worldView_.leftUpRect.y + (my_- worldView_.leftUpRect.y)/32*32);
 		mouseBlockRect_.w = mouseBlockRect_.h = 32;
 		worldView_.drawCrack(*playerView_.binderBreakingProgress_, &mouseBlockRect_);
 	}
 	drawPlayer();
 	worldView_.drawItemBar();
+}
+
+void Window::drawPause() {
+	drawGame();
+	SDL_Rect rect = { 0, 0, 1280, 768 };
+	SDL_RenderCopy(renderer_, guiTexture_->getPause(), NULL, &rect);
 }
 
 void Window::drawPlayer() {
@@ -125,6 +141,12 @@ void Window::drawPlayer() {
 	if (playerView_.binderDirection_->getX() < 0)
 		action++;//left
 	worldView_.drawPlayer(action);
+}
+
+DroppedItemView* Window::createDroppedItemView() {
+	DroppedItemView* droppedItemView = new DroppedItemView();
+	droppedItems_.push_back(droppedItemView);
+	return droppedItemView;
 }
 
 WorldView &Window::getWorldView() {
