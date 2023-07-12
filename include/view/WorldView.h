@@ -227,7 +227,7 @@ private:
 
 class WorldView {
 public:
-	WorldView() : windowWidth(1280), windowHeight(768), blockSize(32), renderer(nullptr), blockTexture(nullptr), backgroundTexture(nullptr), environmentTexture(nullptr), gui(GUI::HOME){}
+	WorldView() : windowWidth(1280), windowHeight(768), blockSize(32), renderer(nullptr), blockTexture(nullptr), backgroundTexture(nullptr), environmentTexture(nullptr), gui(GUI::HOME), weatherAlpha_(0) {}
 	void drawMap();//draw the map as location as the center
 	void drawPlayer(int action);
 	void drawRain(double v);
@@ -277,7 +277,7 @@ public:
 	long long* binderTicks_;
 	MaterialMatrix* binderMaterialMatrix_;
 	Weather* binderWeather_;
-
+	int weatherAlpha_;
 };
 
 
