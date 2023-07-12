@@ -13,8 +13,11 @@ Material Item::getMaterial() const {
 std::unordered_map<Material, Item> Item::byMaterial_;
 
 void Item::registerAllItems() {
-    byMaterial_.emplace(Material::AIR,Item(Material::AIR));
-    byMaterial_.emplace(Material::DIRT,Item(Material::DIRT));
+    std::vector<Material> materials;
+    MaterialHelper::getAllMaterials(materials);
+    for (const auto &item: materials){
+        byMaterial_.emplace(item,Item(item));
+    }
 }
 
 Item* Item::of(Material material) {

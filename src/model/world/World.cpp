@@ -78,6 +78,7 @@ Block* World::getBlock(const Location &location, bool front) const {
 void World::notifyEntityJoin(Entity *entity) {
     entities_.insert(entity);
     auto player = FlatCraft::getInstance()->getPlayer();
+    entity->notifyJoinWorld();
     if(player->getWorld()==this){
         entity->notifyDisplayed();
     }
@@ -85,6 +86,7 @@ void World::notifyEntityJoin(Entity *entity) {
 
 void World::notifyEntityLeave(Entity *entity) {
     entities_.erase(entity);
+    entity->notifyLeaveWorld();
 }
 
 void World::getEntities(std::vector<Entity*> &entities) const {

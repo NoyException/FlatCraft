@@ -13,6 +13,7 @@ class Entity {
 public:
     friend class FlatCraft;
     friend class EntityViewModel;
+    friend class World;
     explicit Entity(const Location& spawnLocation, const Vec2d& direction = {1,0});
     virtual ~Entity();
     explicit Entity(const nlohmann::json& json);
@@ -43,6 +44,8 @@ protected:
     bool friction_;
     bool gravity_;
 private:
+    void notifyJoinWorld();
+    void notifyLeaveWorld();
     Task* physicsTask_;
 };
 

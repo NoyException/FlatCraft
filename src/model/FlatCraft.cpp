@@ -7,8 +7,7 @@
 //#include <windows.h>
 #include <filesystem>
 
-FlatCraft::FlatCraft() : ticks_(0) {
-}
+FlatCraft::FlatCraft() : ticks_(0), nextEntityId_(0) {}
 
 void FlatCraft::start() {
     ticks_=0;
@@ -28,8 +27,6 @@ void FlatCraft::createWorld(const std::string &name) {
 
 FlatCraft *FlatCraft::getInstance() {
     if(instance==nullptr){
-        Item::registerAllItems();
-        EventType::init();
         instance = std::make_unique<FlatCraft>();
     }
     return instance.get();
@@ -64,20 +61,29 @@ void FlatCraft::loadSave(const std::string &name) {
 }
 
 void FlatCraft::loadPlayer() {
+    std::cout<<"loading player..."<<std::endl;
     std::ifstream in(save_+"/player.dat");
     if(in.is_open()){
         std::string s((std::istreambuf_iterator<char> (in)), (std::istreambuf_iterator<char> ()));
         in.close();
         if(!s.empty()){
             player_ = Player::deserialize(nlohmann::json::parse(s));
-            player_->teleport(player_->getLocation());
+            player_->id_ = nextEntityId_;
+            nextEntityId_++;
             player_->getWorld()->run();
+            player_->getWorld()->notifyEntityJoin(player_.get());
             return;
         }
     }
-    player_ = std::make_unique<Player>(Location{"",0,64});
+    std::cout<<"failed"<<std::endl;
+}
+
+void FlatCraft::createPlayer() {
+    player_ = std::make_unique<Player>(Location{"main_world",0,64});
     player_->id_ = nextEntityId_;
     nextEntityId_++;
+    player_->getWorld()->run();
+    player_->getWorld()->notifyEntityJoin(player_.get());
 }
 
 void FlatCraft::loadWorld(const std::string &name) {
@@ -143,7 +149,7 @@ void FlatCraft::createSave(const std::string &name) {
     std::filesystem::create_directories(save_);
     std::filesystem::create_directories(save_+"/world");
     createWorld("main_world");
-    loadPlayer();
+    createPlayer();
     auto world = getWorld("main_world");
     for(int i=255;i>=0;i--){
         if(MaterialHelper::isOccluded(world->getBlock(-1,i,true)->getMaterial()) ||
@@ -181,5 +187,10 @@ void FlatCraft::destroyEntity(Entity *entity) {
     auto world = entity->getWorld();
     if(world!=nullptr) world->notifyEntityLeave(entity);
     entities_.erase(entity->id_);
+}
+
+void FlatCraft::init() {
+    Item::registerAllItems();
+    EventType::init();
 }
 

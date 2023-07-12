@@ -20,6 +20,7 @@ walkingDirection_(0), sprinting_(false), sneaking_(false), flying_(false){
             }
         }
     });
+
 }
 
 Player::~Player() = default;

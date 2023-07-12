@@ -44,6 +44,7 @@ private:
 class MaterialHelper{
 public:
     static void registerAllMaterials();
+    static void getAllMaterials(std::vector<Material>& container);
     static MaterialInfo *getInfo(Material material);
     static std::string getName(Material material);
     static bool containsFlag(Material material, MaterialFlag flag);

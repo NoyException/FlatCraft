@@ -7,50 +7,13 @@
 #include "model/FlatCraft.h"
 #include "model/event/events.h"
 
-Entity::Entity(const Location &spawnLocation, const Vec2d& direction) : location_(spawnLocation), direction_(direction), velocity_(),
-friction_(true), gravity_(true){
-    physicsTask_ = FlatCraft::getInstance()->getScheduler()->runTaskTimer([&]() {
-        bool onGround = isOnGround();
-        if(onGround){
-            if(friction_){
-                double x = velocity_.getX();
-                if(x<0) {
-                    velocity_.setX(std::min(0.0,x+0.1));
-                }
-                else if(x>0){
-                    velocity_.setX(std::max(0.0,x-0.1));
-                }
-            }
-        }
-        else {
-            if(gravity_){
-                velocity_.add(0, -0.025);
-            }
-        }
-        velocity_.adjust();
-//        if(velocity_.getX()>0){
-//            std::cout<<"*";
-//        }
-        if(velocity_.getX()!=0)
-            setDirection({velocity_.getX(),direction_.getY()});
-        if(velocity_.getY()!=0)
-            setDirection({direction_.getX(),velocity_.getY()});
-
-        if(velocity_.getX()>0 && isCollided(BoundingBox::Face::RIGHT)){
-//            std::cout<<"paused";
-//            isCollided(BoundingBox::Face::RIGHT);
-            velocity_.setX(0);
-        }
-        if(velocity_.getX()<0 && isCollided(BoundingBox::Face::LEFT)) velocity_.setX(0);
-        if(velocity_.getY()>0 && isCollided(BoundingBox::Face::TOP)) velocity_.setY(0);
-        if(velocity_.getY()<0 && onGround) velocity_.setY(0);
-        move();
-        run();
-    },0,0);
-}
+Entity::Entity(const Location &spawnLocation, const Vec2d& direction) :
+location_(spawnLocation), direction_(direction), velocity_(),
+friction_(true), gravity_(true), physicsTask_(nullptr), id_(-1){}
 
 Entity::~Entity() {
-    physicsTask_->cancel();
+    if(physicsTask_ != nullptr)
+        physicsTask_->cancel();
 }
 
 Entity::Entity(const nlohmann::json &json) :
@@ -215,3 +178,51 @@ int Entity::getId() const {
 }
 
 void Entity::notifyDisplayed() {}
+
+void Entity::notifyJoinWorld() {
+    physicsTask_ = FlatCraft::getInstance()->getScheduler()->runTaskTimer([&]() {
+        bool onGround = isOnGround();
+        if(onGround){
+            if(friction_){
+                double x = velocity_.getX();
+                if(x<0) {
+                    velocity_.setX(std::min(0.0,x+0.1));
+                }
+                else if(x>0){
+                    velocity_.setX(std::max(0.0,x-0.1));
+                }
+            }
+        }
+        else {
+            if(gravity_){
+                velocity_.add(0, -0.025);
+            }
+        }
+        velocity_.adjust();
+//        if(velocity_.getX()>0){
+//            std::cout<<"*";
+//        }
+        if(velocity_.getX()!=0)
+            setDirection({velocity_.getX(),direction_.getY()});
+        if(velocity_.getY()!=0)
+            setDirection({direction_.getX(),velocity_.getY()});
+
+        if(velocity_.getX()>0 && isCollided(BoundingBox::Face::RIGHT)){
+//            std::cout<<"paused";
+//            isCollided(BoundingBox::Face::RIGHT);
+            velocity_.setX(0);
+        }
+        if(velocity_.getX()<0 && isCollided(BoundingBox::Face::LEFT)) velocity_.setX(0);
+        if(velocity_.getY()>0 && isCollided(BoundingBox::Face::TOP)) velocity_.setY(0);
+        if(velocity_.getY()<0 && onGround) velocity_.setY(0);
+        move();
+        run();
+    },0,0);
+}
+
+void Entity::notifyLeaveWorld() {
+    if(physicsTask_!= nullptr) {
+        physicsTask_->cancel();
+        physicsTask_ = nullptr;
+    }
+}

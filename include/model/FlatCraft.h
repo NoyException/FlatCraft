@@ -14,6 +14,7 @@
 class FlatCraft {
 public:
     friend class Entity;
+    static void init();
     void start();
     void stop();
     void createWorld(const std::string& name);
@@ -29,11 +30,12 @@ public:
     template<class T, typename... Args>
     T* createEntity(Args&&... args);
     static FlatCraft* getInstance();
-    friend std::unique_ptr<FlatCraft> std::make_unique<FlatCraft>(void);
+    friend std::unique_ptr<FlatCraft> std::make_unique<FlatCraft>();
 private:
     FlatCraft();
     void destroyEntity(Entity* entity);
 
+    void createPlayer();
     void loadPlayer();
     void savePlayer();
 
@@ -58,10 +60,13 @@ private:
 
 template<class T, typename... Args>
 T* FlatCraft::createEntity(Args&&... args) {
-    T* t = new T(std::forward<Args>(args)...);
-    entities_[nextEntityId_] = std::unique_ptr<T>(t);
+    static_assert(std::is_base_of<Entity, T>::value, "T must be a subclass of Entity");
+    std::unique_ptr<T> ptr = std::make_unique<T>(std::forward<Args>(args)...);
+    T* t = ptr.get();
     t->id_ = nextEntityId_;
+    entities_.emplace(nextEntityId_,std::move(ptr));
     nextEntityId_++;
     return t;
 }
+
 #endif //FLATCRAFT_FLATCRAFT_H

@@ -120,4 +120,10 @@ double MaterialHelper::getHardness(Material material){
     return getInfo(material)->hardness_;
 }
 
+void MaterialHelper::getAllMaterials(std::vector<Material> &container) {
+    for (const auto &item: byId){
+        container.push_back(static_cast<Material>(item.first));
+    }
+}
+
 std::unordered_map<int,MaterialInfo> MaterialHelper::byId;
