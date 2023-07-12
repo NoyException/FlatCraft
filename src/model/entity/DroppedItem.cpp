@@ -26,6 +26,7 @@ long long DroppedItem::getTicksLived() const {
 void DroppedItem::pickUpBy(Entity *entity) {
     ValueChangedNotification notification(this,Field::DROPPED_ITEM_STATE,1);
     EventManager::callEvent(notification);
+    remove();
 }
 
 void DroppedItem::run() {

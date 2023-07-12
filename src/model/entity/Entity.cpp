@@ -168,6 +168,7 @@ bool Entity::hasGravity() const {
 void Entity::run() {}
 
 void Entity::remove() {
+    notifyLeaveWorld();
     FlatCraft::getInstance()->getScheduler()->runTask([&](){
         FlatCraft::getInstance()->destroyEntity(this);
     });
