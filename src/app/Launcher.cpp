@@ -30,14 +30,14 @@ void Launcher::start() {
     EventManager::registerListener<ModelCreatedNotification<DroppedItem>>(EventPriority::MONITOR,[&](auto event){
         auto item = event->getModel();
         auto viewModel = new DroppedItemViewModel(item);
-        auto view = window_->createDroppedItemViewModel();
-        Binder::bind(*view,*viewModel);
-        droppedItemViewModels_.push_back(view);
+        auto view = window_->createDroppedItemView();
+        Binder::bindDroppedItem(*view,*viewModel);
+        droppedItemViewModels_.push_back(viewModel);
     });
     EventManager::registerListener<ModelCreatedNotification<DroppedItem>>(EventPriority::MONITOR,[&](auto event){
-        droppedItemViewModels_.remove_if([&](DroppedItemViewModel& viewModel){
+        droppedItemViewModels_.remove_if([&](DroppedItemViewModel& viewModel) {
             return viewModel.getDroppedItem() == event->getModel();
-        })
+            });
     });
     std::cout << "Game starting" << std::endl;
     game_->start();

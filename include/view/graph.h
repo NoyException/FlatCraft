@@ -3,6 +3,7 @@
 #include "view/PlayerView.h"
 #include "view/WorldView.h"
 #include "view/DroppedItemView.h"
+#include "view/EnitityView.h"
 extern bool graphFinish;
 
 enum class GUI : int {

@@ -4,6 +4,7 @@
 #include "SDL_image.h"
 #include "SDL_mouse.h"
 #include "common.h"
+#include "view/EnitityView.h"
 
 #define MYLOAD(path, name) \
 do{	\
@@ -14,13 +15,20 @@ name = SDL_CreateTextureFromSurface(renderer, pic);\
 SDL_FreeSurface(pic);\
 }while(0);
 
-class DroppedItemView {
+class DroppedItemView : public EntityView {
 public:
+	void setBinderMaterialStack(const std::function<void(RefPtr<MaterialStack>)>& binder);
+
+	std::function<void()> getNotificationMaterialStackChanged();
+	std::function<void()> getNotificationPickedUp();
+	std::function<void()> getNotificationDisappeared();
 
 private:
-
+	MaterialStack* binderMaterialStack;
 
 };
+
+
 
 
 
