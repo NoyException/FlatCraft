@@ -6,20 +6,20 @@
 #include "model/FlatCraft.h"
 #include "model/event/instance/normal/EntityTeleportEvent.h"
 
-Player::Player(const Location &spawnLocation) : LivingEntity(spawnLocation),
+Player::Player() : LivingEntity(),
 currentSlot_(0), cursor_(nullptr), lastBreaking_(nullptr), breakingProgress_(0),
 walkingDirection_(0), sprinting_(false), sneaking_(false), flying_(false){
 
-    EventManager::registerListener<EntityTeleportEvent>(EventPriority::MONITOR,[&](EntityTeleportEvent* event){
-        if(!event->isCanceled() && event->getEntity()==this){
-            auto target = event->getTargetLocation().getWorld();
-            auto old = location_.getWorld();
-            if(target!=old){
-                if(old != nullptr) old->stop();
-                if(target != nullptr) target->run();
-            }
-        }
-    });
+//    EventManager::registerListener<EntityTeleportEvent>(EventPriority::MONITOR,[&](EntityTeleportEvent* event){
+//        if(!event->isCanceled() && event->getEntity()==this){
+//            auto target = event->getTargetLocation().getWorld();
+//            auto old = location_.getWorld();
+//            if(target!=old){
+//                if(old != nullptr) old->stop();
+//                if(target != nullptr) target->run();
+//            }
+//        }
+//    });
 
 }
 
@@ -33,14 +33,10 @@ walkingDirection_(0), sprinting_(false), sneaking_(false), flying_(false){
     }
 }
 
-std::unique_ptr<Player> Player::deserialize(const nlohmann::json &json) {
-    return std::make_unique<Player>(json);
-}
-
 std::unique_ptr<nlohmann::json> Player::serialize() const {
     auto json = LivingEntity::serialize();
     if(cursor_!=nullptr)
-        json->merge_patch(nlohmann::json{{"cursor",*cursor_->serialize()}});
+        json->emplace("cursor",*cursor_->serialize());
     return json;
 }
 
@@ -179,4 +175,18 @@ double Player::getBreakingProgress() const {
 
 void Player::stopBreaking() {
     breakingProgress_ = 0;
+}
+
+void Player::notifyJoinWorld(World *world) {
+    Entity::notifyJoinWorld(world);
+    world->run();
+}
+
+void Player::notifyLeaveWorld(World *world) {
+    Entity::notifyLeaveWorld(world);
+    world->stop();
+}
+
+EntityType Player::getType() const {
+    return EntityType::PLAYER;
 }

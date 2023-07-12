@@ -7,7 +7,7 @@
 //#include <windows.h>
 #include <filesystem>
 
-FlatCraft::FlatCraft() : ticks_(0), nextEntityId_(0) {}
+FlatCraft::FlatCraft() : ticks_(0), nextEntityId_(0), player_(nullptr) {}
 
 void FlatCraft::start() {
     ticks_=0;
@@ -41,7 +41,7 @@ World *FlatCraft::getWorld(const std::string &name) const {
 }
 
 Player *FlatCraft::getPlayer() {
-    return player_.get();
+    return player_;
 }
 
 Scheduler *FlatCraft::getScheduler() {
@@ -67,23 +67,58 @@ void FlatCraft::loadPlayer() {
         std::string s((std::istreambuf_iterator<char> (in)), (std::istreambuf_iterator<char> ()));
         in.close();
         if(!s.empty()){
-            player_ = Player::deserialize(nlohmann::json::parse(s));
-            player_->id_ = nextEntityId_;
-            nextEntityId_++;
-            player_->getWorld()->run();
-            player_->getWorld()->notifyEntityJoin(player_.get());
+            player_ = dynamic_cast<Player *>(registerEntity(Entity::deserialize(nlohmann::json::parse(s))));
             return;
         }
     }
     std::cout<<"failed"<<std::endl;
 }
 
-void FlatCraft::createPlayer() {
-    player_ = std::make_unique<Player>(Location{"main_world",0,64});
-    player_->id_ = nextEntityId_;
-    nextEntityId_++;
-    player_->getWorld()->run();
-    player_->getWorld()->notifyEntityJoin(player_.get());
+void FlatCraft::savePlayer() {
+    std::cout<<"saving player..."<<std::endl;
+    std::ofstream out(save_+"/player.dat");
+    if(out.is_open()){
+        out<<player_->serialize()->dump();
+        out.close();
+        return;
+    }
+    std::cout<<"failed"<<std::endl;
+}
+
+void FlatCraft::loadEntities() {
+    std::cout<<"loading entities..."<<std::endl;
+    std::ifstream in(save_+"/entities.dat");
+    if(in.is_open()){
+        std::string s((std::istreambuf_iterator<char> (in)), (std::istreambuf_iterator<char> ()));
+        in.close();
+        if(!s.empty()){
+            auto json = nlohmann::json::parse(s);
+            int amount = json.at("amount").get<int>();
+            for (int i = 0; i < amount; ++i) {
+                registerEntity(Entity::deserialize(json.at(std::to_string(i))));
+            }
+            return;
+        }
+    }
+    std::cout<<"failed"<<std::endl;
+}
+
+void FlatCraft::saveEntities() {
+    std::cout<<"saving entities..."<<std::endl;
+    std::ofstream out(save_+"/entities.dat");
+    if(out.is_open()){
+        nlohmann::json json({{"amount",entities_.size()-1}});
+        int i=0;
+        for (const auto &item: entities_){
+            if(item.first==player_->getId()) continue;
+            json.emplace(std::to_string(i),*item.second->serialize());
+            i++;
+        }
+        out<<json.dump();
+        out.close();
+        return;
+    }
+    std::cout<<"failed"<<std::endl;
 }
 
 void FlatCraft::loadWorld(const std::string &name) {
@@ -149,44 +184,28 @@ void FlatCraft::createSave(const std::string &name) {
     std::filesystem::create_directories(save_);
     std::filesystem::create_directories(save_+"/world");
     createWorld("main_world");
-    createPlayer();
     auto world = getWorld("main_world");
+
     for(int i=255;i>=0;i--){
         if(MaterialHelper::isOccluded(world->getBlock(-1,i,true)->getMaterial()) ||
         MaterialHelper::isOccluded(world->getBlock(0,i,true)->getMaterial())){
+            player_ = createEntity<Player>();
             player_->teleport(Location(*world,0,i+1));
             break;
         }
     }
 }
 
-void FlatCraft::savePlayer() {
-    std::ofstream out(save_+"/player.dat");
-    if(out.is_open()){
-        out<<player_->serialize()->dump();
-        out.close();
-    }
-}
-
 Entity *FlatCraft::getEntity(int id) {
-    if(id==player_->id_) return player_.get();
     auto it = entities_.find(id);
     if(it==entities_.end()) return nullptr;
     return it->second.get();
 }
 
-void FlatCraft::loadEntities() {
-
-}
-
-void FlatCraft::saveEntities() {
-
-}
-
 void FlatCraft::destroyEntity(Entity *entity) {
     auto world = entity->getWorld();
-    if(world!=nullptr) world->notifyEntityLeave(entity);
-    entities_.erase(entity->id_);
+    if(world!=nullptr) entity->teleport(Location::INVALID_LOCATION);
+    entities_.erase(entity->getId());
 }
 
 void FlatCraft::init() {

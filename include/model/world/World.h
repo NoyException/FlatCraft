@@ -17,7 +17,6 @@ class World {
 public:
     friend class Entity;
     friend class WorldGenerator;
-    friend class FlatCraft;
     explicit World(const std::string& name);
     explicit World(const nlohmann::json& json);
     [[nodiscard]] std::unique_ptr<nlohmann::json> serialize() const;

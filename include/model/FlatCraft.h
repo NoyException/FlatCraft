@@ -33,9 +33,10 @@ public:
     friend std::unique_ptr<FlatCraft> std::make_unique<FlatCraft>();
 private:
     FlatCraft();
+    template<class T>
+    T* registerEntity(std::unique_ptr<T>&& entity);
     void destroyEntity(Entity* entity);
 
-    void createPlayer();
     void loadPlayer();
     void savePlayer();
 
@@ -48,7 +49,7 @@ private:
     void saveWorlds();
     //name->World
     std::map<std::string,std::unique_ptr<World>> worlds_;
-    std::unique_ptr<Player> player_;
+    Player* player_;
     std::unordered_map<int,std::unique_ptr<Entity>> entities_;
     Scheduler scheduler_;
     int nextEntityId_;
@@ -58,15 +59,20 @@ private:
     static std::unique_ptr<FlatCraft> instance;
 };
 
+template<class T>
+T* FlatCraft::registerEntity(std::unique_ptr<T>&& entity) {
+    static_assert(std::is_base_of<Entity, T>::value, "T must be a subclass of Entity");
+    T* ptr = entity.get();
+    entity->id_ = nextEntityId_;
+    entities_.emplace(nextEntityId_,std::move(entity));
+    nextEntityId_++;
+    return ptr;
+}
+
 template<class T, typename... Args>
 T* FlatCraft::createEntity(Args&&... args) {
     static_assert(std::is_base_of<Entity, T>::value, "T must be a subclass of Entity");
-    std::unique_ptr<T> ptr = std::make_unique<T>(std::forward<Args>(args)...);
-    T* t = ptr.get();
-    t->id_ = nextEntityId_;
-    entities_.emplace(nextEntityId_,std::move(ptr));
-    nextEntityId_++;
-    return t;
+    return registerEntity(std::make_unique<T>(std::forward<Args>(args)...));
 }
 
 #endif //FLATCRAFT_FLATCRAFT_H
