@@ -62,7 +62,7 @@ std::string World::getName() const {
 
 Block* World::getBlock(int x, int y, bool front) const {
     auto it = blocks_.find((x<<11)^(y<<1)^front);
-    if(it==blocks_.end()) return {};
+    if(it==blocks_.end()) return nullptr;
     return it->second.get();
 }
 

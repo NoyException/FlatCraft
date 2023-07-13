@@ -140,22 +140,23 @@ void Player::tryToBreak(const Vec2d &position) {
                                [](Block* block){return MaterialHelper::isOccluded(block->getMaterial());},
                                [&](Entity* entity){return entity!=this;});
     if(res!=nullptr && res->getHitBlock()!=block && (res->getHitPoint()->toBlockLocation().toVec2d()-start).lengthSquared() <
-                               (block->getLocation().toVec2d()-start).lengthSquared()) return;
+                               (block->getLocation().toVec2d()-start).lengthSquared()){
+        lastBreaking_ = nullptr;
+        breakingProgress_ = 0;
+        return;
+    }
 
-    if (MaterialHelper::isAir(block->getMaterial()) || MaterialHelper::isLiquid(block->getMaterial()))
+    if (!block->isBreakable())
         block = world->getBlock(position, false);
-    if (block != nullptr && !MaterialHelper::isAir(block->getMaterial())
-    && !MaterialHelper::isLiquid(block->getMaterial())) {
+    if (block->isBreakable()) {
         if (block == lastBreaking_) {
             double hardness = MaterialHelper::getHardness(block->getMaterial());
-//            std::cout<<hardness<<" "<<breakingProgress_<<std::endl;
             if (hardness > 0) breakingProgress_ += 0.05 / hardness;
             if (hardness == 0) breakingProgress_ = 1;
             if (hardness < 0) breakingProgress_ = 0;
             if (breakingProgress_ > 1.0) breakingProgress_ = 1.0;
             if (breakingProgress_ >= 1.0) {
                 block->breakBy(this);
-//block->setMaterial(Material::AIR);
                 breakingProgress_ = 0;
             }
             setDirection(direction);
@@ -165,6 +166,40 @@ void Player::tryToBreak(const Vec2d &position) {
             breakingProgress_ = 0;
         }
     }
+    else{
+        lastBreaking_ = nullptr;
+        breakingProgress_ = 0;
+    }
+}
+
+void Player::tryToPlace(const Vec2d &position) {
+    auto hand = getHand();
+    if(ItemStackHelper::isAir(hand)) return;
+
+    auto world = getWorld();
+    static const Vec2d D_POS[4] = {{0,1},{1,0},{0,-1},{-1,0}};
+
+    bool flag = true;
+    for(int i=0;i<4 && flag;i++){
+        for(int j=0;j<=1 && flag;j++){
+            if(!world->getBlock(position+D_POS[i],j)->isAir())
+                flag = false;
+        }
+    }
+    if(flag) return;
+
+    auto block = world->getBlock(position, true);
+    if(!block->isReplaceable())
+        return;
+    auto behind = world->getBlock(position, false);
+
+    auto stack = hand->clone();
+    stack->setAmount(stack->getAmount()-1);
+    setHand(std::move(stack));
+    if(behind->isReplaceable()){
+        behind->setMaterial(hand->getMaterial());
+    }
+    else block->setMaterial(hand->getMaterial());
 }
 
 int Player::getCurrentSlot() const {
@@ -203,7 +238,7 @@ PlayerInventory *Player::getInventory() {
     return inventory_.get();
 }
 
-ItemStack* Player::getCursor() const {
+const ItemStack* Player::getCursor() const {
     return cursor_.get();
 }
 
@@ -212,4 +247,13 @@ void Player::setCursor(std::unique_ptr<ItemStack> &&cursor) {
     ValueChangedNotification notification(this,Field::PLAYER_CURSOR,cursor_.get());
     EventManager::callEvent(notification);
 }
+
+const ItemStack *Player::getHand() const {
+    return inventory_->get(currentSlot_+36);
+}
+
+void Player::setHand(std::unique_ptr<ItemStack> &&hand) {
+    inventory_->set(currentSlot_+36, std::move(hand));
+}
+
 

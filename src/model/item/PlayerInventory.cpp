@@ -12,6 +12,8 @@ PlayerInventory::PlayerInventory() : Inventory(46) {}
 PlayerInventory::PlayerInventory(const nlohmann::json &json) : Inventory(json) {}
 
 bool PlayerInventory::add(std::unique_ptr<ItemStack> &itemStack) {
+    if(ItemStackHelper::isAir(itemStack))
+        return true;
     if(ADD_ORDER==nullptr){
         ADD_ORDER = new int[36];
         for(int i=0;i<9;i++){
@@ -22,10 +24,30 @@ bool PlayerInventory::add(std::unique_ptr<ItemStack> &itemStack) {
         }
     }
     for(int i=0;i<36;i++){
-        if(contents_[ADD_ORDER[i]]==nullptr){
-            size_++;
-            contents_[ADD_ORDER[i]] = std::move(itemStack);
+        auto& slot = contents_[ADD_ORDER[i]];
+        if(ItemStackHelper::isSimilar(itemStack,slot)){
+            int amount = slot->getAmount() + itemStack->getAmount();
+            int maxAmount = slot->getMaxAmount();
+            if(amount<=maxAmount){
+                itemStack->setAmount(0);
+                slot->setAmount(amount);
+                ValueChangedNotification notification(this,Field::PLAYER_INVENTORY,ADD_ORDER[i]);
+                EventManager::callEvent(notification);
+                return true;
+            }
+            itemStack->setAmount(amount-maxAmount);
+            slot->setAmount(maxAmount);
             ValueChangedNotification notification(this,Field::PLAYER_INVENTORY,ADD_ORDER[i]);
+            EventManager::callEvent(notification);
+        }
+    }
+
+    for(int i=0;i<36;i++) {
+        auto &slot = contents_[ADD_ORDER[i]];
+        if (ItemStackHelper::isAir(slot)) {
+            size_++;
+            slot = std::move(itemStack);
+            ValueChangedNotification notification(this, Field::PLAYER_INVENTORY, ADD_ORDER[i]);
             EventManager::callEvent(notification);
             return true;
         }

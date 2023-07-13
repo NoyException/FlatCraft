@@ -26,6 +26,12 @@ std::unique_ptr<ItemStack> ItemStack::deserialize(const nlohmann::json &json) {
     return std::make_unique<ItemStack>(json);
 }
 
+std::unique_ptr<ItemStack> ItemStack::clone() const {
+    auto copy = std::make_unique<ItemStack>(getMaterial(),amount_);
+    copy->meta_ = meta_->clone();
+    return std::move(copy);
+}
+
 Item *ItemStack::getItem() const {
     return item_;
 }
@@ -60,6 +66,10 @@ int ItemStack::getAmount() const {
 
 void ItemStack::setAmount(int amount) {
     amount_ = amount;
+    if(amount_<=0){
+        setMaterial(Material::AIR);
+        amount_ = 1;
+    }
 }
 
 MaterialStack ItemStack::toMaterialStack() const {

@@ -19,6 +19,11 @@ std::unique_ptr<ItemMeta> ItemMeta::ofDefault(Material material) {
     return {};
 }
 
+std::unique_ptr<ItemMeta> ItemMeta::clone() const {
+    return {};
+}
+
 bool ItemMeta::equals(const ItemMeta *another) const {
     return true;
 }
+

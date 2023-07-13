@@ -46,15 +46,21 @@ public:
 
     void tryToBreak(const Vec2d& position);
 
+    void tryToPlace(const Vec2d& position);
+
     void stopBreaking();
 
     [[nodiscard]] EntityType getType() const override;
 
     PlayerInventory* getInventory();
 
-    [[nodiscard]] ItemStack* getCursor() const;
+    [[nodiscard]] const ItemStack* getCursor() const;
 
     void setCursor(std::unique_ptr<ItemStack> &&cursor);
+
+    [[nodiscard]] const ItemStack* getHand() const;
+
+    void setHand(std::unique_ptr<ItemStack> &&);
 
 protected:
     void notifyJoinWorld(World *world) override;

@@ -10,11 +10,14 @@
 
 class ItemStack {
 public:
+    friend class ItemStackHelper;
     explicit ItemStack(Material material, int amount = 1);
     ItemStack(Material material, int amount, std::unique_ptr<ItemMeta>&& meta);
     explicit ItemStack(const nlohmann::json &json);
     [[nodiscard]] std::unique_ptr<nlohmann::json> serialize() const;
     static std::unique_ptr<ItemStack> deserialize(const nlohmann::json &json);
+
+    [[nodiscard]] std::unique_ptr<ItemStack> clone() const;
 
     [[nodiscard]] MaterialStack toMaterialStack() const;
 
@@ -38,6 +41,5 @@ private:
     int amount_;
     std::unique_ptr<ItemMeta> meta_;
 };
-
 
 #endif //FLATCRAFT_ITEMSTACK_H

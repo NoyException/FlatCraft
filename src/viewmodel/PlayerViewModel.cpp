@@ -118,7 +118,7 @@ void PlayerViewModel::control() {
     player->setSprinting(isPressed(Key::CTRL));
     if(isPressed(Key::UP))
         player->jump();
-    //挖掘与放置
+    //挖掘
     double progress = player->getBreakingProgress();
     if(isPressed(Key::LEFT_CLICK)){
         player->tryToBreak(cursorPosition_);
@@ -126,6 +126,14 @@ void PlayerViewModel::control() {
     else player->stopBreaking();
     if(progress!=player->getBreakingProgress())
         notificationBreakingProgressChanged_();
+    //放置
+    if(isPressed(Key::RIGHT_CLICK)){
+        if(!isRightClickPressedLastTick_){
+            player->tryToPlace(cursorPosition_);
+            isRightClickPressedLastTick_ = true;
+        }
+    }
+    else isRightClickPressedLastTick_ = false;
     //滚轮滚动
     int oldSlot = player->getCurrentSlot();
     int slot = (int)std::round(-scrollY_)+oldSlot;
