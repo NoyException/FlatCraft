@@ -40,6 +40,7 @@ public:
     bool* binderSneak_;
     double* binderBreakingProgress_;
     bool isDigging;
+    MaterialStack* binderMaterialStack;//46
 };
 
 #endif
