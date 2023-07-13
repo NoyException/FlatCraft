@@ -68,6 +68,9 @@ void Window::start() {
 					case SDLK_ESCAPE:
 						playerView_.commandChangeKeyState_(Key::ESC, keyState);
 						break;
+					case SDLK_e:
+						playerView_.commandChangeKeyState_(Key::OPENINVEMTORY, keyState);
+						break;
 				}
 			}
 			else if (my_event.type == SDL_MOUSEBUTTONDOWN || my_event.type == SDL_MOUSEBUTTONUP) {
@@ -102,6 +105,10 @@ void Window::guiControl() {
 			gui_ = GUI::PAUSE;
 			my_event_.key.keysym.sym = SDLK_l;
 		}
+		if (my_event_.key.keysym.sym == SDLK_e && my_event_.type == SDL_KEYUP) {
+			gui_ = GUI::INVENTORY;
+			my_event_.key.keysym.sym = SDLK_l;
+		}
 		break;
 	case GUI::PAUSE:
 			gui_ = GUI::ALREADYPAUSE;
@@ -110,8 +117,16 @@ void Window::guiControl() {
 	case GUI::ALREADYPAUSE:
 		pauseControl();
 		break;
-
-
+	case GUI::INVENTORY:
+		gui_ = GUI::ALREADYINVENTORY;
+		my_event_.key.keysym.sym = SDLK_l;
+		break;
+	case GUI::ALREADYINVENTORY:
+		if (my_event_.key.keysym.sym == SDLK_e && my_event_.type == SDL_KEYUP) {
+			gui_ = GUI::GAME;
+			my_event_.key.keysym.sym = SDLK_l;
+		}
+		break;
 	}//end for switch
 }
 
@@ -144,9 +159,20 @@ void Window::draw() {
 		break;
 	case GUI::ALREADYPAUSE:
 		break;
+	case GUI::INVENTORY:
+	case GUI::ALREADYINVENTORY:
+		drawInventory();
+		break;
 	}
 	guiControl();
 	SDL_RenderPresent(renderer_); //output image
+}
+
+void Window::drawInventory() {
+	drawGame();
+	SDL_Texture* texture = guiTexture_->getInventory();
+	SDL_Rect rect = { 1280/2 - 200, 768/2 - 200, 400, 400 };
+	SDL_RenderCopy(renderer_, texture, NULL, &rect);
 }
 
 void Window::drawDroppedItems() {
@@ -187,7 +213,7 @@ void Window::drawItemsBar() {
 	for (int i = 36; i <= 44; i++) {
 		material = playerView_.binderMaterialStack_[i].material_;
 		num = playerView_.binderMaterialStack_[i].amount_;
-		if (i - 36 == *playerView_.binderSlot_ && material != Material::AIR) {
+		if (i - 36 == *playerView_.binderSlot_ ) {
 			SDL_Rect tempRect = rect;
 			tempRect.x -= 2;
 			tempRect.y -= 2;

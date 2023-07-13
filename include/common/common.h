@@ -29,6 +29,7 @@ enum class Key : int{
     LEFT_CLICK,
     RIGHT_CLICK,
     ESC,
+    OPENINVEMTORY
 };
 
 enum class KeyState : bool{

@@ -11,7 +11,9 @@ enum class GUI : int {
 	GAME,
 	PAUSE,
 	ALREADYPAUSE,
-	CONFIG
+	CONFIG,
+	INVENTORY,
+	ALREADYINVENTORY
 };
 
 class GuiTexture {
@@ -41,6 +43,7 @@ public:
 		MYLOAD("digit/9.png", digits[9]);
 
 		MYLOAD("gui/pause.png", pause);
+		MYLOAD("gui/myInventory.png", inventory);
 	}
 	inline SDL_Texture* getItemsBar() {
 		return items_bar;
@@ -54,12 +57,16 @@ public:
 	inline SDL_Texture* getPause() {
 		return pause;
 	}
+	inline SDL_Texture* getInventory() {
+		return inventory;
+	}
 private:
 	SDL_Texture* items_bar;
 	SDL_Renderer* renderer;
 	SDL_Texture* home;
 	std::vector<SDL_Texture*> digits;
 	SDL_Texture* pause;
+	SDL_Texture* inventory;
 };
 
 class Window {
@@ -87,6 +94,8 @@ public:
 	void drawDroppedItem(DroppedItemView* droppedItemView);
 
 	void drawItemsBar();
+
+	void drawInventory();
 
 private:
 	void pauseControl();
