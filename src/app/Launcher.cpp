@@ -36,9 +36,15 @@ void Launcher::start() {
         droppedItemViewModels_.push_back(viewModel);
     });
     EventManager::registerListener<ModelCreatedNotification<DroppedItem>>(EventPriority::MONITOR,[&](auto event){
-        droppedItemViewModels_.remove_if([&](DroppedItemViewModel* viewModel) {
-            return viewModel->getDroppedItem() == event->getModel();
-        });
+        DroppedItemViewModel* vm = nullptr;
+        for (auto &item: droppedItemViewModels_){
+            if(item->getDroppedItem()==event->getModel())
+                vm = item;
+        }
+        if(vm!=nullptr){
+            droppedItemViewModels_.remove(vm);
+            delete vm;
+        }
     });
     std::cout << "Game starting" << std::endl;
     game_->start();
