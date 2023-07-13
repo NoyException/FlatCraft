@@ -8,14 +8,17 @@
 #include "model/entity/entities.h"
 
 
-World::World(const std::string& name) : name_(name), ticks_(0), weather_(Weather::CLEAR) {
+World::World(const std::string& name, long long seed) :
+name_(name), ticks_(0), weather_(Weather::CLEAR), seed_(seed), rand_(seed) {
     init();
 }
 
-World::World(const nlohmann::json &json) : World(json.at("name").get<std::string>()) {
-    ticks_ = json.at("ticks").get<long long>();
-    seed_ = json.at("seed").get<int>();
-    weather_ = static_cast<Weather>(json.at("weather").get<int>());
+World::World(const nlohmann::json &json) :
+name_(json.at("name").get<std::string>()),
+ticks_(json.at("ticks").get<long long>()),
+weather_(static_cast<Weather>(json.at("weather").get<int>())),
+seed_(json.at("seed").get<long long>()),
+rand_(json.at("randomSeed").get<unsigned long long>()){
     auto blocks = json.at("blocks");
     for(int i=-128;i<=128;i++) {
         for (int j = 0; j < 256; j++) {
@@ -36,7 +39,8 @@ std::unique_ptr<nlohmann::json> World::serialize() const {
         {"name",name_},
         {"ticks",ticks_},
         {"seed",seed_},
-        {"weather",static_cast<int>(weather_)}
+        {"weather",static_cast<int>(weather_)},
+        {"randomSeed",rand_.getCurrentSeed()}
     });
     nlohmann::json blocks;
     for(int i=-128;i<=128;i++) {
@@ -62,7 +66,7 @@ std::string World::getName() const {
 
 Block* World::getBlock(int x, int y, bool front) const {
     auto it = blocks_.find((x<<11)^(y<<1)^front);
-    if(it==blocks_.end()) return {};
+    if(it==blocks_.end()) return nullptr;
     return it->second.get();
 }
 
@@ -102,7 +106,7 @@ void World::getEntitiesNearby(std::vector<Entity *> &entities, const Vec2d& posi
 }
 
 void World::init() {
-    seed_ = (int)(rand_.nextInt()%INT_MAX);
+    seed_ = rand_.nextInt(0x3F3F3F3F);
     WorldGenerator generator;
     generator.generate(*this);
     /*for(int i=-128;i<=128;i++){
@@ -304,7 +308,7 @@ std::unique_ptr<RayTraceResult> World::rayTrace(const Location &location, const 
     return rayTrace(location.toVec2d(), direction, maxDistance, xSize, ySize, hitBackground, blockFilter, entityFilter);
 }
 
-int World::getSeed() const {
+long long World::getSeed() const {
     return seed_;
 }
 

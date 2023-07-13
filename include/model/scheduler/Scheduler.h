@@ -19,16 +19,16 @@ public:
     void stop();
     [[nodiscard]] bool isRunning() const;
     void sleep(long long ticks);
-    Task* runTask(const RawTask& task);
-    Task* runTaskLater(const RawTask& task, int delay);
-    Task* runTaskTimer(const RawTask& task, int delay, int interval);
-    Task* runTaskFiniteTimer(const RawTask& task, int delay, int interval, int times);
+    std::shared_ptr<Task> runTask(const RawTask& task);
+    std::shared_ptr<Task> runTaskLater(const RawTask& task, int delay);
+    std::shared_ptr<Task> runTaskTimer(const RawTask& task, int delay, int interval);
+    std::shared_ptr<Task> runTaskFiniteTimer(const RawTask& task, int delay, int interval, int times);
 private:
     void run();
     long long sleep_;
     bool running_;
     std::mutex mtx_;
-    std::list<Task> tasks_;
+    std::list<std::shared_ptr<Task>> tasks_;
     std::unique_ptr<std::thread> thread_;
     decltype(std::chrono::high_resolution_clock::now()) timestamp_;
 };

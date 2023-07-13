@@ -9,14 +9,16 @@
 
 Entity::Entity() :
 location_(Location::INVALID_LOCATION), direction_(), velocity_(),
-friction_(true), gravity_(true), physicsTask_(nullptr), id_(-1){}
+friction_(true), gravity_(true), id_(-1){}
 
 Entity::~Entity() {
-    if(physicsTask_ != nullptr)
+    if(physicsTask_ != nullptr){
         physicsTask_->cancel();
+        physicsTask_ = nullptr;
+    }
 }
 
-Entity::Entity(const nlohmann::json &json) : physicsTask_(nullptr), id_(-1),
+Entity::Entity(const nlohmann::json &json) : id_(-1),
 location_(json.at("location")), velocity_(json.at("velocity")),
 gravity_(json.at("gravity").get<bool>()), friction_(json.at("friction").get<bool>()){
     FlatCraft::getInstance()->getScheduler()->runTask([&](){
@@ -153,7 +155,7 @@ bool Entity::isCollided(BoundingBox::Face face) const {
             dir = {1,0};
             break;
     }
-    if(abs(d-std::round(d))>0.000001) return false;
+    if(std::abs(d-std::round(d))>0.000001) return false;
     Vec2d start = location_.toVec2d() + Vec2d(0,aabb.getHeight()/2);
     auto res = getWorld()->rayTrace(start,dir,0.000001,aabb.getWidth()/2,aabb.getHeight()/2);
     return res!= nullptr;
@@ -197,6 +199,9 @@ int Entity::getId() const {
 }
 
 void Entity::notifyJoinWorld(World *world) {
+    if(physicsTask_!=nullptr){
+        physicsTask_->cancel();
+    }
     physicsTask_ = FlatCraft::getInstance()->getScheduler()->runTaskTimer([&]() {
         bool onGround = isOnGround();
         if(onGround){

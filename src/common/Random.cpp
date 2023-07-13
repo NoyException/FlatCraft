@@ -33,8 +33,7 @@ unsigned int Random::nextInt(unsigned int bound) {
     else { // reject over-represented candidates
         for (unsigned int u = r;
              u - (r = u % bound) + m < 0;
-             u = next(31))
-            ;
+             u = next(31));
     }
     return r;
 }
@@ -53,5 +52,9 @@ float Random::nextFloat() {
 
 double Random::nextDouble() {
     return (double)(((unsigned long long)(next(26)) << 27) + next(27)) * DOUBLE_UNIT;
+}
+
+unsigned long long Random::getCurrentSeed() const {
+    return seed_;
 }
 

@@ -40,6 +40,7 @@ private:
     Vec2d cursorPosition_;
     bool isPaused_ = false;
     bool isEscPressedLastTick_ = false;
+    bool isRightClickPressedLastTick_ = false;
     MaterialStack cursor_;
     MaterialStack inventory_[46];
     std::function<void()> notificationCurrentSlotChanged_;

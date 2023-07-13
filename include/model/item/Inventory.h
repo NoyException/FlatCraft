@@ -7,6 +7,7 @@
 
 #include "common.h"
 #include "ItemStack.h"
+#include "ItemStackHelper.h"
 
 enum class InventoryType : int{
     BASE_INVENTORY,
@@ -22,7 +23,7 @@ public:
     [[nodiscard]] virtual std::unique_ptr<nlohmann::json> serialize() const;
     static std::unique_ptr<Inventory> deserialize(const nlohmann::json& json);
 
-    [[nodiscard]] ItemStack* get(int index) const;
+    [[nodiscard]] const ItemStack* get(int index) const;
     virtual bool add(std::unique_ptr<ItemStack>& itemStack);
     virtual void set(int index, std::unique_ptr<ItemStack>&& itemStack);
     virtual std::unique_ptr<ItemStack> remove(int index);

@@ -76,6 +76,7 @@ void WorldGenerator::generate(World &world) {
     generateMaterial(-128,256,4,0.5,1.0,4,66,Material::STONE,world,seed1,seed2);//world.chunk
     generateMineral(-128,256,1.2,24,Material::LOG,world,5,seed3);
     generateCave(-128,1,256,60,8,0.5,1.0,1.0,0,world,seed4);
+
 }
 void WorldGenerator::generateMaterial(double start,int width,int octaves, double persistence, double frequency,double amplitude,int minY,Material a,World& world,long long seed,long long treeSeed){
     int *hash=generateHash(seed);
@@ -136,10 +137,8 @@ bool WorldGenerator::haveTree(double x,int treeSeed) {
     return addr > 0.8;
 }
 void WorldGenerator::buildTree(int x, int y,World& world) {
-    if(world.getBlock(x,y, true)->getMaterial()!=Material::AIR){
         buildLeaves(x,y,world);
         buildLog(x,y,world);
-    }
 }
 void WorldGenerator::buildLeaves(int x, int y,World& world) {
     int leaveWidth=2;
