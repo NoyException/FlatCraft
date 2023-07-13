@@ -15,6 +15,10 @@ public:
 
     bool add(std::unique_ptr<ItemStack> &itemStack) override;
 
+    void set(int index, std::unique_ptr<ItemStack> &&itemStack) override;
+
+    std::unique_ptr<ItemStack> remove(int index) override;
+
     [[nodiscard]] InventoryType getType() const override;
 
 private:

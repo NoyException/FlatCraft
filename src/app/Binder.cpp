@@ -11,6 +11,7 @@ void Binder::bindWorld(WorldView &view, WorldViewModel &viewModel) {
     view.setBinderTicks(viewModel.getBinderTicks());
     view.setBinderWeather(viewModel.getBinderWeather());
     viewModel.setNotificationWeatherChanged(view.getNotificationWeatherChanged());
+    viewModel.notifyBound();
 }
 
 void Binder::bindEntity(EntityView &view, EntityViewModel &viewModel) {
@@ -30,9 +31,14 @@ void Binder::bindPlayer(PlayerView &view, PlayerViewModel &viewModel) {
     view.setBinderCurrentSlot(viewModel.getBinderCurrentSlot());
     view.setBinderSneaking(viewModel.getBinderSneaking());
     view.setBinderBreakingProgress(viewModel.getBinderBreakingProgress());
+    viewModel.getBinderCursor();//////////////////////////////////
+    viewModel.getBinderInventory();///////////////////////////////
     viewModel.setNotificationCurrentSlotChanged(view.getNotificationCurrentSlotChanged());
     viewModel.setNotificationSneakingStateChanged(view.getNotificationSneakingStateChanged());
     viewModel.setNotificationBreakingProgressChanged(view.getNotificationBreakingProgressChanged());
+    viewModel.setNotificationCursorChanged([](){});////////////////////////////////////
+    viewModel.setNotificationInventoryChanged([](int index){});////////////////////////
+    viewModel.notifyBound();
 }
 
 void Binder::bindDroppedItem(DroppedItemView &view, DroppedItemViewModel &viewModel) {
@@ -41,4 +47,5 @@ void Binder::bindDroppedItem(DroppedItemView &view, DroppedItemViewModel &viewMo
     viewModel.setNotificationMaterialStackChanged(view.getNotificationMaterialStackChanged());
     viewModel.setNotificationPickedUp(view.getNotificationPickedUp());
     viewModel.setNotificationDisappeared(view.getNotificationDisappeared());
+    viewModel.notifyBound();
 }

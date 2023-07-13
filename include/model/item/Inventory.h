@@ -22,10 +22,10 @@ public:
     [[nodiscard]] virtual std::unique_ptr<nlohmann::json> serialize() const;
     static std::unique_ptr<Inventory> deserialize(const nlohmann::json& json);
 
-    virtual bool add(std::unique_ptr<ItemStack>& itemStack);
-    void set(int index, std::unique_ptr<ItemStack>&& itemStack);
     [[nodiscard]] ItemStack* get(int index) const;
-    std::unique_ptr<ItemStack> remove(int index);
+    virtual bool add(std::unique_ptr<ItemStack>& itemStack);
+    virtual void set(int index, std::unique_ptr<ItemStack>&& itemStack);
+    virtual std::unique_ptr<ItemStack> remove(int index);
     [[nodiscard]] int getSize() const;
     [[nodiscard]] int getCapacity() const;
     [[nodiscard]] virtual InventoryType getType() const;

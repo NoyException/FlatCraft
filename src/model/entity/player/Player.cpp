@@ -196,3 +196,13 @@ EntityType Player::getType() const {
 PlayerInventory *Player::getInventory() {
     return inventory_.get();
 }
+
+ItemStack* Player::getCursor() const {
+    return cursor_.get();
+}
+
+void Player::setCursor(std::unique_ptr<ItemStack> &&cursor) {
+    cursor_ = std::move(cursor);
+    ValueChangedNotification notification(this,Field::PLAYER_CURSOR,cursor_.get());
+    EventManager::callEvent(notification);
+}

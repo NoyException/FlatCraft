@@ -50,6 +50,10 @@ public:
 
     PlayerInventory* getInventory();
 
+    [[nodiscard]] ItemStack* getCursor() const;
+
+    void setCursor(std::unique_ptr<ItemStack> &&cursor);
+
 protected:
     void notifyJoinWorld(World *world) override;
     void notifyLeaveWorld(World *world) override;
