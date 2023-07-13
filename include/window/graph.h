@@ -86,6 +86,8 @@ public:
 
 	void drawDroppedItem(DroppedItemView* droppedItemView);
 
+	void drawItemsBar();
+
 private:
 	void pauseControl();
 	inline void outputMouse() {//used for test
