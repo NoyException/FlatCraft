@@ -268,6 +268,7 @@ void WorldView::drawDroppedItem(Material material, Vec2d position, int amount) {
 	rect.y -= 32 * (position.getY() - leftUpPosition_.getY());
 	rect.w = rect.h = 16;
 	rect.y -= rect.h;
+	rect.x -= rect.w / 2;
 	SDL_Texture* texture = blockTexture->getTexture(material);
 	SDL_RenderCopy(renderer, texture, NULL, &rect);
 }
