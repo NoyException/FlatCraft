@@ -10,6 +10,7 @@
 #include "Material.h"
 #include "model/Location.h"
 #include "BlockData.h"
+#include "model/entity/entities.h"
 
 enum class BlockFace : unsigned char{
     UP,
@@ -27,6 +28,7 @@ public:
     static Block deserialize(Location&& location, bool front, const nlohmann::json& json);
     [[nodiscard]] Material getMaterial() const;
     void setMaterial(const Material& material);
+    void breakBy(Entity* entity);
     [[nodiscard]] Location getLocation() const;
     [[nodiscard]] bool isFront() const;
     [[nodiscard]] BoundingBox getBoundingBox() const;

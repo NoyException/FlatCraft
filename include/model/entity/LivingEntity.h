@@ -10,7 +10,7 @@
 
 class LivingEntity : public Entity {
 public:
-    explicit LivingEntity(const Location& spawnLocation);
+    LivingEntity();
     explicit LivingEntity(const nlohmann::json& json);
     [[nodiscard]] std::unique_ptr<nlohmann::json> serialize() const override;
     ~LivingEntity() override = default;

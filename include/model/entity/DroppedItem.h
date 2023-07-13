@@ -10,11 +10,18 @@
 
 class DroppedItem : public Entity {
 public:
+    explicit DroppedItem(std::unique_ptr<ItemStack>&& itemStack);
+    explicit DroppedItem(const nlohmann::json& json);
+    [[nodiscard]] std::unique_ptr<nlohmann::json> serialize() const override;
     [[nodiscard]] ItemStack* getItemStack() const;
-    void setItemStack(std::unique_ptr<ItemStack> &itemStack);
+    void setItemStack(std::unique_ptr<ItemStack> &&itemStack);
     [[nodiscard]] long long getTicksLived() const;
-    void remove() override;
+    void pickUpBy(Entity* entity);
+    [[nodiscard]] EntityType getType() const override;
+//    void notifyDisplayed() override;
 protected:
+    void notifyJoinWorld(World *world) override;
+    void notifyLeaveWorld(World *world) override;
     void run() override;
 private:
     std::unique_ptr<ItemStack> itemStack_;

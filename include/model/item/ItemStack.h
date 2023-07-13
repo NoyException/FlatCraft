@@ -11,7 +11,7 @@
 class ItemStack {
 public:
     explicit ItemStack(Material material, int amount = 1);
-    ItemStack(Material material, int amount, std::unique_ptr<ItemMeta> meta);
+    ItemStack(Material material, int amount, std::unique_ptr<ItemMeta>&& meta);
     explicit ItemStack(const nlohmann::json &json);
     [[nodiscard]] std::unique_ptr<nlohmann::json> serialize() const;
 
@@ -24,7 +24,7 @@ public:
     void setMaterial(Material material);
 
     [[nodiscard]] ItemMeta* getMeta() const;
-    void setMeta(std::unique_ptr<ItemMeta> meta);
+    void setMeta(std::unique_ptr<ItemMeta>&& meta);
 
     [[nodiscard]] int getAmount() const;
     void setAmount(int amount);

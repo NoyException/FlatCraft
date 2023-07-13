@@ -35,13 +35,12 @@ void preciseSleepUntil(decltype(std::chrono::high_resolution_clock::now()) to) {
 //    std::cout<<"# "<<i<<std::endl;
 }
 
-Scheduler::Scheduler() : running_(false) {
+Scheduler::Scheduler() : running_(false), thread_(nullptr) {
 
 }
 
 void Scheduler::run(){
-    std::lock_guard<std::mutex> lock(mtx_);
-
+    std::unique_lock<std::mutex> lock(mtx_);
     tasks_.remove_if([](Task &task){return task.isExpired();});
     for (auto &task: tasks_){
         task.run();
@@ -82,7 +81,11 @@ Task* Scheduler::runTaskTimer(const RawTask& task, int delay, int interval) {
 }
 
 Task* Scheduler::runTaskFiniteTimer(const RawTask &task, int delay, int interval, int times) {
-    std::lock_guard<std::mutex> lock(mtx_);
+    if(thread_ != nullptr && std::this_thread::get_id()!=thread_->get_id()){
+        std::unique_lock<std::mutex> lock(mtx_);
+        tasks_.emplace_back(task,delay,interval,times);
+        return &tasks_.back();
+    }
     tasks_.emplace_back(task,delay,interval,times);
     return &tasks_.back();
 }

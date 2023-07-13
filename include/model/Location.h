@@ -19,6 +19,9 @@ public:
     explicit Location(const nlohmann::json& json);
     static Location deserialize(const nlohmann::json& json);
     [[nodiscard]] nlohmann::json serialize() const;
+
+    static const Location INVALID_LOCATION;
+
     Location& operator=(const Location& another);
     bool operator==(const Location& another) const;
     bool operator<(const Location& another) const;
@@ -26,12 +29,13 @@ public:
     [[nodiscard]] Vec2d toVec2d() const;
     [[nodiscard]] World* getWorld() const;
     [[nodiscard]] Block* getBlock(bool front) const;
-    [[nodiscard]] std::string getRawWorld() const;
+    [[nodiscard]] const std::string &getRawWorld() const;
     [[nodiscard]] double getX() const;
     [[nodiscard]] double getY() const;
     [[nodiscard]] int getBlockX() const;
     [[nodiscard]] int getBlockY() const;
     [[nodiscard]] Location toBlockLocation() const;
+    [[nodiscard]] Location toBlockCenterLocation() const;
     void setWorld(const World &world);
     void setX(double x);
     void setY(double y);

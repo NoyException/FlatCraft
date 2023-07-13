@@ -12,11 +12,11 @@
 
 class Player : public LivingEntity{
 public:
-    explicit Player(const Location& spawnLocation);
+    friend class PlayerViewModel;
+    Player();
     Player(const Player& another) = delete;
     ~Player() override;
     explicit Player(const nlohmann::json& json);
-    static std::unique_ptr<Player> deserialize(const nlohmann::json& json);
     [[nodiscard]] std::unique_ptr<nlohmann::json> serialize() const override;
     [[nodiscard]] BoundingBox getBoundingBox() const override;
 
@@ -46,7 +46,12 @@ public:
 
     void stopBreaking();
 
-    friend class PlayerViewModel;
+    [[nodiscard]] EntityType getType() const override;
+
+protected:
+    void notifyJoinWorld(World *world) override;
+    void notifyLeaveWorld(World *world) override;
+
 private:
     void control();
     //只能是-1 0 1
@@ -55,7 +60,7 @@ private:
     bool sneaking_;
     int currentSlot_;
     bool flying_;
-    ItemStack cursor_;
+    std::unique_ptr<ItemStack> cursor_;
     Inventory inventory_;
     Block *lastBreaking_;
     double breakingProgress_;

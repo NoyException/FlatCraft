@@ -7,7 +7,7 @@
 ItemStack::ItemStack(Material material, int amount) :
 ItemStack(material, amount, ItemMeta::ofDefault(material)){}
 
-ItemStack::ItemStack(Material material, int amount, std::unique_ptr<ItemMeta> meta) :
+ItemStack::ItemStack(Material material, int amount, std::unique_ptr<ItemMeta>&& meta) :
 item_(Item::of(material)), amount_(amount), meta_(std::move(meta)){}
 
 ItemStack::ItemStack(const nlohmann::json &json) :
@@ -46,7 +46,7 @@ ItemMeta* ItemStack::getMeta() const {
     return meta_.get();
 }
 
-void ItemStack::setMeta(std::unique_ptr<ItemMeta> meta) {
+void ItemStack::setMeta(std::unique_ptr<ItemMeta>&& meta) {
     meta_ = std::move(meta);
 }
 
