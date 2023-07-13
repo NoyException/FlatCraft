@@ -54,12 +54,16 @@ void DroppedItem::run() {
         remove();
         return;
     }
+
     //玩家捡起
     auto player = FlatCraft::getInstance()->getPlayer();
-    if(player->getLocation().distanceSquared(location_)<1){
+    auto aabb = player->getBoundingBox();
+    aabb.expand(1,0.25,1,0.25);
+    if(aabb.contains(location_.toVec2d())){
         pickUpBy(player);
         return;
     }
+
     //同类合并
     std::vector<DroppedItem*> items;
     getWorld()->getEntitiesNearby<DroppedItem>(items,location_.toVec2d(),1,[&](const DroppedItem& item){

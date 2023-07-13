@@ -46,6 +46,7 @@ void Scheduler::run(){
         tasks_.remove_if([](Task &task){return task.isExpired();});
         for (auto &task: tasks_){
             if(!running_) break;
+            if(task.isExpired()) continue;
             task.run();
         }
     }

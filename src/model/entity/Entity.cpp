@@ -189,9 +189,7 @@ void Entity::run() {}
 
 void Entity::remove() {
     notifyLeaveWorld(getWorld());
-    FlatCraft::getInstance()->getScheduler()->runTask([&](){
-        FlatCraft::getInstance()->destroyEntity(this);
-    });
+    FlatCraft::getInstance()->destroyEntity(this);
 }
 
 int Entity::getId() const {
