@@ -4,14 +4,18 @@ void PlayerView::setCommandChangeCursorPosition(const std::function<void(const V
     commandChangeCursorPosition_ = command;
 }
 
-//TODO: 实现！
+
 void PlayerView::setCommandChangeKeyState(const std::function<void(Key, KeyState)>& command) {
     commandChangeKeyState_ = command;
 }
 
-//TODO: 实现！
+
 void PlayerView::setCommandScrollMouseWheel(const std::function<void(double)>& command) {
     commandScrollMouseWheel_ = command;
+}
+
+void PlayerView::setCommandClickedSlot(const std::function<void(int)>& command) {
+    commandClickedSlot_ = command;
 }
 
 void PlayerView::setBinderCurrentSlot(const std::function<void(RefPtr<int>)>& binder) {

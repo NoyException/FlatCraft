@@ -14,6 +14,8 @@ public:
 
     void setCommandScrollMouseWheel(const std::function<void(double)>& command);
 
+    void setCommandClickedSlot(const std::function<void(int)>& command);
+
     
 
     void setBinderCurrentSlot(const std::function<void(RefPtr<int>)>& binder);
@@ -42,6 +44,7 @@ public:
     std::function<void(const Vec2d&)> commandChangeCursorPosition_;
     std::function<void(Key, KeyState)> commandChangeKeyState_;
     std::function<void(double)> commandScrollMouseWheel_;
+    std::function<void(int)> commandClickedSlot_;
     
     int* binderSlot_;
     bool* binderSneak_;
