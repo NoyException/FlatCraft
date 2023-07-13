@@ -25,7 +25,7 @@ bool PlayerInventory::add(std::unique_ptr<ItemStack> &itemStack) {
         if(contents_[ADD_ORDER[i]]==nullptr){
             size_++;
             contents_[ADD_ORDER[i]] = std::move(itemStack);
-            ValueChangedNotification notification(this,Field::PLAYER_INVENTORY,i);
+            ValueChangedNotification notification(this,Field::PLAYER_INVENTORY,ADD_ORDER[i]);
             EventManager::callEvent(notification);
             return true;
         }
