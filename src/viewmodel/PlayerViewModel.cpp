@@ -10,6 +10,17 @@ PlayerViewModel::PlayerViewModel(Player *player) : EntityViewModel(player), stat
         item = KeyState::UP;
     }
     FlatCraft::getInstance()->getScheduler()->runTaskTimer([&](){
+        //暂停
+        do{
+            if(isPressed(Key::ESC)){
+                if(!isEscPressedLastTick_){
+                    isPaused_ = !isPaused_;
+                }
+                isEscPressedLastTick_ = true;
+            }
+            else isEscPressedLastTick_ = false;
+            if(isPaused_) std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }while(isPaused_ && FlatCraft::getInstance()->getScheduler()->isRunning());
         control();
     },1,0);
 }

@@ -32,6 +32,8 @@ private:
     double scrollY_;
     //鼠标点击位置（绝对位置）
     Vec2d cursorPosition_;
+    bool isPaused_ = false;
+    bool isEscPressedLastTick_ = false;
     std::function<void()> notificationCurrentSlotChanged_;
     std::function<void()> notificationSneakingStateChanged_;
     std::function<void()> notificationBreakingProgressChanged_;

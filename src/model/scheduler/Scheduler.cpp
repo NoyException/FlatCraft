@@ -35,15 +35,19 @@ void preciseSleepUntil(decltype(std::chrono::high_resolution_clock::now()) to) {
 //    std::cout<<"# "<<i<<std::endl;
 }
 
-Scheduler::Scheduler() : running_(false), thread_(nullptr) {
+Scheduler::Scheduler() : running_(false), thread_(nullptr), sleep_(0) {
 
 }
 
 void Scheduler::run(){
-    std::unique_lock<std::mutex> lock(mtx_);
-    tasks_.remove_if([](Task &task){return task.isExpired();});
-    for (auto &task: tasks_){
-        task.run();
+    if(sleep_>0) sleep_--;
+    else{
+        std::unique_lock<std::mutex> lock(mtx_);
+        tasks_.remove_if([](Task &task){return task.isExpired();});
+        for (auto &task: tasks_){
+            if(!running_) break;
+            task.run();
+        }
     }
 }
 
@@ -68,6 +72,10 @@ void Scheduler::stop() {
     if(thread_->joinable()) thread_->join();
 }
 
+void Scheduler::sleep(long long int ticks) {
+    sleep_ = std::max(sleep_,ticks);
+}
+
 Task* Scheduler::runTask(const RawTask& task) {
     return runTaskFiniteTimer(task, 1, 0, 1);
 }
@@ -88,4 +96,8 @@ Task* Scheduler::runTaskFiniteTimer(const RawTask &task, int delay, int interval
     }
     tasks_.emplace_back(task,delay,interval,times);
     return &tasks_.back();
+}
+
+bool Scheduler::isRunning() const {
+    return running_;
 }

@@ -311,6 +311,7 @@ int World::getSeed() const {
 void World::dropItem(const Vec2d &position, std::unique_ptr<ItemStack>&& itemStack) {
     auto item = FlatCraft::getInstance()->createEntity<DroppedItem>(std::move(itemStack));
     item->teleport(Location(*this,position.getX(),position.getY()));
+    item->setVelocity({rand_.nextDouble()/5.0-0.1,0.1});
 }
 
 

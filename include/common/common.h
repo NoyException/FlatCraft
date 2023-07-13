@@ -36,4 +36,17 @@ enum class KeyState : bool{
     DOWN,
 };
 
+template<class A, class B>
+std::unique_ptr<A> dynamic_unique_cast(std::unique_ptr<B>&& p){
+    static_assert(std::is_convertible<A*, B*>::value, "A must be convertible to B");
+    B* b = p.release();
+    A* a = dynamic_cast<A*>(b);
+    if(a == nullptr){
+        delete b;
+        return nullptr;
+    }
+    return std::unique_ptr<A>(a);
+}
+
+
 #endif //FLATCRAFT_COMMON_H

@@ -17,6 +17,7 @@ public:
     void setItemStack(std::unique_ptr<ItemStack> &&itemStack);
     [[nodiscard]] long long getTicksLived() const;
     void pickUpBy(Entity* entity);
+    [[nodiscard]] BoundingBox getBoundingBox() const override;
     [[nodiscard]] EntityType getType() const override;
 //    void notifyDisplayed() override;
 protected:
