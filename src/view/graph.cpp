@@ -117,10 +117,11 @@ void Window::guiControl() {
 
 void Window::pauseControl() {
 	if (my_event_.type == SDL_MOUSEBUTTONUP && SDL_BUTTON_LEFT == my_event_.button.button) {
-		outputMouse();
+		//outputMouse();
 		if (mx_ > 375 && mx_ < 901) {
 			if (my_ > 180 && my_ < 230) {
 				gui_ = GUI::GAME;
+				playerView_.commandChangeKeyState_(Key::ESC, KeyState::UP);
 			}
 			if (my_ > 345 && my_ < 391) {
 				graphFinish = true;
