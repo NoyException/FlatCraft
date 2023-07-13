@@ -125,7 +125,7 @@ void Window::pauseControl() {
 			if (my_ > 345 && my_ < 391) {
 				graphFinish = true;
 			}
-			if()
+			
 		}
 	}
 }
