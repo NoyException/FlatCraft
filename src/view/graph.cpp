@@ -121,6 +121,7 @@ void Window::pauseControl() {
 		if (mx_ > 375 && mx_ < 901) {
 			if (my_ > 180 && my_ < 230) {
 				gui_ = GUI::GAME;
+				playerView_.commandChangeKeyState_(Key::ESC, KeyState::UP);
 			}
 			if (my_ > 345 && my_ < 391) {
 				graphFinish = true;

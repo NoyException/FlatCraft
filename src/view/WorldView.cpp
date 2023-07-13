@@ -270,7 +270,27 @@ void WorldView::drawDroppedItem(Material material, Vec2d position, int amount) {
 	rect.y -= rect.h;
 	rect.x -= rect.w / 2;
 	SDL_Texture* texture = blockTexture->getTexture(material);
-	SDL_RenderCopy(renderer, texture, NULL, &rect);
+	if(amount == 1)
+		SDL_RenderCopy(renderer, texture, NULL, &rect);
+	else if (amount <= 32) {
+		rect.x -= 2;
+		rect.y -= 2;
+		SDL_RenderCopy(renderer, texture, NULL, &rect);
+		rect.x += 4;
+		rect.y += 2;
+		SDL_RenderCopy(renderer, texture, NULL, &rect);
+	}
+	else {
+		rect.x -= 3;
+		rect.y -= 3;
+		SDL_RenderCopy(renderer, texture, NULL, &rect);
+		rect.x += 6;
+		rect.y += 1;
+		SDL_RenderCopy(renderer, texture, NULL, &rect);
+		rect.x -= 3;
+		rect.y += 2;
+		SDL_RenderCopy(renderer, texture, NULL, &rect);
+	}
 }
 
 void WorldView::setBinderCameraPosition(const std::function<void(RefPtr<Vec2d>)>& binder) {
