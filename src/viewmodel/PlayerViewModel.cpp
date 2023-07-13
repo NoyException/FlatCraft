@@ -184,7 +184,7 @@ void PlayerViewModel::onBound() {
                 case Field::PLAYER_INVENTORY:{
                     int index = event->template getPayload<int>();
                     auto itemStack = player->getInventory()->get(index);
-                    if(itemStack!= nullptr) inventory_[index] = itemStack->toMaterialStack();
+                    if(itemStack != nullptr) inventory_[index] = itemStack->toMaterialStack();
                     else inventory_[index] = MaterialStack();
                     notificationInventoryChanged_(index);
                     break;
