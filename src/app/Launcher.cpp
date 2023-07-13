@@ -35,7 +35,7 @@ void Launcher::start() {
         Binder::bindDroppedItem(*view,*viewModel);
         droppedItemViewModels_.push_back(viewModel);
     });
-    EventManager::registerListener<ModelCreatedNotification<DroppedItem>>(EventPriority::MONITOR,[&](auto event){
+    EventManager::registerListener<ModelDestroyedNotification<DroppedItem>>(EventPriority::MONITOR,[&](auto event){
         DroppedItemViewModel* vm = nullptr;
         for (auto &item: droppedItemViewModels_){
             if(item->getDroppedItem()==event->getModel())
