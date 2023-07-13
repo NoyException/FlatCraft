@@ -22,6 +22,9 @@ public:
 
     void setBinderBreakingProgress(const std::function<void(RefPtr<double>)>& binder);
 
+    void setBinderCursor(const std::function<void(RefPtr<MaterialStack>)>& binder);
+
+    void setBinderInventory(const std::function<void(RefPtr<MaterialStack>)>& binder);
     
 
     std::function<void()> getNotificationCurrentSlotChanged();
@@ -32,6 +35,10 @@ public:
 
     std::function<void()> getNotificationBreakingProgressChanged();
 
+    std::function<void()> getNotificationCursorChanged();
+
+    std::function<void(int)> getNotificationInventoryChanged();
+
     std::function<void(const Vec2d&)> commandChangeCursorPosition_;
     std::function<void(Key, KeyState)> commandChangeKeyState_;
     std::function<void(double)> commandScrollMouseWheel_;
@@ -40,7 +47,8 @@ public:
     bool* binderSneak_;
     double* binderBreakingProgress_;
     bool isDigging;
-    MaterialStack* binderMaterialStack;//46
+    MaterialStack* binderMaterialStack_;//46
+    MaterialStack* binderCursor_;
 };
 
 #endif

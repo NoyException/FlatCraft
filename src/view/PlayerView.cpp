@@ -14,44 +14,54 @@ void PlayerView::setCommandScrollMouseWheel(const std::function<void(double)>& c
     commandScrollMouseWheel_ = command;
 }
 
-
-
-//TODO: 实现！
 void PlayerView::setBinderCurrentSlot(const std::function<void(RefPtr<int>)>& binder) {
     binder(binderSlot_);
 }
 
-//TODO: 实现！
-
-
-//TODO: 实现！
 void PlayerView::setBinderSneaking(const std::function<void(RefPtr<bool>)>& binder) {
     binder(binderSneak_);
 }
 
-//TODO: 实现！
 void PlayerView::setBinderBreakingProgress(const std::function<void(RefPtr<double>)>& binder) {
     binder(binderBreakingProgress_);
 }
 
+void PlayerView::setBinderCursor(const std::function<void(RefPtr<MaterialStack>)>& binder) {
+    binder(binderCursor_);
+}
+
+void PlayerView::setBinderInventory(const std::function<void(RefPtr<MaterialStack>)>& binder) {
+    binder(binderMaterialStack_);
+}
 
 
 
 
 
-//TODO: 实现！
 std::function<void()> PlayerView::getNotificationCurrentSlotChanged() {
     return [&]() {};
 }
 
-//TODO: 实现！
+
 std::function<void()> PlayerView::getNotificationBreakingProgressChanged() {
     return [&]() {
         isDigging = true;
     };
 }
 
-//TODO: 实现！
+
 std::function<void()> PlayerView::getNotificationSneakingStateChanged() {
     return [&]() {};
+}
+
+std::function<void()> PlayerView::getNotificationCursorChanged() {
+    return [&]() {
+
+    };
+}
+
+std::function<void(int)> PlayerView::getNotificationInventoryChanged() {
+    return [&](int index) {
+
+    };
 }
