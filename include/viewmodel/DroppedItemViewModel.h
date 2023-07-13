@@ -17,6 +17,9 @@ public:
     void setNotificationPickedUp(const std::function<void()> &notification);
     void setNotificationDisappeared(const std::function<void()> &notification);
     [[nodiscard]] DroppedItem* getDroppedItem() const;
+protected:
+    void onBound() override;
+
 private:
     BaseListener* listener_;
     MaterialStack materialStack_;

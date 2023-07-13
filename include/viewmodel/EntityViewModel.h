@@ -6,9 +6,10 @@
 #define FLATCRAFT_ENTITYVIEWMODEL_H
 
 #include "common.h"
+#include "ViewModel.h"
 #include "model/entity/entities.h"
 
-class EntityViewModel {
+class EntityViewModel : public ViewModel {
 public:
     explicit EntityViewModel(Entity* entity);
 
@@ -21,6 +22,8 @@ public:
     void setNotificationVelocityChanged(const std::function<void()> &notification);
 
 protected:
+    void onBound() override;
+
     Entity* entity_;
     Vec2d position_;
 

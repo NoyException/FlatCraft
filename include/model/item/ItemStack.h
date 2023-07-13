@@ -14,6 +14,7 @@ public:
     ItemStack(Material material, int amount, std::unique_ptr<ItemMeta>&& meta);
     explicit ItemStack(const nlohmann::json &json);
     [[nodiscard]] std::unique_ptr<nlohmann::json> serialize() const;
+    static std::unique_ptr<ItemStack> deserialize(const nlohmann::json &json);
 
     [[nodiscard]] MaterialStack toMaterialStack() const;
 

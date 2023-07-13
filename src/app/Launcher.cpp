@@ -62,17 +62,18 @@ void Launcher::start() {
 void Launcher::stop() {
     game_->save();
     viewThread_->join();
-    std::cout << "Game ended" << std::endl;
     game_->stop();
     delete worldViewModel_;
     delete playerViewModel_;
     for (auto &item: droppedItemViewModels_){
         delete item;
     }
+    std::cout << "Game stopped" << std::endl;
 }
 
 void Launcher::end() {
     delete window_;
+    std::cout << "Game ended" << std::endl;
 }
 
 void Launcher::test() {

@@ -8,7 +8,7 @@
 
 Player::Player() : LivingEntity(),
 currentSlot_(0), cursor_(nullptr), lastBreaking_(nullptr), breakingProgress_(0),
-walkingDirection_(0), sprinting_(false), sneaking_(false), flying_(false){
+walkingDirection_(0), sprinting_(false), sneaking_(false), flying_(false), inventory_(std::make_unique<PlayerInventory>()){
 
 //    EventManager::registerListener<EntityTeleportEvent>(EventPriority::MONITOR,[&](EntityTeleportEvent* event){
 //        if(!event->isCanceled() && event->getEntity()==this){
@@ -27,14 +27,16 @@ Player::~Player() = default;
 
 Player::Player(const nlohmann::json &json) : LivingEntity(json),
 cursor_(nullptr), currentSlot_(0), lastBreaking_(nullptr), breakingProgress_(0),
-walkingDirection_(0), sprinting_(false), sneaking_(false), flying_(false){
+walkingDirection_(0), sprinting_(false), sneaking_(false), flying_(false),
+inventory_(dynamic_unique_cast<PlayerInventory>(Inventory::deserialize(json.at("inventory")))){
     if(json.contains("cursor")){
-        cursor_ = std::make_unique<ItemStack>(json.at("cursor"));
+        cursor_ = ItemStack::deserialize(json.at("cursor"));
     }
 }
 
 std::unique_ptr<nlohmann::json> Player::serialize() const {
     auto json = LivingEntity::serialize();
+    json->emplace("inventory",*inventory_->serialize());
     if(cursor_!=nullptr)
         json->emplace("cursor",*cursor_->serialize());
     return json;
@@ -189,4 +191,18 @@ void Player::notifyLeaveWorld(World *world) {
 
 EntityType Player::getType() const {
     return EntityType::PLAYER;
+}
+
+PlayerInventory *Player::getInventory() {
+    return inventory_.get();
+}
+
+ItemStack* Player::getCursor() const {
+    return cursor_.get();
+}
+
+void Player::setCursor(std::unique_ptr<ItemStack> &&cursor) {
+    cursor_ = std::move(cursor);
+    ValueChangedNotification notification(this,Field::PLAYER_CURSOR,cursor_.get());
+    EventManager::callEvent(notification);
 }

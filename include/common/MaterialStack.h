@@ -9,6 +9,8 @@
 #include "Material.h"
 
 struct MaterialStack {
+    MaterialStack();
+    MaterialStack(Material material, int amount);
     Material material_;
     int amount_;
 };

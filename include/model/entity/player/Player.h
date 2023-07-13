@@ -8,7 +8,7 @@
 #include "common.h"
 #include "model/entity/LivingEntity.h"
 #include "model/item/ItemStack.h"
-#include "model/item/Inventory.h"
+#include "model/item/PlayerInventory.h"
 
 class Player : public LivingEntity{
 public:
@@ -48,6 +48,12 @@ public:
 
     [[nodiscard]] EntityType getType() const override;
 
+    PlayerInventory* getInventory();
+
+    [[nodiscard]] ItemStack* getCursor() const;
+
+    void setCursor(std::unique_ptr<ItemStack> &&cursor);
+
 protected:
     void notifyJoinWorld(World *world) override;
     void notifyLeaveWorld(World *world) override;
@@ -61,7 +67,7 @@ private:
     int currentSlot_;
     bool flying_;
     std::unique_ptr<ItemStack> cursor_;
-    Inventory inventory_;
+    std::unique_ptr<PlayerInventory> inventory_;
     Block *lastBreaking_;
     double breakingProgress_;
 };

@@ -17,12 +17,15 @@ public:
     Scheduler();
     void start();
     void stop();
+    [[nodiscard]] bool isRunning() const;
+    void sleep(long long ticks);
     Task* runTask(const RawTask& task);
     Task* runTaskLater(const RawTask& task, int delay);
     Task* runTaskTimer(const RawTask& task, int delay, int interval);
     Task* runTaskFiniteTimer(const RawTask& task, int delay, int interval, int times);
 private:
     void run();
+    long long sleep_;
     bool running_;
     std::mutex mtx_;
     std::list<Task> tasks_;
