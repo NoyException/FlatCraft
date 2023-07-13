@@ -30,8 +30,12 @@ public:
     void setWeather(Weather weather);
     [[nodiscard]] std::string getName() const;
     void getEntities(std::vector<Entity*>& entities) const;
-    void getEntities(std::vector<Entity*>& entities, const std::function<bool(Entity&)>& filter) const;
-    void getEntitiesNearby(std::vector<Entity*>& entities, const Vec2d& position, double r) const;
+    void getEntities(std::vector<Entity*>& entities, const std::function<bool(const Entity&)>& filter) const;
+    void getEntitiesNearby(std::vector<Entity*>& entities, const Vec2d& position, double r,
+                           const std::function<bool(const Entity&)>& filter=[](const Entity&){return true;}) const;
+    template<class E>
+    void getEntitiesNearby(std::vector<E*>& entities, const Vec2d& position, double r,
+                           const std::function<bool(const E&)>& filter=[](E&){return true;}) const;
     [[nodiscard]] Block* getBlock(int x, int y, bool front) const;
     [[nodiscard]] Block* getBlock(const Vec2d& v, bool front) const;
     [[nodiscard]] Block* getBlock(const Location& location, bool front) const;
@@ -60,5 +64,17 @@ private:
     std::unordered_map<int, std::unique_ptr<Block>> blocks_;
 };
 
+template<class E>
+void World::getEntitiesNearby(std::vector<E*>& entities, const Vec2d& position, double r,
+                       const std::function<bool(const E&)>& filter) const{
+    std::vector<Entity*> tmp;
+    getEntitiesNearby(tmp, position, r, [&](const Entity& entity){
+        const E* e = dynamic_cast<const E*>(&entity);
+        return e!=nullptr && filter(*e);
+    });
+    for (auto &item: tmp){
+        entities.push_back(dynamic_cast<E*>(item));
+    }
+}
 
 #endif //FLATCRAFT_WORLD_H

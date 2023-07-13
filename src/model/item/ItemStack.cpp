@@ -73,3 +73,7 @@ bool ItemStack::isSimilar(const ItemStack *another) const {
 bool ItemStack::equals(const ItemStack *another) const {
     return isSimilar(another) && amount_==another->amount_;
 }
+
+int ItemStack::getMaxAmount() const {
+    return MaterialHelper::getInfo(getMaterial())->maxStacks_;
+}

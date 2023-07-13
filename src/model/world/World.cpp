@@ -89,15 +89,15 @@ void World::getEntities(std::vector<Entity*> &entities) const {
     }
 }
 
-void World::getEntities(std::vector<Entity*> &entities, const std::function<bool(Entity&)>& filter) const {
+void World::getEntities(std::vector<Entity*> &entities, const std::function<bool(const Entity&)>& filter) const {
     for (const auto &item: entities_){
         if(filter(*item)) entities.push_back(item);
     }
 }
 
-void World::getEntitiesNearby(std::vector<Entity *> &entities, const Vec2d& position, double r) const {
+void World::getEntitiesNearby(std::vector<Entity *> &entities, const Vec2d& position, double r, const std::function<bool(const Entity&)>& filter) const {
     getEntities(entities, [&](const Entity& entity){
-        return entity.getLocation().toVec2d().distanceSquared(position)<=r*r;
+        return entity.getLocation().toVec2d().distanceSquared(position)<=r*r && filter(entity);
     });
 }
 
