@@ -137,23 +137,21 @@ void Window::draw() {
 }
 
 void Window::drawDroppedItems() {
-	for (auto it = droppedItems_.begin(); it != droppedItems_.end(); it++) {
+	for (auto it = droppedItems_.begin(); it != droppedItems_.end(); ) {
 		if ((*it)->itemState != ItemState::EXIST)
-			droppedItems_.erase(it);
+			it = droppedItems_.erase(it);
 		else {
 			drawDroppedItem(*it);
+			it++;
 		}
 	}
 }
 
 void Window::drawDroppedItem(DroppedItemView* droppedItemView) {
-	
+	worldView_.drawDroppedItem(droppedItemView->binderMaterialStack->material_, *droppedItemView->binderPosition_, droppedItemView->binderMaterialStack->amount_);
 }
 
 void Window::drawGame() {
-	//static long long a = 0;
-	//a++;
-	//std::cout << a << std::endl;
 	worldView_.drawBackground();
 	worldView_.drawRain(playerView_.binderVelocity_->getX());
 	worldView_.drawMap();

@@ -262,6 +262,16 @@ void WorldView::drawCrack(double process, SDL_Rect* rect) {
 
 }
 
+void WorldView::drawDroppedItem(Material material, Vec2d position, int amount) {
+	SDL_Rect rect = leftUpRect;
+	rect.x += 32 * (position.getX() - leftUpPosition_.getX());
+	rect.y -= 32 * (position.getY() - leftUpPosition_.getY());
+	rect.w = rect.h = 16;
+	rect.y -= rect.h;
+	SDL_Texture* texture = blockTexture->getTexture(material);
+	SDL_RenderCopy(renderer, texture, NULL, &rect);
+}
+
 void WorldView::setBinderCameraPosition(const std::function<void(RefPtr<Vec2d>)>& binder) {
 	binder(binderCameraPosition_);
 }
