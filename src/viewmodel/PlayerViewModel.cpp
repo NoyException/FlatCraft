@@ -127,8 +127,14 @@ void PlayerViewModel::control() {
     if(progress!=player->getBreakingProgress())
         notificationBreakingProgressChanged_();
     //滚轮滚动
-    int slot = ((int)std::floor(scrollY_*2)+player->getCurrentSlot())%9;
-    player->setCurrentSlot(slot);
+    int oldSlot = player->getCurrentSlot();
+    int slot = (int)std::round(-scrollY_)+oldSlot;
+    if(slot<0) slot+=(1-slot/9)*9;
+    slot%=9;
+    if(slot!=oldSlot){
+        player->setCurrentSlot(slot);
+    }
+    scrollY_ = 0;
     //玩家行动
     player->control();
 }

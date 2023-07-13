@@ -68,6 +68,7 @@ void DroppedItem::run() {
     int amount = itemStack_->getAmount();
     int maxAmount = itemStack_->getMaxAmount();
     for (const auto &item: items){
+        if(item==this) continue;
         amount += item->itemStack_->getAmount();
         if(amount<maxAmount) item->remove();
         else{//amount>=maxAmount
