@@ -1,5 +1,5 @@
 ﻿
-#include "view/graph.h"
+#include "window/graph.h"
 
 bool graphFinish;
 
