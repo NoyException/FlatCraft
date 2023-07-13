@@ -24,8 +24,11 @@ public:
     void buildLeaves(int x,int y,World& world);
     void buildLog(int x,int y,World& world);
     void generateMineral(double start,int width,double amplitude ,int minY,Material,World& world,int times,long long seed);
-    bool haveMineral(double x,int mineralSeed);
-
+    void generateCave(double startX,double startY,int width,int height,int octaves, double persistence,
+                      double frequency,double amplitude ,int minY,World& world,long long seed);
+    double grad(double x,double y,int hash);
+    double noise(double x,double y,int *hash);
+    double perlin(int *hash,double x, double y, int octaves, double persistence,double amplitude,double frequency,int minY);
 };
 
 
