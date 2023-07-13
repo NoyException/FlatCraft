@@ -225,9 +225,11 @@ void Window::drawItemsBar() {
 		////material = Material::STONE;
 		texture = worldView_.blockTexture->getTexture(material);
 		SDL_RenderCopy(renderer_, texture, NULL, &rect);
-		digitRect.x = rect.x;
-		//num = 63;
+		//num = 42;
 		digit = num / 10;
+		digitRect.x = rect.x + 20;
+		if (num >= 10)
+			digitRect.x -= 8;
 		if (digit) {
 			texture = guiTexture_->getDigit(digit);
 			SDL_RenderCopy(renderer_, texture, NULL, &digitRect);
