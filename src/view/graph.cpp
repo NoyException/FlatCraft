@@ -108,14 +108,26 @@ void Window::guiControl() {
 			my_event_.key.keysym.sym = SDLK_l;
 		break;
 	case GUI::ALREADYPAUSE:
-		if (my_event_.key.keysym.sym == SDLK_ESCAPE && my_event_.type == SDL_KEYUP) {
-			gui_ = GUI::GAME;
-			my_event_.key.keysym.sym = SDLK_l;
-		}
+		pauseControl();
 		break;
 
 
 	}//end for switch
+}
+
+void Window::pauseControl() {
+	if (my_event_.type == SDL_MOUSEBUTTONUP && SDL_BUTTON_LEFT == my_event_.button.button) {
+		outputMouse();
+		if (mx_ > 375 && mx_ < 901) {
+			if (my_ > 180 && my_ < 230) {
+				gui_ = GUI::GAME;
+			}
+			if (my_ > 345 && my_ < 391) {
+				graphFinish = true;
+			}
+			if()
+		}
+	}
 }
 
 void Window::draw() {
@@ -138,8 +150,10 @@ void Window::draw() {
 
 void Window::drawDroppedItems() {
 	for (auto it = droppedItems_.begin(); it != droppedItems_.end(); ) {
-		if ((*it)->itemState != ItemState::EXIST)
+		if ((*it)->itemState != ItemState::EXIST) {
+			delete[](*it);
 			it = droppedItems_.erase(it);
+		}
 		else {
 			drawDroppedItem(*it);
 			it++;

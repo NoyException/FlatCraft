@@ -10,7 +10,8 @@ enum class GUI : int {
 	HOME,
 	GAME,
 	PAUSE,
-	ALREADYPAUSE
+	ALREADYPAUSE,
+	CONFIG
 };
 
 class GuiTexture {
@@ -86,6 +87,11 @@ public:
 	void drawDroppedItem(DroppedItemView* droppedItemView);
 
 private:
+	void pauseControl();
+	inline void outputMouse() {//used for test
+		std::cout << mx_ << "  " << my_ << std::endl;
+	}
+
 	int mx_, my_;
 	SDL_Event my_event_;
 	SDL_Renderer* renderer_ = nullptr;
