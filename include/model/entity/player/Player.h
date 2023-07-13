@@ -15,7 +15,7 @@ public:
     friend class PlayerViewModel;
     Player();
     Player(const Player& another) = delete;
-    ~Player() override;
+    ~Player() override = default;
     explicit Player(const nlohmann::json& json);
     [[nodiscard]] std::unique_ptr<nlohmann::json> serialize() const override;
     [[nodiscard]] BoundingBox getBoundingBox() const override;

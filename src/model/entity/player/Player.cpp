@@ -23,8 +23,6 @@ walkingDirection_(0), sprinting_(false), sneaking_(false), flying_(false), inven
 
 }
 
-Player::~Player() = default;
-
 Player::Player(const nlohmann::json &json) : LivingEntity(json),
 cursor_(nullptr), currentSlot_(0), lastBreaking_(nullptr), breakingProgress_(0),
 walkingDirection_(0), sprinting_(false), sneaking_(false), flying_(false),
@@ -193,13 +191,14 @@ void Player::tryToPlace(const Vec2d &position) {
         return;
     auto behind = world->getBlock(position, false);
 
-    auto stack = hand->clone();
-    stack->setAmount(stack->getAmount()-1);
-    setHand(std::move(stack));
     if(behind->isReplaceable()){
         behind->setMaterial(hand->getMaterial());
     }
     else block->setMaterial(hand->getMaterial());
+
+    auto stack = hand->clone();
+    stack->setAmount(stack->getAmount()-1);
+    setHand(std::move(stack));
 }
 
 int Player::getCurrentSlot() const {

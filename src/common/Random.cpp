@@ -55,3 +55,7 @@ double Random::nextDouble() {
     return (double)(((unsigned long long)(next(26)) << 27) + next(27)) * DOUBLE_UNIT;
 }
 
+unsigned long long Random::getCurrentSeed() const {
+    return seed_;
+}
+

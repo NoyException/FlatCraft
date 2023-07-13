@@ -9,14 +9,16 @@
 
 Entity::Entity() :
 location_(Location::INVALID_LOCATION), direction_(), velocity_(),
-friction_(true), gravity_(true), physicsTask_(nullptr), id_(-1){}
+friction_(true), gravity_(true), id_(-1){}
 
 Entity::~Entity() {
-    if(physicsTask_ != nullptr)
+    if(physicsTask_ != nullptr){
         physicsTask_->cancel();
+        physicsTask_ = nullptr;
+    }
 }
 
-Entity::Entity(const nlohmann::json &json) : physicsTask_(nullptr), id_(-1),
+Entity::Entity(const nlohmann::json &json) : id_(-1),
 location_(json.at("location")), velocity_(json.at("velocity")),
 gravity_(json.at("gravity").get<bool>()), friction_(json.at("friction").get<bool>()){
     FlatCraft::getInstance()->getScheduler()->runTask([&](){
@@ -197,6 +199,9 @@ int Entity::getId() const {
 }
 
 void Entity::notifyJoinWorld(World *world) {
+    if(physicsTask_!=nullptr){
+        physicsTask_->cancel();
+    }
     physicsTask_ = FlatCraft::getInstance()->getScheduler()->runTaskTimer([&]() {
         bool onGround = isOnGround();
         if(onGround){

@@ -22,7 +22,8 @@ void FlatCraft::stop() {
 }
 
 void FlatCraft::createWorld(const std::string &name) {
-    worlds_.emplace(name, std::make_unique<World>(name));
+    Random random;
+    worlds_.emplace(name, std::make_unique<World>(name,random.nextLongLong()));
 }
 
 FlatCraft *FlatCraft::getInstance() {

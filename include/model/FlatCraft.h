@@ -50,6 +50,7 @@ private:
     //name->World
     std::map<std::string,std::unique_ptr<World>> worlds_;
     Player* player_;
+    //id->Entity
     std::unordered_map<int,std::unique_ptr<Entity>> entities_;
     Scheduler scheduler_;
     int nextEntityId_;
