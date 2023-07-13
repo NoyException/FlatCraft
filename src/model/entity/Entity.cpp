@@ -155,7 +155,7 @@ bool Entity::isCollided(BoundingBox::Face face) const {
             dir = {1,0};
             break;
     }
-    if(abs(d-std::round(d))>0.000001) return false;
+    if(std::abs(d-std::round(d))>0.000001) return false;
     Vec2d start = location_.toVec2d() + Vec2d(0,aabb.getHeight()/2);
     auto res = getWorld()->rayTrace(start,dir,0.000001,aabb.getWidth()/2,aabb.getHeight()/2);
     return res!= nullptr;

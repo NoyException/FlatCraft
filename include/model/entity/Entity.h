@@ -51,7 +51,7 @@ protected:
     bool friction_;
     bool gravity_;
 private:
-    Task* physicsTask_ = nullptr;
+    std::shared_ptr<Task> physicsTask_ = nullptr;
 };
 
 

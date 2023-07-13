@@ -106,7 +106,7 @@ void World::getEntitiesNearby(std::vector<Entity *> &entities, const Vec2d& posi
 }
 
 void World::init() {
-    seed_ = (int)(rand_.nextInt()%INT_MAX);
+    seed_ = rand_.nextInt(0x3F3F3F3F);
     WorldGenerator generator;
     generator.generate(*this);
     /*for(int i=-128;i<=128;i++){

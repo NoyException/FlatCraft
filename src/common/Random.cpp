@@ -33,8 +33,7 @@ unsigned int Random::nextInt(unsigned int bound) {
     else { // reject over-represented candidates
         for (unsigned int u = r;
              u - (r = u % bound) + m < 0;
-             u = next(31))
-            ;
+             u = next(31));
     }
     return r;
 }

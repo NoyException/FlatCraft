@@ -55,7 +55,13 @@ void Launcher::start() {
     });
 
     while(!graphFinish){
-        std::this_thread::sleep_for(std::chrono::milliseconds(20));
+//        std::string input;
+//        if(std::cin>>input){
+//            if(input=="stop"){
+//                graphFinish = true;
+//            }
+//        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 }
 
@@ -65,6 +71,7 @@ void Launcher::stop() {
     game_->stop();
     delete worldViewModel_;
     delete playerViewModel_;
+    delete viewThread_;
     for (auto &item: droppedItemViewModels_){
         delete item;
     }
