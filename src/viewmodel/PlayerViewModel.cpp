@@ -10,13 +10,11 @@ cursor_(player->cursor_==nullptr?MaterialStack():player->cursor_->toMaterialStac
     for (auto &item: states_){
         item = KeyState::UP;
     }
-
     for (int i = 0; i < player->getInventory()->getCapacity(); ++i){
         auto itemStack = player->getInventory()->get(i);
         if(itemStack!= nullptr) inventory_[i] = itemStack->toMaterialStack();
         else inventory_[i] = MaterialStack();
     }
-
 }
 
 Player *PlayerViewModel::getPlayer() {
@@ -32,7 +30,6 @@ std::function<void(Key, KeyState)> PlayerViewModel::getCommandChangeKeyState() {
 std::function<void(double)> PlayerViewModel::getCommandScrollMouseWheel() {
     return [&](double scrollY){
         scrollY_ = scrollY;
-        notificationCurrentSlotChanged_();
     };
 }
 
@@ -129,8 +126,16 @@ void PlayerViewModel::control() {
     else player->stopBreaking();
     if(progress!=player->getBreakingProgress())
         notificationBreakingProgressChanged_();
-    //TODO: 滚轮滚动
-    //
+    //滚轮滚动
+    int oldSlot = player->getCurrentSlot();
+    int slot = (int)std::round(-scrollY_)+oldSlot;
+    if(slot<0) slot+=(1-slot/9)*9;
+    slot%=9;
+    if(slot!=oldSlot){
+        player->setCurrentSlot(slot);
+    }
+    scrollY_ = 0;
+    //玩家行动
     player->control();
 }
 
@@ -158,10 +163,14 @@ void PlayerViewModel::onBound() {
         auto player = getPlayer();
         if(event!=nullptr && event->getObject()==player){
             switch(event->getField()){
-                case Field::PLAYER_CURSOR:
+                case Field::PLAYER_CURSOR:{
                     cursor_ = player->cursor_==nullptr?MaterialStack():player->cursor_->toMaterialStack();
                     notificationCursorChanged_();
                     break;
+                }
+                case Field::PLAYER_CURRENT_SLOT:{
+                    notificationCurrentSlotChanged_();
+                }
                 default:
                     break;
             }

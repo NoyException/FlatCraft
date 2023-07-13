@@ -171,6 +171,12 @@ int Player::getCurrentSlot() const {
     return currentSlot_;
 }
 
+void Player::setCurrentSlot(int currentSlot) {
+    currentSlot_ = currentSlot;
+    ValueChangedNotification notification(this,Field::PLAYER_CURRENT_SLOT,nullptr);
+    EventManager::callEvent(notification);
+}
+
 double Player::getBreakingProgress() const {
     return breakingProgress_;
 }
@@ -206,3 +212,4 @@ void Player::setCursor(std::unique_ptr<ItemStack> &&cursor) {
     ValueChangedNotification notification(this,Field::PLAYER_CURSOR,cursor_.get());
     EventManager::callEvent(notification);
 }
+

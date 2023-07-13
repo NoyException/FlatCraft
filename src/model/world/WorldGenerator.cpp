@@ -9,8 +9,8 @@
 
 int *WorldGenerator::generateHash(int seed) {
     Random rnd(seed);
-    int *hash = new int[256];
-    for(int j=0;j<256;j++){
+    int *hash = new int[257];
+    for(int j=0;j<257;j++){
         hash[j]=(int) rnd.nextInt(256);
     }
     return hash;
@@ -53,6 +53,11 @@ double WorldGenerator::perlin(int *hash,double x, int octaves, double persistenc
 }
 
 void WorldGenerator::generate(World &world) {
+    Random random(world.getSeed());
+    auto seed1=random.nextLongLong();
+    auto seed2=random.nextLongLong();
+    auto seed3=random.nextLongLong();
+    auto seed4=random.nextLongLong();
     for(int i=0;i<256;i++){
         for(int j=-128;j<=128;j++){
             world.setBlock(j,i, true,Material::AIR);
@@ -68,13 +73,12 @@ void WorldGenerator::generate(World &world) {
             }
         }
     }
-    generateMaterial(-128,256,4,0.5,1.0,4,66,Material::STONE,world);//world.chunk
+    generateMaterial(-128,256,4,0.5,1.0,4,66,Material::STONE,world,seed1,seed2);//world.chunk
+    generateMineral(-128,256,1.2,24,Material::LOG,world,5,seed3);
+    generateCave(-128,1,256,60,6,0.5,1.0,1.0,0,world,seed4);
 }
-
-
-void WorldGenerator::generateMaterial(double start,int width,int octaves, double persistence, double frequency,double amplitude,int minY,
-                                      Material a,World& world){
-    int *hash=generateHash(world.seed_);
+void WorldGenerator::generateMaterial(double start,int width,int octaves, double persistence, double frequency,double amplitude,int minY,Material a,World& world,long long seed,long long treeSeed){
+    int *hash=generateHash(seed);
     auto *noiseArray = new double[width];
     for(int i=0;i<width;i++) {
         double x = (double) i / 32.0;
@@ -90,7 +94,7 @@ void WorldGenerator::generateMaterial(double start,int width,int octaves, double
     if(a==Material::STONE){
         //double* newNoiseArray = new double[width];
         double newNoiseArray[300];
-        generateTree(start,width,2,world,noiseArray);
+        generateTree(start,width,treeSeed,world,noiseArray);
         for(int i=0;i<=width;i++){
             int noise = std::floor(noiseArray[i]);
             if(noise+1>61){
@@ -114,31 +118,29 @@ void WorldGenerator::generateMaterial(double start,int width,int octaves, double
     delete[] noiseArray;
     delete[] hash;
 }
-
 void WorldGenerator::generateTree(double start,int width,int treeSeed,World& world,double *noise) {
     int startX = std::floor(start);
     int treeAddress=startX;
     for(int i=0;i<=width;i++){
         double x = (double) i / 32.0;
-        if(haveTree(x,noise,treeSeed)&& (start+i> treeAddress + 5) && (noise[i]>63)){
+        if(haveTree(x,treeSeed)&& (start+i> treeAddress + 5) && (noise[i]>63)){
             treeAddress=startX+i;
             buildTree(treeAddress,noise[i]+1,world);
         }
     }
 }
-
-bool WorldGenerator::haveTree(double x,double *noise,int treeSeed) {
+bool WorldGenerator::haveTree(double x,int treeSeed) {
     int *hash = generateHash(treeSeed);
     double addr = perlin(hash, x, 4, 0.5, 1, 1.0, 0);
     delete []hash;
     return addr > 0.8;
 }
-
 void WorldGenerator::buildTree(int x, int y,World& world) {
-    buildLeaves(x,y,world);
-    buildLog(x,y,world);
+    if(world.getBlock(x,y, true)->getMaterial()!=Material::AIR){
+        buildLeaves(x,y,world);
+        buildLog(x,y,world);
+    }
 }
-
 void WorldGenerator::buildLeaves(int x, int y,World& world) {
     int leaveWidth=2;
     for(int i=y+4;i<y+8;i++){
@@ -154,34 +156,139 @@ void WorldGenerator::buildLeaves(int x, int y,World& world) {
     }
     world.setBlock(x,y+7, true,Material::AIR);
 }
-
 void WorldGenerator::buildLog(int x, int y,World& world) {
     for(int i=y;i<y+7;i++){
         world.setBlock(x,i, false,Material::LOG);
     }
 }
-/*
-void WorldGenerator::generateMineral(double start, int width, int octaves, double persistence, double frequency,
-                                     double amplitude, int minY, Material, World &world,int hashSeed,int times) {
-    int *hash = generateHash(hashSeed);
-    double mineralNoiseArray[300];
-    for(int i=0;i<width;i++){
-        double x=(double) i/16.0;
-        mineralNoiseArray[i]= perlin(hash, x, 4, 0.5, amplitude, 1.0, 0);
-    }
-    for(int i=0;i<width;i++){
-        for(int j=minY-mineralNoiseArray[i];j<minY+mineralNoiseArray[i]+1;j++){
-            for(int z=0;z<times;z++){
-                if(haveMineral(i,))
+void WorldGenerator::generateMineral(double start, int width,double amplitude, int minY, Material a, World &world,int times,long long seed) {
+
+    Random rnd(seed);
+    double mineralNoiseArrayX[300];
+    double mineralNoiseArrayY[300];
+    double prob;
+    int z=1;
+    int zz=-1;
+    for(int tim=0;tim<times;tim++) {
+        for (int i = 0; i < width; i++) {
+            double xx = (double) i / 16.0;
+            for (int j = 0; j < 20; j++) {
+                double x = (double) j / 0.67;
+                int *hash = generateHash(tim+ i+ j + seed);
+                mineralNoiseArrayX[i] = perlin(hash, xx, 4, 0.5, amplitude, 1.0, 0);
+                mineralNoiseArrayY[j] = perlin(hash, x, 4, 0.5, amplitude, 1.0, 0);
+                if(j<5) {
+                    prob=mineralNoiseArrayX[i]*mineralNoiseArrayY[j]*1.2;
+                }else {
+                    prob=mineralNoiseArrayX[i]*mineralNoiseArrayY[j];
+                }
+                double r=rnd.nextDouble();
+                if(r*prob>8.8) {
+                    int sizeX=rnd.nextInt(4);
+                    int xm=i+start-1;
+                    if(sizeX==0){
+                        zz=-1*zz;
+                    }else if(sizeX==1){
+                        world.setBlock(xm,j+minY, true,Material::LOG);
+                        world.setBlock(xm,j+minY+z, true,Material::LOG);
+                        world.setBlock(xm+z,j+minY, true,Material::LOG);
+                        z=-z;
+                    } else if(sizeX==2){
+                        world.setBlock(xm,j+minY, true,Material::LOG);
+                        world.setBlock(xm+1,j+minY, true,Material::LOG);
+                        world.setBlock(xm-1,j+minY, true,Material::LOG);
+                        world.setBlock(xm,j+minY-1, true,Material::LOG);
+                        world.setBlock(xm,j+minY+1, true,Material::LOG);
+                        world.setBlock(xm+z,j+minY+zz, true,Material::LOG);
+                        zz=-1*zz;
+                        z=-1*z;
+                    }else if(sizeX==3){
+                        world.setBlock(xm,j+minY, true,Material::LOG);
+                        world.setBlock(xm+1,j+minY, true,Material::LOG);
+                        world.setBlock(xm-1,j+minY, true,Material::LOG);
+                        world.setBlock(xm,j+minY-1, true,Material::LOG);
+                        world.setBlock(xm,j+minY+1, true,Material::LOG);
+                        world.setBlock(xm+1,j+minY+1, true,Material::LOG);
+                        world.setBlock(xm+1,j+minY-1, true,Material::LOG);
+                        world.setBlock(xm-1,j+minY+1, true,Material::LOG);
+                        world.setBlock(xm-1,j+minY-1, true,Material::LOG);
+                        world.setBlock(xm+1,j+minY+1, true,Material::LOG);
+                        world.setBlock(xm+2,j+minY, true,Material::LOG);
+                        world.setBlock(xm-2,j+minY, true,Material::LOG);
+                        world.setBlock(xm+2*zz*z,j+minY, true,Material::STONE);
+                        z=-1*z;
+                    }
+                }
             }
         }
     }
 }
 
-bool WorldGenerator::haveMineral(double x,double *noise,int mineralSeed) {
-    int *hash = generateHash(mineralSeed);
-    double addr = perlin(hash, x, 4, 0.5, 1, 1.0, 0);
-    delete []hash;
-    return addr > 0.8;
-}*/
+double WorldGenerator::grad(double x, double y, int hash) {
+    int h = hash & 7;
+    double u = h < 4 ? x : y;
+    double v = h < 4 ? y : x;
+    return ((h & 1) ? -u : u) + ((h & 2) ? -2.0 * v : 2.0 * v);
+}
+
+double WorldGenerator::noise(double x, double y, int *hash) {
+    int X = (int)std::floor(x)&255;
+    int Y = (int)std::floor(y)&127;
+    x -= std::floor(x);
+    y -= std::floor(y);
+    double u = x * x * x * (x * (x * 6 -15) +10);
+    double v = y * y * y * (y * (y * 6 - 15) + 10);
+    int A = hash[X] + Y;
+    int B = hash[X + 1] + Y;
+    int C = hash[X] + Y+ 1;
+    int D = hash[X + 1] + Y + 1;
+
+    double g1 = grad( x, y,hash[A]);
+    double g2 = grad( x -1, y,hash[B]);
+    double g3 = grad(x, y -1,hash[C]);
+    double g4 = grad( x -1, y -1,hash[D]);
+
+    return lerp(lerp(g1, g2, u), lerp(g3, g4, u), v);
+}
+
+double WorldGenerator::perlin(int *hash,double x, double y, int octaves, double persistence,double amplitude,double frequency,int minY) {
+    double total =0.0;
+    // 循环累加每个频率的噪声值
+    for (int i=0; i<octaves; i++) {
+        total += noise(x*frequency,y*frequency,hash)*amplitude;
+        frequency *=2.0;
+        amplitude *=persistence;
+    }
+    // 返回总噪声值
+    return total+minY;
+}
+
+void WorldGenerator::generateCave(double startX, double startY, int width, int height, int octaves, double persistence,
+                                  double frequency, double amplitude, int minY, World &world,
+                                  long long seed ){
+    int *hash=generateHash(seed);
+    double noiseArray[256][128];
+    for(int i=0;i<width;i++) {
+        double x = (double) i / 32.0;
+        for(int j=0;j<height;j++){
+            double y=(double) j/8.0;
+            noiseArray[i][j]=perlin(hash,x,y, octaves, persistence, amplitude, frequency, minY);
+        }
+    }
+
+    int xStart = std::floor(startX);
+    int yStart = std::floor(startY);
+    for(int i=0;i<=width;i++){
+        for(int j=0;j<=height;j++){
+            if(noiseArray[i][j]<-0.3){
+                if ( world.getBlock(xStart+i,yStart+j, true)->getMaterial()!=Material::WATER){
+                    world.setBlock(xStart+i,yStart+j, true,Material::AIR);
+                }
+            }
+        }
+    }
+    delete[] hash;
+}
+
+
 

@@ -18,3 +18,7 @@ std::unique_ptr<ItemMeta> ItemMeta::ofDefault(Item *item) {
 std::unique_ptr<ItemMeta> ItemMeta::ofDefault(Material material) {
     return {};
 }
+
+bool ItemMeta::equals(const ItemMeta *another) const {
+    return true;
+}
