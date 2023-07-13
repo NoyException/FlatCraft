@@ -9,8 +9,8 @@
 
 int *WorldGenerator::generateHash(int seed) {
     Random rnd(seed);
-    int *hash = new int[256];
-    for(int j=0;j<256;j++){
+    int *hash = new int[257];
+    for(int j=0;j<257;j++){
         hash[j]=(int) rnd.nextInt(256);
     }
     return hash;
@@ -287,6 +287,7 @@ void WorldGenerator::generateCave(double startX, double startY, int width, int h
             }
         }
     }
+    delete[] hash;
 }
 
 
