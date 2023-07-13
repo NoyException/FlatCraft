@@ -47,16 +47,22 @@ void DroppedItem::pickUpBy(Entity *entity) {
 
 void DroppedItem::run() {
     Entity::run();
+    //超时消失
     ticksLived_++;
     if(ticksLived_>6000){
         ValueChangedNotification notification(this,Field::DROPPED_ITEM_STATE,2);
         EventManager::callEvent(notification);
         remove();
+        return;
     }
+    //玩家捡起
     auto player = FlatCraft::getInstance()->getPlayer();
     if(player->getLocation().distanceSquared(location_)<1){
         pickUpBy(player);
+        return;
     }
+    //同类合并
+
 }
 
 void DroppedItem::notifyJoinWorld(World *world) {

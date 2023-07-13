@@ -22,6 +22,8 @@ public:
 
     [[nodiscard]] int getCurrentSlot() const;
 
+    void setCurrentSlot(int currentSlot);
+
     [[nodiscard]] double getBreakingProgress() const;
 
     [[nodiscard]] int getWalkingDirection() const;

@@ -10,11 +10,12 @@
 
 class ItemMeta {
 public:
-    ItemMeta(const nlohmann::json &json);
+    explicit ItemMeta(const nlohmann::json &json);
     [[nodiscard]] std::unique_ptr<nlohmann::json> serialize() const;
     virtual ~ItemMeta() = default;
     static std::unique_ptr<ItemMeta> ofDefault(Item* item);
     static std::unique_ptr<ItemMeta> ofDefault(Material material);
+    [[nodiscard]] bool equals(const ItemMeta* another) const;
 };
 
 

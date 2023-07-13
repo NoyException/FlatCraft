@@ -18,6 +18,7 @@ enum class Field{
     DROPPED_ITEM_STATE,
     PLAYER_CURSOR,
     PLAYER_INVENTORY,
+    PLAYER_CURRENT_SLOT,
 };
 
 template<class T>

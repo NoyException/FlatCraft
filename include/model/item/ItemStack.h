@@ -30,6 +30,8 @@ public:
     [[nodiscard]] int getAmount() const;
     void setAmount(int amount);
 
+    [[nodiscard]] bool isSimilar(const ItemStack* another) const;
+    [[nodiscard]] bool equals(const ItemStack* another) const;
 private:
     Item* item_;
     int amount_;

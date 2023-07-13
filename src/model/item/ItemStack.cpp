@@ -65,3 +65,11 @@ void ItemStack::setAmount(int amount) {
 MaterialStack ItemStack::toMaterialStack() const {
     return MaterialStack{getMaterial(),amount_};
 }
+
+bool ItemStack::isSimilar(const ItemStack *another) const {
+    return item_ == another->item_ && meta_->equals(another->meta_.get());
+}
+
+bool ItemStack::equals(const ItemStack *another) const {
+    return isSimilar(another) && amount_==another->amount_;
+}
