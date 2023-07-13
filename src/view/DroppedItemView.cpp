@@ -11,12 +11,12 @@ std::function<void()> DroppedItemView::getNotificationMaterialStackChanged() {
 }
 std::function<void()> DroppedItemView::getNotificationPickedUp() {
 	return [&]() {
-
+		itemState = ItemState::PICKUP;
 	};
 }
 
 std::function<void()> DroppedItemView::getNotificationDisappeared() {
 	return [&]() {
-
+		itemState = ItemState::DISAPPEAR;
 	};
 }

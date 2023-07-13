@@ -108,14 +108,27 @@ void Window::guiControl() {
 			my_event_.key.keysym.sym = SDLK_l;
 		break;
 	case GUI::ALREADYPAUSE:
-		if (my_event_.key.keysym.sym == SDLK_ESCAPE && my_event_.type == SDL_KEYUP) {
-			gui_ = GUI::GAME;
-			my_event_.key.keysym.sym = SDLK_l;
-		}
+		pauseControl();
 		break;
 
 
 	}//end for switch
+}
+
+void Window::pauseControl() {
+	if (my_event_.type == SDL_MOUSEBUTTONUP && SDL_BUTTON_LEFT == my_event_.button.button) {
+		//outputMouse();
+		if (mx_ > 375 && mx_ < 901) {
+			if (my_ > 180 && my_ < 230) {
+				gui_ = GUI::GAME;
+				playerView_.commandChangeKeyState_(Key::ESC, KeyState::UP);
+			}
+			if (my_ > 345 && my_ < 391) {
+				graphFinish = true;
+			}
+			
+		}
+	}
 }
 
 void Window::draw() {
@@ -136,12 +149,24 @@ void Window::draw() {
 	SDL_RenderPresent(renderer_); //output image
 }
 
+void Window::drawDroppedItems() {
+	for (auto it = droppedItems_.begin(); it != droppedItems_.end(); ) {
+		if ((*it)->itemState != ItemState::EXIST) {
+			delete[](*it);
+			it = droppedItems_.erase(it);
+		}
+		else {
+			drawDroppedItem(*it);
+			it++;
+		}
+	}
+}
 
+void Window::drawDroppedItem(DroppedItemView* droppedItemView) {
+	worldView_.drawDroppedItem(droppedItemView->binderMaterialStack->material_, *droppedItemView->binderPosition_, droppedItemView->binderMaterialStack->amount_);
+}
 
 void Window::drawGame() {
-	//static long long a = 0;
-	//a++;
-	//std::cout << a << std::endl;
 	worldView_.drawBackground();
 	worldView_.drawRain(playerView_.binderVelocity_->getX());
 	worldView_.drawMap();
@@ -154,6 +179,7 @@ void Window::drawGame() {
 		mouseBlockRect_.w = mouseBlockRect_.h = 32;
 		worldView_.drawCrack(*playerView_.binderBreakingProgress_, &mouseBlockRect_);
 	}
+	drawDroppedItems();
 	drawPlayer();
 	worldView_.drawItemBar();
 }

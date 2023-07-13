@@ -22,6 +22,10 @@ std::unique_ptr<nlohmann::json> ItemStack::serialize() const {
             {"meta",*meta_->serialize()}});
 }
 
+std::unique_ptr<ItemStack> ItemStack::deserialize(const nlohmann::json &json) {
+    return std::make_unique<ItemStack>(json);
+}
+
 Item *ItemStack::getItem() const {
     return item_;
 }
@@ -60,4 +64,12 @@ void ItemStack::setAmount(int amount) {
 
 MaterialStack ItemStack::toMaterialStack() const {
     return MaterialStack{getMaterial(),amount_};
+}
+
+bool ItemStack::isSimilar(const ItemStack *another) const {
+    return item_ == another->item_ && meta_->equals(another->meta_.get());
+}
+
+bool ItemStack::equals(const ItemStack *another) const {
+    return isSimilar(another) && amount_==another->amount_;
 }

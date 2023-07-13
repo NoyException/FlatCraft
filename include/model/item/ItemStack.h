@@ -14,6 +14,7 @@ public:
     ItemStack(Material material, int amount, std::unique_ptr<ItemMeta>&& meta);
     explicit ItemStack(const nlohmann::json &json);
     [[nodiscard]] std::unique_ptr<nlohmann::json> serialize() const;
+    static std::unique_ptr<ItemStack> deserialize(const nlohmann::json &json);
 
     [[nodiscard]] MaterialStack toMaterialStack() const;
 
@@ -29,6 +30,8 @@ public:
     [[nodiscard]] int getAmount() const;
     void setAmount(int amount);
 
+    [[nodiscard]] bool isSimilar(const ItemStack* another) const;
+    [[nodiscard]] bool equals(const ItemStack* another) const;
 private:
     Item* item_;
     int amount_;

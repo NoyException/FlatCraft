@@ -35,10 +35,16 @@ void Launcher::start() {
         Binder::bindDroppedItem(*view,*viewModel);
         droppedItemViewModels_.push_back(viewModel);
     });
-    EventManager::registerListener<ModelCreatedNotification<DroppedItem>>(EventPriority::MONITOR,[&](auto event){
-        droppedItemViewModels_.remove_if([&](DroppedItemViewModel* viewModel) {
-            return viewModel->getDroppedItem() == event->getModel();
-        });
+    EventManager::registerListener<ModelDestroyedNotification<DroppedItem>>(EventPriority::MONITOR,[&](auto event){
+        DroppedItemViewModel* vm = nullptr;
+        for (auto &item: droppedItemViewModels_){
+            if(item->getDroppedItem()==event->getModel())
+                vm = item;
+        }
+        if(vm!=nullptr){
+            droppedItemViewModels_.remove(vm);
+            delete vm;
+        }
     });
     std::cout << "Game starting" << std::endl;
     game_->start();
@@ -56,17 +62,18 @@ void Launcher::start() {
 void Launcher::stop() {
     game_->save();
     viewThread_->join();
-    std::cout << "Game ended" << std::endl;
     game_->stop();
     delete worldViewModel_;
     delete playerViewModel_;
     for (auto &item: droppedItemViewModels_){
         delete item;
     }
+    std::cout << "Game stopped" << std::endl;
 }
 
 void Launcher::end() {
     delete window_;
+    std::cout << "Game ended" << std::endl;
 }
 
 void Launcher::test() {

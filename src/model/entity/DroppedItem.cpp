@@ -10,7 +10,7 @@ DroppedItem::DroppedItem(std::unique_ptr<ItemStack> &&itemStack) :
 Entity(), itemStack_(std::move(itemStack)), ticksLived_(0) {}
 
 DroppedItem::DroppedItem(const nlohmann::json &json) : Entity(json),
-itemStack_(std::make_unique<ItemStack>(json.at("itemStack"))),
+itemStack_(ItemStack::deserialize(json.at("itemStack"))),
 ticksLived_(json.at("ticksLived").get<long long>()){}
 
 std::unique_ptr<nlohmann::json> DroppedItem::serialize() const {
@@ -35,6 +35,11 @@ long long DroppedItem::getTicksLived() const {
 }
 
 void DroppedItem::pickUpBy(Entity *entity) {
+    auto player = dynamic_cast<Player*>(entity);
+    if(player!=nullptr){
+        if(!player->getInventory()->add(itemStack_))
+            return;
+    }
     ValueChangedNotification notification(this,Field::DROPPED_ITEM_STATE,1);
     EventManager::callEvent(notification);
     remove();
@@ -42,16 +47,22 @@ void DroppedItem::pickUpBy(Entity *entity) {
 
 void DroppedItem::run() {
     Entity::run();
+    //超时消失
     ticksLived_++;
     if(ticksLived_>6000){
         ValueChangedNotification notification(this,Field::DROPPED_ITEM_STATE,2);
         EventManager::callEvent(notification);
         remove();
+        return;
     }
+    //玩家捡起
     auto player = FlatCraft::getInstance()->getPlayer();
     if(player->getLocation().distanceSquared(location_)<1){
         pickUpBy(player);
+        return;
     }
+    //同类合并
+
 }
 
 void DroppedItem::notifyJoinWorld(World *world) {
@@ -68,6 +79,12 @@ void DroppedItem::notifyLeaveWorld(World *world) {
 
 EntityType DroppedItem::getType() const {
     return EntityType::DROPPED_ITEM;
+}
+
+BoundingBox DroppedItem::getBoundingBox() const {
+    BoundingBox aabb = Entity::getBoundingBox();
+    aabb.expand(0.25,0,0.25,0.5);
+    return aabb;
 }
 
 

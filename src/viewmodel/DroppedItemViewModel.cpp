@@ -5,24 +5,11 @@
 #include "DroppedItemViewModel.h"
 
 DroppedItemViewModel::DroppedItemViewModel(DroppedItem *droppedItem) :
-EntityViewModel(droppedItem), materialStack_(droppedItem->getItemStack()->toMaterialStack()) {
-    listener_ = EventManager::registerListener<ValueChangedNotification<DroppedItem>>(EventPriority::MONITOR,[&](ValueChangedNotification<DroppedItem>* event){
-        DroppedItem *item = getDroppedItem();
-        if(event->getObject() == item){
-            if(event->getField()==Field::DROPPED_ITEM_ITEMSTACK){
-                materialStack_ = item->getItemStack()->toMaterialStack();
-                notificationMaterialStackChanged_();
-            }
-            if(event->getField()==Field::DROPPED_ITEM_STATE){
-                if(event->getNewValue<int>()==1) notificationPickedUp_();
-                else notificationDisappeared_();
-            }
-        }
-    });
-}
+EntityViewModel(droppedItem), materialStack_(droppedItem->getItemStack()->toMaterialStack()), listener_(nullptr) {}
 
 DroppedItemViewModel::~DroppedItemViewModel() {
-    EventManager::unregisterListener(listener_);
+    if(listener_!=nullptr)
+        EventManager::unregisterListener(listener_);
 }
 
 DroppedItem *DroppedItemViewModel::getDroppedItem() const {
@@ -45,4 +32,21 @@ void DroppedItemViewModel::setNotificationPickedUp(const std::function<void()> &
 
 void DroppedItemViewModel::setNotificationDisappeared(const std::function<void()> &notification) {
     notificationDisappeared_ = notification;
+}
+
+void DroppedItemViewModel::onBound() {
+    EntityViewModel::onBound();
+    listener_ = EventManager::registerListener<ValueChangedNotification<DroppedItem>>(EventPriority::MONITOR,[&](ValueChangedNotification<DroppedItem>* event){
+        DroppedItem *item = getDroppedItem();
+        if(event->getObject() == item){
+            if(event->getField()==Field::DROPPED_ITEM_ITEMSTACK){
+                materialStack_ = item->getItemStack()->toMaterialStack();
+                notificationMaterialStackChanged_();
+            }
+            if(event->getField()==Field::DROPPED_ITEM_STATE){
+                if(event->getPayload<int>() == 1) notificationPickedUp_();
+                else notificationDisappeared_();
+            }
+        }
+    });
 }

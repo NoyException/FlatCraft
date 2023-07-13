@@ -5,13 +5,16 @@
 #include "PlayerViewModel.h"
 #include "model/FlatCraft.h"
 
-PlayerViewModel::PlayerViewModel(Player *player) : EntityViewModel(player), states_(), scrollY_(0) {
+PlayerViewModel::PlayerViewModel(Player *player) : EntityViewModel(player), states_(), scrollY_(0),
+cursor_(player->cursor_==nullptr?MaterialStack():player->cursor_->toMaterialStack()), inventory_(){
     for (auto &item: states_){
         item = KeyState::UP;
     }
-    FlatCraft::getInstance()->getScheduler()->runTaskTimer([&](){
-        control();
-    },1,0);
+    for (int i = 0; i < player->getInventory()->getCapacity(); ++i){
+        auto itemStack = player->getInventory()->get(i);
+        if(itemStack!= nullptr) inventory_[i] = itemStack->toMaterialStack();
+        else inventory_[i] = MaterialStack();
+    }
 }
 
 Player *PlayerViewModel::getPlayer() {
@@ -27,7 +30,6 @@ std::function<void(Key, KeyState)> PlayerViewModel::getCommandChangeKeyState() {
 std::function<void(double)> PlayerViewModel::getCommandScrollMouseWheel() {
     return [&](double scrollY){
         scrollY_ = scrollY;
-        notificationCurrentSlotChanged_();
     };
 }
 
@@ -52,6 +54,18 @@ std::function<void(RefPtr<bool>)> PlayerViewModel::getBinderSneaking() {
 std::function<void(RefPtr<double>)> PlayerViewModel::getBinderBreakingProgress() {
     return [&](RefPtr<double> ptr) {
         ptr.pointTo(getPlayer()->breakingProgress_);
+    };
+}
+
+std::function<void(RefPtr<MaterialStack>)> PlayerViewModel::getBinderCursor() {
+    return [&](RefPtr<MaterialStack> ptr) {
+        ptr.pointTo(cursor_);
+    };
+}
+
+std::function<void(RefPtr<MaterialStack>)> PlayerViewModel::getBinderInventory() {
+    return [&](RefPtr<MaterialStack> ptr) {
+        ptr.pointTo(inventory_[0]);
     };
 }
 
@@ -112,8 +126,10 @@ void PlayerViewModel::control() {
     else player->stopBreaking();
     if(progress!=player->getBreakingProgress())
         notificationBreakingProgressChanged_();
-    //TODO: 滚轮滚动
-    //
+    //滚轮滚动
+    int slot = ((int)std::floor(scrollY_*2)+player->getCurrentSlot())%9;
+    player->setCurrentSlot(slot);
+    //玩家行动
     player->control();
 }
 
@@ -124,4 +140,67 @@ void PlayerViewModel::setNotificationSneakingStateChanged(const std::function<vo
 void PlayerViewModel::setNotificationBreakingProgressChanged(
         const std::function<void()> &notificationBreakingProgressChanged) {
     notificationBreakingProgressChanged_ = notificationBreakingProgressChanged;
+}
+
+void PlayerViewModel::setNotificationCursorChanged(const std::function<void()> &notificationCursorChanged) {
+    notificationCursorChanged_ = notificationCursorChanged;
+}
+
+void PlayerViewModel::setNotificationInventoryChanged(const std::function<void(int)> &notificationInventoryChanged) {
+    notificationInventoryChanged_ = notificationInventoryChanged;
+}
+
+void PlayerViewModel::onBound() {
+    EntityViewModel::onBound();
+
+    EventManager::registerListener<ValueChangedNotification<Player>>(EventPriority::MONITOR, [&](auto *event) {
+        auto player = getPlayer();
+        if(event!=nullptr && event->getObject()==player){
+            switch(event->getField()){
+                case Field::PLAYER_CURSOR:{
+                    cursor_ = player->cursor_==nullptr?MaterialStack():player->cursor_->toMaterialStack();
+                    notificationCursorChanged_();
+                    break;
+                }
+                case Field::PLAYER_CURRENT_SLOT:{
+                    notificationCurrentSlotChanged_();
+                }
+                default:
+                    break;
+            }
+        }
+    });
+
+    EventManager::registerListener<ValueChangedNotification<PlayerInventory>>(EventPriority::MONITOR, [&](ValueChangedNotification<PlayerInventory> *event) {
+        auto player = getPlayer();
+        if(event!=nullptr && event->getObject()==player->getInventory()){
+            switch(event->getField()){
+                case Field::PLAYER_INVENTORY:{
+                    int index = event->template getPayload<int>();
+                    auto itemStack = player->getInventory()->get(index);
+                    if(itemStack!= nullptr) inventory_[index] = itemStack->toMaterialStack();
+                    else inventory_[index] = MaterialStack();
+                    notificationInventoryChanged_(index);
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+    });
+
+    FlatCraft::getInstance()->getScheduler()->runTaskTimer([&](){
+        //暂停
+        do{
+            if(isPressed(Key::ESC)){
+                if(!isEscPressedLastTick_){
+                    isPaused_ = !isPaused_;
+                }
+                isEscPressedLastTick_ = true;
+            }
+            else isEscPressedLastTick_ = false;
+            if(isPaused_) std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }while(isPaused_ && FlatCraft::getInstance()->getScheduler()->isRunning());
+        control();
+    },1,0);
 }

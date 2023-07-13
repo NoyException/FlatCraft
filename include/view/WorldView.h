@@ -193,6 +193,7 @@ public:
 	void drawItemBar();
 	void drawHome();
 	void drawCrack(double process, SDL_Rect* rect);
+	void drawDroppedItem(Material material, Vec2d position, int amount);
 
 	void setBinderCameraPosition(const std::function<void(RefPtr<Vec2d>)>& binder);
 
