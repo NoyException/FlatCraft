@@ -77,10 +77,6 @@ Block* World::getBlock(const Location &location, bool front) const {
 
 void World::notifyEntityJoin(Entity *entity) {
     entities_.insert(entity);
-    auto player = FlatCraft::getInstance()->getPlayer();
-    if(player->getWorld()==this){
-        entity->notifyDisplayed();
-    }
 }
 
 void World::notifyEntityLeave(Entity *entity) {
@@ -136,6 +132,7 @@ void World::init() {
 }
 
 void World::run() {
+    std::cout<<"world "<<name_<<" start ticking"<<std::endl;
     if(isRunning()) return;
     task_ = FlatCraft::getInstance()->getScheduler()->runTaskTimer([&](){
         ticks_++;
@@ -165,6 +162,7 @@ void World::run() {
 }
 
 void World::stop() {
+    std::cout<<"world "<<name_<<" stop ticking"<<std::endl;
     if(!isRunning()) return;
     task_->cancel();
     task_ = nullptr;
@@ -311,9 +309,8 @@ int World::getSeed() const {
 }
 
 void World::dropItem(const Vec2d &position, std::unique_ptr<ItemStack>&& itemStack) {
-    auto item = FlatCraft::getInstance()->createEntity<DroppedItem>(
-            Location(*this,position.getX(),position.getY()), std::move(itemStack));
-    notifyEntityJoin(item);
+    auto item = FlatCraft::getInstance()->createEntity<DroppedItem>(std::move(itemStack));
+    item->teleport(Location(*this,position.getX(),position.getY()));
 }
 
 

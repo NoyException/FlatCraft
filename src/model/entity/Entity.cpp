@@ -7,66 +7,42 @@
 #include "model/FlatCraft.h"
 #include "model/event/events.h"
 
-Entity::Entity(const Location &spawnLocation, const Vec2d& direction) : location_(spawnLocation), direction_(direction), velocity_(),
-friction_(true), gravity_(true){
-    physicsTask_ = FlatCraft::getInstance()->getScheduler()->runTaskTimer([&]() {
-        bool onGround = isOnGround();
-        if(onGround){
-            if(friction_){
-                double x = velocity_.getX();
-                if(x<0) {
-                    velocity_.setX(std::min(0.0,x+0.1));
-                }
-                else if(x>0){
-                    velocity_.setX(std::max(0.0,x-0.1));
-                }
-            }
-        }
-        else {
-            if(gravity_){
-                velocity_.add(0, -0.025);
-            }
-        }
-        velocity_.adjust();
-//        if(velocity_.getX()>0){
-//            std::cout<<"*";
-//        }
-        if(velocity_.getX()!=0)
-            setDirection({velocity_.getX(),direction_.getY()});
-        if(velocity_.getY()!=0)
-            setDirection({direction_.getX(),velocity_.getY()});
-
-        if(velocity_.getX()>0 && isCollided(BoundingBox::Face::RIGHT)){
-//            std::cout<<"paused";
-//            isCollided(BoundingBox::Face::RIGHT);
-            velocity_.setX(0);
-        }
-        if(velocity_.getX()<0 && isCollided(BoundingBox::Face::LEFT)) velocity_.setX(0);
-        if(velocity_.getY()>0 && isCollided(BoundingBox::Face::TOP)) velocity_.setY(0);
-        if(velocity_.getY()<0 && onGround) velocity_.setY(0);
-        move();
-        run();
-    },0,0);
-}
+Entity::Entity() :
+location_(Location::INVALID_LOCATION), direction_(), velocity_(),
+friction_(true), gravity_(true), physicsTask_(nullptr), id_(-1){}
 
 Entity::~Entity() {
-    physicsTask_->cancel();
+    if(physicsTask_ != nullptr)
+        physicsTask_->cancel();
 }
 
-Entity::Entity(const nlohmann::json &json) :
-Entity(Location{json.at("location")},Vec2d{json.at("direction")}) {
-    velocity_ = Vec2d{json.at("velocity")};
-    gravity_ = json.at("gravity").get<bool>();
-    friction_ = json.at("friction").get<bool>();
+Entity::Entity(const nlohmann::json &json) : physicsTask_(nullptr), id_(-1),
+location_(json.at("location")), velocity_(json.at("velocity")),
+gravity_(json.at("gravity").get<bool>()), friction_(json.at("friction").get<bool>()){
+    FlatCraft::getInstance()->getScheduler()->runTask([&](){
+        notifyJoinWorld(getWorld());
+    });
 }
 
 std::unique_ptr<nlohmann::json> Entity::serialize() const {
     return std::make_unique<nlohmann::json>(nlohmann::json::initializer_list_t{
+        {"type",static_cast<int>(getType())},
         {"location",location_.serialize()},
         {"direction",direction_.serialize()},
         {"velocity",velocity_.serialize()},
         {"gravity",gravity_},
         {"friction",friction_}});
+}
+
+std::unique_ptr<Entity> Entity::deserialize(const nlohmann::json& json) {
+    switch (static_cast<EntityType>(json.at("type").get<int>())) {
+        case EntityType::PLAYER:
+            return std::make_unique<Player>(json);
+        case EntityType::DROPPED_ITEM:
+            return std::make_unique<DroppedItem>(json);
+        default:
+            return nullptr;
+    }
 }
 
 Location Entity::getLocation() const {
@@ -82,11 +58,18 @@ void Entity::teleport(const Location &location) {
     EventManager::callEvent(event);
     if(event.isCanceled()) return;
     Location targetLocation = event.getTargetLocation();
-    World* oldWorld = targetLocation.getWorld();
+    World* oldWorld = location_.getWorld();
+    World* newWorld = targetLocation.getWorld();
     location_ = targetLocation;
-    if(targetLocation.getWorld()!=oldWorld){
-        if(oldWorld != nullptr) oldWorld->notifyEntityLeave(this);
-        targetLocation.getWorld()->notifyEntityJoin(this);
+    if(newWorld!=oldWorld){
+        if(oldWorld != nullptr){
+            notifyLeaveWorld(oldWorld);
+            oldWorld->notifyEntityLeave(this);
+        }
+        if(newWorld != nullptr){
+            notifyJoinWorld(newWorld);
+            newWorld->notifyEntityJoin(this);
+        }
     }
     ValueChangedNotification notification(this,Field::ENTITY_POSITION,location_.toVec2d());
     EventManager::callEvent(notification);
@@ -205,6 +188,7 @@ bool Entity::hasGravity() const {
 void Entity::run() {}
 
 void Entity::remove() {
+    notifyLeaveWorld(getWorld());
     FlatCraft::getInstance()->getScheduler()->runTask([&](){
         FlatCraft::getInstance()->destroyEntity(this);
     });
@@ -214,4 +198,55 @@ int Entity::getId() const {
     return id_;
 }
 
-void Entity::notifyDisplayed() {}
+void Entity::notifyJoinWorld(World *world) {
+    physicsTask_ = FlatCraft::getInstance()->getScheduler()->runTaskTimer([&]() {
+        bool onGround = isOnGround();
+        if(onGround){
+            if(friction_){
+                double x = velocity_.getX();
+                if(x<0) {
+                    velocity_.setX(std::min(0.0,x+0.1));
+                }
+                else if(x>0){
+                    velocity_.setX(std::max(0.0,x-0.1));
+                }
+            }
+        }
+        else {
+            if(gravity_){
+                velocity_.add(0, -0.025);
+            }
+        }
+        velocity_.adjust();
+//        if(velocity_.getX()>0){
+//            std::cout<<"*";
+//        }
+        if(velocity_.getX()!=0)
+            setDirection({velocity_.getX(),direction_.getY()});
+        if(velocity_.getY()!=0)
+            setDirection({direction_.getX(),velocity_.getY()});
+
+        if(velocity_.getX()>0 && isCollided(BoundingBox::Face::RIGHT)){
+//            std::cout<<"paused";
+//            isCollided(BoundingBox::Face::RIGHT);
+            velocity_.setX(0);
+        }
+        if(velocity_.getX()<0 && isCollided(BoundingBox::Face::LEFT)) velocity_.setX(0);
+        if(velocity_.getY()>0 && isCollided(BoundingBox::Face::TOP)) velocity_.setY(0);
+        if(velocity_.getY()<0 && onGround) velocity_.setY(0);
+        move();
+        run();
+    },0,0);
+}
+
+void Entity::notifyLeaveWorld(World *world) {
+    if(physicsTask_!= nullptr) {
+        physicsTask_->cancel();
+        physicsTask_ = nullptr;
+    }
+}
+
+bool Entity::isSpawned() const {
+    return !location_.getRawWorld().empty();
+}
+

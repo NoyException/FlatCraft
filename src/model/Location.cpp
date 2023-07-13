@@ -27,6 +27,8 @@ nlohmann::json Location::serialize() const {
     };
 }
 
+const Location Location::INVALID_LOCATION = {"",0,0};
+
 Location &Location::operator=(const Location &another) = default;
 
 bool Location::operator==(const Location &another) const {
@@ -118,7 +120,7 @@ Location Location::toBlockCenterLocation() const {
     return {world_, (double)getBlockX()+0.5, (double)getBlockY()+0.5};
 }
 
-std::string Location::getRawWorld() const {
+const std::string &Location::getRawWorld() const {
     return world_;
 }
 

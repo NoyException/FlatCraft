@@ -6,8 +6,19 @@
 #include "model/entity/DroppedItem.h"
 #include "model/event/events.h"
 
-DroppedItem::DroppedItem(const Location& spawnLocation, std::unique_ptr<ItemStack> &&itemStack) :
-Entity(spawnLocation), itemStack_(std::move(itemStack)), ticksLived_(0) {}
+DroppedItem::DroppedItem(std::unique_ptr<ItemStack> &&itemStack) :
+Entity(), itemStack_(std::move(itemStack)), ticksLived_(0) {}
+
+DroppedItem::DroppedItem(const nlohmann::json &json) : Entity(json),
+itemStack_(std::make_unique<ItemStack>(json.at("itemStack"))),
+ticksLived_(json.at("ticksLived").get<long long>()){}
+
+std::unique_ptr<nlohmann::json> DroppedItem::serialize() const {
+    auto json = Entity::serialize();
+    json->emplace("itemStack",*itemStack_->serialize());
+    json->emplace("ticksLived",ticksLived_);
+    return json;
+}
 
 ItemStack *DroppedItem::getItemStack() const {
     return itemStack_.get();
@@ -26,6 +37,7 @@ long long DroppedItem::getTicksLived() const {
 void DroppedItem::pickUpBy(Entity *entity) {
     ValueChangedNotification notification(this,Field::DROPPED_ITEM_STATE,1);
     EventManager::callEvent(notification);
+    remove();
 }
 
 void DroppedItem::run() {
@@ -42,14 +54,20 @@ void DroppedItem::run() {
     }
 }
 
-void DroppedItem::remove() {
-    Entity::remove();
+void DroppedItem::notifyJoinWorld(World *world) {
+    Entity::notifyJoinWorld(world);
+    ModelCreatedNotification notification(this);
+    EventManager::callEvent(notification);
+}
+
+void DroppedItem::notifyLeaveWorld(World *world) {
+    Entity::notifyLeaveWorld(world);
     ModelDestroyedNotification notification(this);
     EventManager::callEvent(notification);
 }
 
-void DroppedItem::notifyDisplayed() {
-    ModelCreatedNotification notification(this);
-    EventManager::callEvent(notification);
+EntityType DroppedItem::getType() const {
+    return EntityType::DROPPED_ITEM;
 }
+
 

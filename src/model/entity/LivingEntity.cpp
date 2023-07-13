@@ -4,16 +4,16 @@
 
 #include "model/entity/LivingEntity.h"
 
-LivingEntity::LivingEntity(const Location &spawnLocation) : Entity(spawnLocation), health_(20) {
+LivingEntity::LivingEntity() : Entity(), health_(20) {
 }
 
 LivingEntity::LivingEntity(const nlohmann::json &json) : Entity(json),
 health_(json.at("health").get<double>()) {}
 
 std::unique_ptr<nlohmann::json> LivingEntity::serialize() const {
-    std::unique_ptr<nlohmann::json> j = Entity::serialize();
-    j->merge_patch(nlohmann::json{{"health",health_}});
-    return j;
+    std::unique_ptr<nlohmann::json> json = Entity::serialize();
+    json->emplace("health",health_);
+    return json;
 }
 
 bool LivingEntity::isDead() const {

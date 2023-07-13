@@ -11,6 +11,7 @@ void Launcher::init() {
     MaterialHelper::registerAllMaterials();
 //    CommandType::init();
     game_ = FlatCraft::getInstance();
+    FlatCraft::init();
     window_ = new Window();
 }
 
