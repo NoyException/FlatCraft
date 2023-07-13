@@ -24,6 +24,7 @@ protected:
     void notifyJoinWorld(World *world) override;
     void notifyLeaveWorld(World *world) override;
     void run() override;
+    void notifyItemStackChanged();
 private:
     std::unique_ptr<ItemStack> itemStack_;
     long long ticksLived_;

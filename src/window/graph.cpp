@@ -1,5 +1,5 @@
 ﻿
-#include "view/graph.h"
+#include "window/graph.h"
 
 bool graphFinish;
 
@@ -166,6 +166,58 @@ void Window::drawDroppedItem(DroppedItemView* droppedItemView) {
 	worldView_.drawDroppedItem(droppedItemView->binderMaterialStack->material_, *droppedItemView->binderPosition_, droppedItemView->binderMaterialStack->amount_);
 }
 
+void Window::drawItemsBar() {
+	SDL_Texture* texture;
+	texture = guiTexture_->getItemsBar();
+	SDL_Rect rect;
+	rect.x = 400;
+	rect.y = 700;
+	rect.h = 68;
+	rect.w = 440;
+	SDL_RenderCopy(renderer_, texture, NULL, &rect);
+	rect.x = 425;
+	rect.h = rect.w = 30;
+	rect.y += 20;
+	SDL_Rect digitRect = rect;
+	Material material;
+	digitRect.y += 18;
+	digitRect.w = 8;
+	digitRect.h = 12;
+	int num, digit;
+	for (int i = 36; i <= 44; i++) {
+		material = playerView_.binderMaterialStack_[i].material_;
+		num = playerView_.binderMaterialStack_[i].amount_;
+		if (i - 36 == *playerView_.binderSlot_ && material != Material::AIR) {
+			SDL_Rect tempRect = rect;
+			tempRect.x -= 2;
+			tempRect.y -= 2;
+			tempRect.w += 4;
+			tempRect.h += 4;
+			SDL_SetRenderDrawColor(renderer_, 210, 255, 0, 255);
+			SDL_RenderFillRect(renderer_, &tempRect);
+		}
+		////material = Material::STONE;
+		texture = worldView_.blockTexture->getTexture(material);
+		SDL_RenderCopy(renderer_, texture, NULL, &rect);
+		digitRect.x = rect.x;
+		//num = 63;
+		digit = num / 10;
+		if (digit) {
+			texture = guiTexture_->getDigit(digit);
+			SDL_RenderCopy(renderer_, texture, NULL, &digitRect);
+			digitRect.x += 8;
+			texture = guiTexture_->getDigit(num % 10);
+			SDL_RenderCopy(renderer_, texture, NULL, &digitRect);
+			digitRect.x += 8;
+		}
+		else if (num != 1) {
+			texture = guiTexture_->getDigit(num);
+			SDL_RenderCopy(renderer_, texture, NULL, &digitRect);
+		}
+		rect.x += 45;
+	}
+}
+
 void Window::drawGame() {
 	worldView_.drawBackground();
 	worldView_.drawRain(playerView_.binderVelocity_->getX());
@@ -181,7 +233,7 @@ void Window::drawGame() {
 	}
 	drawDroppedItems();
 	drawPlayer();
-	worldView_.drawItemBar();
+	drawItemsBar();
 }
 
 void Window::drawPause() {

@@ -10,7 +10,7 @@
 #include "model/FlatCraft.h"
 #include "viewmodel/PlayerViewModel.h"
 #include "viewmodel/DroppedItemViewModel.h"
-#include "view/graph.h"
+#include "window/graph.h"
 
 class Launcher {
 public:

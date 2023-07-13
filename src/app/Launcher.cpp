@@ -3,7 +3,7 @@
 //
 
 #include "app/Launcher.h"
-#include "view/graph.h"
+#include "window/graph.h"
 #include "model/event/events.h"
 #include "model/entity/entities.h"
 

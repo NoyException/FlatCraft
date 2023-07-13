@@ -30,6 +30,7 @@ public:
     [[nodiscard]] int getAmount() const;
     void setAmount(int amount);
 
+    [[nodiscard]] int getMaxAmount() const;
     [[nodiscard]] bool isSimilar(const ItemStack* another) const;
     [[nodiscard]] bool equals(const ItemStack* another) const;
 private:

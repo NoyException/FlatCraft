@@ -26,8 +26,7 @@ ItemStack *DroppedItem::getItemStack() const {
 
 void DroppedItem::setItemStack(std::unique_ptr<ItemStack> &&itemStack) {
     itemStack_ = std::move(itemStack);
-    ValueChangedNotification notification(this,Field::DROPPED_ITEM_ITEMSTACK,&itemStack_);
-    EventManager::callEvent(notification);
+    notifyItemStackChanged();
 }
 
 long long DroppedItem::getTicksLived() const {
@@ -62,7 +61,30 @@ void DroppedItem::run() {
         return;
     }
     //同类合并
-
+    std::vector<DroppedItem*> items;
+    getWorld()->getEntitiesNearby<DroppedItem>(items,location_.toVec2d(),1,[&](const DroppedItem& item){
+        return item.getItemStack()->isSimilar(getItemStack());
+    });
+    int amount = itemStack_->getAmount();
+    int maxAmount = itemStack_->getMaxAmount();
+    for (const auto &item: items){
+        if(item==this) continue;
+        amount += item->itemStack_->getAmount();
+        if(amount<maxAmount) item->remove();
+        else{//amount>=maxAmount
+            if(amount==maxAmount) item->remove();
+            else{
+                item->getItemStack()->setAmount(amount-maxAmount);
+                item->notifyItemStackChanged();
+                amount = maxAmount;
+            }
+            break;
+        }
+    }
+    if(amount!=itemStack_->getAmount()){
+        itemStack_->setAmount(amount);
+        notifyItemStackChanged();
+    }
 }
 
 void DroppedItem::notifyJoinWorld(World *world) {
@@ -85,6 +107,11 @@ BoundingBox DroppedItem::getBoundingBox() const {
     BoundingBox aabb = Entity::getBoundingBox();
     aabb.expand(0.25,0,0.25,0.5);
     return aabb;
+}
+
+void DroppedItem::notifyItemStackChanged() {
+    ValueChangedNotification notification(this,Field::DROPPED_ITEM_ITEMSTACK,&itemStack_);
+    EventManager::callEvent(notification);
 }
 
 

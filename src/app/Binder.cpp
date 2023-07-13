@@ -31,13 +31,13 @@ void Binder::bindPlayer(PlayerView &view, PlayerViewModel &viewModel) {
     view.setBinderCurrentSlot(viewModel.getBinderCurrentSlot());
     view.setBinderSneaking(viewModel.getBinderSneaking());
     view.setBinderBreakingProgress(viewModel.getBinderBreakingProgress());
-    viewModel.getBinderCursor();//////////////////////////////////
-    viewModel.getBinderInventory();///////////////////////////////
+    view.setBinderCursor(viewModel.getBinderCursor());
+    view.setBinderInventory(viewModel.getBinderInventory());
     viewModel.setNotificationCurrentSlotChanged(view.getNotificationCurrentSlotChanged());
     viewModel.setNotificationSneakingStateChanged(view.getNotificationSneakingStateChanged());
     viewModel.setNotificationBreakingProgressChanged(view.getNotificationBreakingProgressChanged());
-    viewModel.setNotificationCursorChanged([](){});////////////////////////////////////
-    viewModel.setNotificationInventoryChanged([](int index){});////////////////////////
+    viewModel.setNotificationCursorChanged(view.getNotificationCursorChanged());
+    viewModel.setNotificationInventoryChanged(view.getNotificationInventoryChanged());
     viewModel.notifyBound();
 }
 
