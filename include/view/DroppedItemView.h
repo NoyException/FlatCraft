@@ -15,21 +15,22 @@ name = SDL_CreateTextureFromSurface(renderer, pic);\
 SDL_FreeSurface(pic);\
 }while(0);
 
+enum class ItemState {
+	EXIST,
+	PICKUP,
+	DISAPPEAR
+};
 class DroppedItemView : public EntityView {
 public:
 	DroppedItemView():itemState(ItemState::EXIST) {}
-	enum class ItemState {
-		EXIST,
-		PICKUP,
-		DISAPPEAR
-	};
+	
 	void setBinderMaterialStack(const std::function<void(RefPtr<MaterialStack>)>& binder);
 
 	std::function<void()> getNotificationMaterialStackChanged();
 	std::function<void()> getNotificationPickedUp();
 	std::function<void()> getNotificationDisappeared();
 
-private:
+
 	MaterialStack* binderMaterialStack;
 	ItemState itemState;
 };

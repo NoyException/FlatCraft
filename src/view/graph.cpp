@@ -136,7 +136,19 @@ void Window::draw() {
 	SDL_RenderPresent(renderer_); //output image
 }
 
+void Window::drawDroppedItems() {
+	for (auto it = droppedItems_.begin(); it != droppedItems_.end(); it++) {
+		if ((*it)->itemState != ItemState::EXIST)
+			droppedItems_.erase(it);
+		else {
+			drawDroppedItem(*it);
+		}
+	}
+}
 
+void Window::drawDroppedItem(DroppedItemView* droppedItemView) {
+	
+}
 
 void Window::drawGame() {
 	//static long long a = 0;
@@ -154,6 +166,7 @@ void Window::drawGame() {
 		mouseBlockRect_.w = mouseBlockRect_.h = 32;
 		worldView_.drawCrack(*playerView_.binderBreakingProgress_, &mouseBlockRect_);
 	}
+	drawDroppedItems();
 	drawPlayer();
 	worldView_.drawItemBar();
 }

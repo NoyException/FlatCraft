@@ -81,6 +81,10 @@ public:
 
 	void guiControl();
 
+	void drawDroppedItems();
+
+	void drawDroppedItem(DroppedItemView* droppedItemView);
+
 private:
 	int mx_, my_;
 	SDL_Event my_event_;
