@@ -38,6 +38,10 @@ void PlayerView::setBinderInventory(const std::function<void(RefPtr<MaterialStac
     binder(binderMaterialStack_);
 }
 
+void PlayerView::setBinderBreakingBlock(const std::function<void(RefPtr<Vec2d>, RefPtr<double>)>& binder) {
+    binder(binderCrackPosition_, binderBreakingProgress_);
+}
+
 
 
 
@@ -67,5 +71,11 @@ std::function<void()> PlayerView::getNotificationCursorChanged() {
 std::function<void(int)> PlayerView::getNotificationInventoryChanged() {
     return [&](int index) {
 
+    };
+}
+
+std::function<void()> PlayerView::getNotificationBreakingBlockChanged() {
+    return [&]() {
+        isDigging = true;
     };
 }
