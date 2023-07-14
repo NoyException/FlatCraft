@@ -62,6 +62,8 @@ public:
 
     void setHand(std::unique_ptr<ItemStack> &&);
 
+    void clickSlot(int slotIndex);
+
 protected:
     void notifyJoinWorld(World *world) override;
     void notifyLeaveWorld(World *world) override;

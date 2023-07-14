@@ -32,6 +32,9 @@ rand_(json.at("randomSeed").get<unsigned long long>()){
             }
         }
     }
+    if(!validate()){
+        std::cout<<"the loaded world is corrupted";
+    }
 }
 
 std::unique_ptr<nlohmann::json> World::serialize() const {
@@ -133,6 +136,9 @@ void World::init() {
 //    setBlock(4,64, false,Material::WATER);
 //    setBlock(5,64, true,Material::DIRT);
 //    setBlock(6,64, false,Material::DIRT);
+    if(!validate()){
+        std::cout<<"the generated world is corrupted";
+    }
 }
 
 void World::run() {
@@ -316,6 +322,18 @@ void World::dropItem(const Vec2d &position, std::unique_ptr<ItemStack>&& itemSta
     auto item = FlatCraft::getInstance()->createEntity<DroppedItem>(std::move(itemStack));
     item->teleport(Location(*this,position.getX(),position.getY()));
     item->setVelocity({rand_.nextDouble()/5.0-0.1,0.1});
+}
+
+bool World::validate() const {
+    for(int i=-128;i<=128;i++) {
+        for (int j = 0; j < 256; j++) {
+            for(int k=0;k<=1;k++)
+            if(MaterialHelper::getInfo(getBlock(i,j,k)->getMaterial())==nullptr){
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 

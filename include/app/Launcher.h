@@ -11,6 +11,7 @@
 #include "viewmodel/PlayerViewModel.h"
 #include "viewmodel/DroppedItemViewModel.h"
 #include "window/graph.h"
+#include "Console.h"
 
 class Launcher {
 public:
@@ -25,7 +26,9 @@ private:
     Window* window_ = nullptr;
     PlayerViewModel* playerViewModel_ = nullptr;
     WorldViewModel* worldViewModel_ = nullptr;
+    Console console_;
     std::thread* viewThread_ = nullptr;
+    std::thread* consoleThread_ = nullptr;
     std::list<DroppedItemViewModel*> droppedItemViewModels_;
 };
 

@@ -255,4 +255,8 @@ void Player::setHand(std::unique_ptr<ItemStack> &&hand) {
     inventory_->set(currentSlot_+36, std::move(hand));
 }
 
+void Player::clickSlot(int slotIndex) {
+
+}
+
 

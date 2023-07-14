@@ -54,6 +54,7 @@ private:
     void notifyEntityJoin(Entity* entity);
     void notifyEntityLeave(Entity* entity);
     void setBlock(int x, int y, bool front, Material material);
+    bool validate() const;
     std::shared_ptr<Task> task_ = nullptr;
     long long seed_;
     long long ticks_;

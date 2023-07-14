@@ -4,7 +4,6 @@
 
 #include "model/FlatCraft.h"
 #include "model/item/Item.h"
-//#include <windows.h>
 #include <filesystem>
 
 FlatCraft::FlatCraft() : ticks_(0), nextEntityId_(0), player_(nullptr) {}
@@ -174,10 +173,13 @@ void FlatCraft::save() {
     savePlayer();
     saveEntities();
     saveWorlds();
+    std::ofstream out(save_+"/options.json");
+    out<<R"({"state":"saved"})";
+    out.close();
 }
 
 bool FlatCraft::existsSave(const std::string &name) const {
-    return std::filesystem::exists(name);
+    return std::filesystem::exists(name+"/options.json");
 }
 
 void FlatCraft::createSave(const std::string &name) {

@@ -54,6 +54,10 @@ void Launcher::start() {
         window_->start();
     });
 
+    consoleThread_ = new std::thread([&](){
+        console_.run();
+    });
+
     while(!graphFinish){
 //        std::string input;
 //        if(std::cin>>input){
@@ -69,9 +73,13 @@ void Launcher::stop() {
     game_->save();
     viewThread_->join();
     game_->stop();
+    console_.stop();
+    if(consoleThread_->joinable())
+        consoleThread_->join();
     delete worldViewModel_;
     delete playerViewModel_;
     delete viewThread_;
+    delete consoleThread_;
     for (auto &item: droppedItemViewModels_){
         delete item;
     }
