@@ -122,12 +122,37 @@ void Window::guiControl() {
 		my_event_.key.keysym.sym = SDLK_l;
 		break;
 	case GUI::ALREADYINVENTORY:
-		if (my_event_.key.keysym.sym == SDLK_e && my_event_.type == SDL_KEYUP) {
-			gui_ = GUI::GAME;
-			my_event_.key.keysym.sym = SDLK_l;
-		}
+		inventoryControl();
 		break;
 	}//end for switch
+}
+
+void Window::inventoryControl() {
+	if (my_event_.key.keysym.sym == SDLK_e && my_event_.type == SDL_KEYUP) {
+		gui_ = GUI::GAME;
+		my_event_.key.keysym.sym = SDLK_l;
+	}
+	if (my_event_.type == SDL_MOUSEBUTTONUP && SDL_BUTTON_LEFT == my_event_.button.button) {
+		if (inRegion(792, 250, 32)) {
+			playerView_.commandClickedSlot_(0);
+		}
+		if (inRegion(664, 227, 32)) {
+			playerView_.commandClickedSlot_(1);
+		}
+		if (inRegion(707, 227, 32)) {
+			playerView_.commandClickedSlot_(2);
+		}
+		if (inRegion(664, 269, 32)) {
+			playerView_.commandClickedSlot_(3);
+		}
+		if (inRegion(707, 269, 32)) {
+			playerView_.commandClickedSlot_(3);
+		}
+		if (inRegion(460, 460 + 8 * 41 + 32, 378, 378 + 80 + 32)) {
+			int k = (mx_ - 460) / 41 + 9 * ((my_ - 378) / 40) + 9;
+			playerView_.commandClickedSlot_(k);
+		}
+	}
 }
 
 void Window::pauseControl() {
@@ -170,9 +195,75 @@ void Window::draw() {
 
 void Window::drawInventory() {
 	drawGame();
+	int num;
 	SDL_Texture* texture = guiTexture_->getInventory();
 	SDL_Rect rect = { 1280/2 - 200, 768/2 - 200, 400, 400 };
 	SDL_RenderCopy(renderer_, texture, NULL, &rect);
+	MaterialStack* materialStacks = playerView_.binderMaterialStack_;
+	rect.x = 792;
+	rect.y = 250;
+	rect.w = rect.h = 32;
+	Material material;
+	material = materialStacks[0].material_;
+	//material = Material::BED_ROCK;
+	num = materialStacks[0].amount_;
+	texture = worldView_.blockTexture->getTexture(material);
+	SDL_RenderCopy(renderer_, texture, NULL, &rect);
+	drawDigit(num, &rect);
+	material = materialStacks[1].material_;
+	num = materialStacks[1].amount_;
+	rect.x = 664;
+	rect.y = 227;
+	texture = worldView_.blockTexture->getTexture(material);
+	SDL_RenderCopy(renderer_, texture, NULL, &rect);
+	drawDigit(num, &rect);
+	material = materialStacks[2].material_;
+	num = materialStacks[2].amount_;
+	rect.x = 707;
+	texture = worldView_.blockTexture->getTexture(material);
+	SDL_RenderCopy(renderer_, texture, NULL, &rect);
+	drawDigit(num, &rect);
+	material = materialStacks[3].material_;
+	num = materialStacks[3].amount_;
+	rect.x = 664;
+	rect.y = 269;
+	texture = worldView_.blockTexture->getTexture(material);
+	SDL_RenderCopy(renderer_, texture, NULL, &rect);
+	drawDigit(num, &rect);
+	material = materialStacks[4].material_;
+	num = materialStacks[4].amount_;
+	rect.x = 707;
+	texture = worldView_.blockTexture->getTexture(material);
+	SDL_RenderCopy(renderer_, texture, NULL, &rect);
+	drawDigit(num, &rect);
+	rect.x = 460;
+	rect.y = 378;
+	for (int i = 9; i <= 44; i++) {
+		//if (materialStacks + i == playerView_.binderMaterialStack_) {
+		//	SDL_Rect tempRect = rect;
+		//	tempRect.x -= 2;
+		//	tempRect.y -= 2;
+		//	tempRect.w += 4;
+		//	tempRect.h += 4;
+		//	SDL_SetRenderDrawColor(renderer_, 210, 255, 0, 255);
+		//	SDL_RenderFillRect(renderer_, &tempRect);
+		//}
+		material = materialStacks[i].material_;
+		num = materialStacks[i].amount_;
+		material = Material::BED_ROCK;
+		texture = worldView_.blockTexture->getTexture(material);
+		SDL_RenderCopy(renderer_, texture, NULL, &rect);
+		drawDigit(num, &rect);
+		rect.x += 41;
+		if (i == 17 || i == 26) {
+			rect.x = 460;
+			rect.y += 40;
+		}
+		if (i == 35) {
+			rect.x = 460;
+			rect.y += 52;
+		}
+	}
 }
 
 void Window::drawDroppedItems() {
@@ -190,6 +281,31 @@ void Window::drawDroppedItems() {
 
 void Window::drawDroppedItem(DroppedItemView* droppedItemView) {
 	worldView_.drawDroppedItem(droppedItemView->binderMaterialStack->material_, *droppedItemView->binderPosition_, droppedItemView->binderMaterialStack->amount_);
+}
+
+void Window::drawDigit(int num, SDL_Rect* rect) {
+	int digit;
+	SDL_Rect digitRect = *rect;
+	digitRect.y += 18;
+	digitRect.w = 8;
+	digitRect.h = 12;
+	SDL_Texture* texture;
+	digit = num / 10;
+	digitRect.x = rect->x + 20;
+	if (num >= 10)
+		digitRect.x -= 8;
+	if (digit) {
+		texture = guiTexture_->getDigit(digit);
+		SDL_RenderCopy(renderer_, texture, NULL, &digitRect);
+		digitRect.x += 8;
+		texture = guiTexture_->getDigit(num % 10);
+		SDL_RenderCopy(renderer_, texture, NULL, &digitRect);
+		digitRect.x += 8;
+	}
+	else if (num != 1) {
+		texture = guiTexture_->getDigit(num);
+		SDL_RenderCopy(renderer_, texture, NULL, &digitRect);
+	}
 }
 
 void Window::drawItemsBar() {

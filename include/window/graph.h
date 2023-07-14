@@ -6,6 +6,8 @@
 #include "view/EnitityView.h"
 extern bool graphFinish;
 
+
+
 enum class GUI : int {
 	HOME,
 	GAME,
@@ -97,10 +99,30 @@ public:
 
 	void drawInventory();
 
+	void drawDigit(int num, SDL_Rect* rect);
+
+	void inventoryControl();
+
 private:
 	void pauseControl();
 	inline void outputMouse() {//used for test
 		std::cout << mx_ << "  " << my_ << std::endl;
+	}
+	inline bool inRegion(int lx, int rx, int uy, int dy) {
+		if (mx_ >= lx && mx_ <= rx) {
+			if (my_ >= uy && my_ <= dy)
+				return true;
+		}
+		return false;
+	}
+	inline bool inRegion(int lx,int uy, int wh) {
+		int rx = lx + wh;
+		int dy = uy + wh;
+		if (mx_ >= lx && mx_ <= rx) {
+			if (my_ >= uy && my_ <= dy)
+				return true;
+		}
+		return false;
 	}
 
 	int mx_, my_;
