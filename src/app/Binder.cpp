@@ -8,6 +8,7 @@ void Binder::bindWorld(WorldView &view, WorldViewModel &viewModel) {
     view.setBinderCameraPosition(viewModel.getBinderCameraPosition());
     view.setBinderLeftUpPosition(viewModel.getBinderLeftUpPosition());
     view.setBinderMaterialMatrix(viewModel.getBinderMaterialMatrix());
+    ////view.setCommandPause();
     view.setBinderTicks(viewModel.getBinderTicks());
     view.setBinderWeather(viewModel.getBinderWeather());
     viewModel.setNotificationWeatherChanged(view.getNotificationWeatherChanged());

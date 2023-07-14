@@ -317,7 +317,6 @@ void WorldView::setBinderWeather(const std::function<void(RefPtr<Weather>)>& bin
 	binder(binderWeather_);
 }
 
-//TODO:  µœ÷£°
 std::function<void()> WorldView::getNotificationWeatherChanged() {
 	return [&]() {
 		if (*binderWeather_ == Weather::CLEAR)
@@ -325,4 +324,8 @@ std::function<void()> WorldView::getNotificationWeatherChanged() {
 		else
 			weatherAlpha_ = 0;
 	};
+}
+
+void WorldView::setCommandPause(const std::function<void(bool)>& command) {
+	commandPause_ = command;
 }

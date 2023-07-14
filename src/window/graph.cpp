@@ -113,6 +113,7 @@ void Window::guiControl() {
 	case GUI::PAUSE:
 			gui_ = GUI::ALREADYPAUSE;
 			my_event_.key.keysym.sym = SDLK_l;
+			worldView_.commandPause_(true);
 		break;
 	case GUI::ALREADYPAUSE:
 		pauseControl();
@@ -161,6 +162,7 @@ void Window::pauseControl() {
 		if (mx_ > 375 && mx_ < 901) {
 			if (my_ > 180 && my_ < 230) {
 				gui_ = GUI::GAME;
+				worldView_.commandPause_(false);
 				playerView_.commandChangeKeyState_(Key::ESC, KeyState::UP);
 			}
 			if (my_ > 345 && my_ < 391) {

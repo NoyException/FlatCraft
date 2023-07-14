@@ -206,6 +206,11 @@ public:
 	void setBinderWeather(const std::function<void(RefPtr<Weather>)>& binder);
 
 	std::function<void()> getNotificationWeatherChanged();
+
+	void setCommandPause(const std::function<void(bool)>& command);
+	std::function<void(bool)> commandPause_;
+
+
 	
 	void setRenderer(SDL_Renderer* renderer) {
 		this->renderer = renderer;
