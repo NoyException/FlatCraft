@@ -25,5 +25,19 @@ double LivingEntity::getHealth() const {
 }
 
 void LivingEntity::setHealth(double health) {
+    bool die = health_>0 && health<=0;
     health_ = health;
+    if(die){
+        onDie();
+    }
+}
+
+void LivingEntity::onDie() {}
+
+void LivingEntity::run() {
+    Entity::run();
+    double y = location_.getY();
+    if(y<-32) setHealth(0);
+    else if(y<-16) setHealth(health_-2);
+    else if(y<0) setHealth(health_-1);
 }

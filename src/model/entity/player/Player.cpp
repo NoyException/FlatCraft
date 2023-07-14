@@ -259,4 +259,21 @@ void Player::clickSlot(int slotIndex) {
 
 }
 
+void Player::respawn() {
+    setHealth(20);
+    auto world = getWorld();
+    for(int i=255;i>=0;i--){
+        if(MaterialHelper::isOccluded(world->getBlock(-1,i,true)->getMaterial()) ||
+           MaterialHelper::isOccluded(world->getBlock(0,i,true)->getMaterial())){
+            teleport(Location(*world,0,i+1));
+            return;
+        }
+    }
+}
+
+void Player::onDie() {
+    LivingEntity::onDie();
+    respawn();
+}
+
 

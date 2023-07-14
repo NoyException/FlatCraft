@@ -68,8 +68,9 @@ std::string World::getName() const {
 }
 
 Block* World::getBlock(int x, int y, bool front) const {
+    static Block VOID(Material::AIR,Location::INVALID_LOCATION,false);
     auto it = blocks_.find((x<<11)^(y<<1)^front);
-    if(it==blocks_.end()) return nullptr;
+    if(it==blocks_.end()) return &VOID;
     return it->second.get();
 }
 

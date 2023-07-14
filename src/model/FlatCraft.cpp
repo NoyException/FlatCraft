@@ -189,14 +189,8 @@ void FlatCraft::createSave(const std::string &name) {
     createWorld("main_world");
     auto world = getWorld("main_world");
 
-    for(int i=255;i>=0;i--){
-        if(MaterialHelper::isOccluded(world->getBlock(-1,i,true)->getMaterial()) ||
-        MaterialHelper::isOccluded(world->getBlock(0,i,true)->getMaterial())){
-            player_ = createEntity<Player>();
-            player_->teleport(Location(*world,0,i+1));
-            break;
-        }
-    }
+    player_ = createEntity<Player>();
+    player_->respawn();
 }
 
 Entity *FlatCraft::getEntity(int id) {

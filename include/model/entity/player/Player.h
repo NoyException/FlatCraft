@@ -64,9 +64,12 @@ public:
 
     void clickSlot(int slotIndex);
 
+    void respawn();
 protected:
     void notifyJoinWorld(World *world) override;
     void notifyLeaveWorld(World *world) override;
+
+    void onDie() override;
 
 private:
     void control();
