@@ -43,7 +43,10 @@ std::unique_ptr<nlohmann::json> Player::serialize() const {
 void Player::control() {
     //走路
     bool onGround = isOnGround();
-    double dx = onGround ? 0.2 : 0.05;
+    bool touchingWater = isTouching(Material::WATER);
+    double dx = 0.2;
+    if(touchingWater) dx = 0.1;
+    else if(!onGround) dx = 0.05;
     if(sprinting_) dx*=1.3;
     if(sneaking_) dx*=0.3;
     bool stopSprinting;
@@ -84,7 +87,27 @@ void Player::control() {
 }
 
 void Player::jump() {
-    if(isOnGround()) velocity_.setY(0.25);
+    if(isTouching(Material::WATER)){
+        auto aabb = getBoundingBox();
+        aabb.expand(0.499999,0.499999,0.499999,0.499999);
+        aabb.shift(-0.5,-0.5);
+        auto world = getWorld();
+        int y = std::floor(location_.getY()+0.2);
+        bool emerge = true;
+        bool sink = velocity_.getY()<0;
+        for(int x = std::ceil(aabb.getMinX()),endX = std::ceil(aabb.getMaxX());x<endX;x++){
+            if(world->getBlock(x,y,true)->getMaterial()==Material::WATER){
+                emerge = false;
+                break;
+            }
+        }
+        if(emerge&&sink) return;
+        velocity_.setY(std::min(emerge?0.2:0.1,velocity_.getY()+0.025));
+    }
+    else{
+        if(isOnGround())
+            velocity_.setY(0.25);
+    }
 }
 
 BoundingBox Player::getBoundingBox() const {
@@ -129,18 +152,22 @@ void Player::setSneaking(bool sneaking) {
 }
 
 bool Player::canTouch(const Vec2d &position) const {
+    //世界边界检查
+    Vec2d blockPos = position.toBlockPosition();
+    if(blockPos.getY()<0 || blockPos.getY()>=256 || blockPos.getX()<-128 || blockPos.getX()>128)
+        return false;
+    //射线检查
     auto world = getWorld();
     auto block = world->getBlock(position, true);
     Vec2d start = location_.toVec2d() + Vec2d(0,0.9);
     static Vec2d D_POS[4] = {{0,0},{0,1},{1,0},{1,1}};
-    Vec2d blockPos = block->getLocation().toBlockLocation().toVec2d();
     for (const auto & v : D_POS) {
         Vec2d target = blockPos+v;
         Vec2d direction = target - start;
         //判断是否能挖到
         auto res = world->rayTrace(start, direction, 6, 0, 0, false,
-                                   [](Block* block){return MaterialHelper::isOccluded(block->getMaterial());},
-                                   [&](Entity* entity){return entity!=this;});
+                                   [](const Block* block){return MaterialHelper::isOccluded(block->getMaterial());},
+                                   [&](const Entity* entity){return entity!=this;});
         if(res!=nullptr && res->getHitBlock()!=block &&
         (res->getHitPoint()->toBlockLocation().toVec2d()-start).lengthSquared() <
         (block->getLocation().toVec2d()-start).lengthSquared())

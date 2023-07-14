@@ -59,14 +59,9 @@ void Launcher::start() {
     });
 
     while(!graphFinish){
-//        std::string input;
-//        if(std::cin>>input){
-//            if(input=="stop"){
-//                graphFinish = true;
-//            }
-//        }
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
+    graphFinish = true;
 }
 
 void Launcher::stop() {

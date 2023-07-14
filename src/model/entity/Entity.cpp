@@ -158,22 +158,43 @@ bool Entity::isCollided(BoundingBox::Face face) const {
     }
     if(std::abs(d-std::round(d))>0.000001) return false;
     Vec2d start = location_.toVec2d() + Vec2d(0,aabb.getHeight()/2);
-    auto res = getWorld()->rayTrace(start,dir,0.000001,aabb.getWidth()/2,aabb.getHeight()/2);
+    auto res = getWorld()->rayTrace(start,dir,0.000001,
+                                    aabb.getWidth()/2,aabb.getHeight()/2,false,[](const Block* block){
+        return MaterialHelper::isOccluded(block->getMaterial());
+    });
     return res!= nullptr;
 }
 
 bool Entity::isOnGround() const {
     return isCollided(BoundingBox::Face::BOTTOM);
-//    auto aabb = getBoundingBox();
-//    auto world = getWorld();
-//
-//    int y = location_.getBlockY();
-//    for(int i = std::ceil(location_.getX()-aabb.getWidth()/2), endI = std::ceil(location_.getX()+aabb.getWidth()/2);
-//    i <= endI; i++){
-//        auto block = world->getBlock(i,y, true);
-//        if(block != nullptr && MaterialHelper::isOccluded(block->getMaterial())) return true;
-//    }
-//    return false;
+}
+
+bool Entity::isStandingOn(Material blockMaterial) const {
+    if(!isOnGround()) return false;
+    auto aabb = getBoundingBox();
+    aabb.expand(0.499999,0.499999,0.499999,0.499999);
+    aabb.shift(-0.5,-0.5);
+    auto world = getWorld();
+    int y = location_.getBlockY()-1;
+    for(int x = std::ceil(aabb.getMinX()),endX = std::ceil(aabb.getMaxX());x<endX;x++){
+        if(world->getBlock(x,y,true)->getMaterial()==blockMaterial)
+            return true;
+    }
+    return false;
+}
+
+bool Entity::isTouching(Material blockMaterial) const {
+    auto aabb = getBoundingBox();
+    aabb.expand(0.499999,0.499999,0.499999,0.499999);
+    aabb.shift(-0.5,-0.5);
+    auto world = getWorld();
+    for(int x = std::ceil(aabb.getMinX()),endX = std::ceil(aabb.getMaxX());x<endX;x++){
+        for(int y = std::ceil(aabb.getMinY()),endY = std::ceil(aabb.getMaxY());y<endY;y++){
+            if(world->getBlock(x,y,true)->getMaterial()==blockMaterial)
+                return true;
+        }
+    }
+    return false;
 }
 
 BoundingBox Entity::getBoundingBox() const {
@@ -203,44 +224,7 @@ void Entity::notifyJoinWorld(World *world) {
     if(physicsTask_!=nullptr){
         physicsTask_->cancel();
     }
-    physicsTask_ = FlatCraft::getInstance()->getScheduler()->runTaskTimer([&]() {
-        bool onGround = isOnGround();
-        if(onGround){
-            if(friction_){
-                double x = velocity_.getX();
-                if(x<0) {
-                    velocity_.setX(std::min(0.0,x+0.1));
-                }
-                else if(x>0){
-                    velocity_.setX(std::max(0.0,x-0.1));
-                }
-            }
-        }
-        else {
-            if(gravity_){
-                velocity_.add(0, -0.025);
-            }
-        }
-        velocity_.adjust();
-//        if(velocity_.getX()>0){
-//            std::cout<<"*";
-//        }
-        if(velocity_.getX()!=0)
-            setDirection({velocity_.getX(),direction_.getY()});
-        if(velocity_.getY()!=0)
-            setDirection({direction_.getX(),velocity_.getY()});
-
-        if(velocity_.getX()>0 && isCollided(BoundingBox::Face::RIGHT)){
-//            std::cout<<"paused";
-//            isCollided(BoundingBox::Face::RIGHT);
-            velocity_.setX(0);
-        }
-        if(velocity_.getX()<0 && isCollided(BoundingBox::Face::LEFT)) velocity_.setX(0);
-        if(velocity_.getY()>0 && isCollided(BoundingBox::Face::TOP)) velocity_.setY(0);
-        if(velocity_.getY()<0 && onGround) velocity_.setY(0);
-        move();
-        run();
-    },0,0);
+    startPhysicalTask();
 }
 
 void Entity::notifyLeaveWorld(World *world) {
@@ -252,5 +236,58 @@ void Entity::notifyLeaveWorld(World *world) {
 
 bool Entity::isSpawned() const {
     return !location_.getRawWorld().empty();
+}
+
+void Entity::startPhysicalTask() {
+    physicsTask_ = FlatCraft::getInstance()->getScheduler()->runTaskTimer([&]() {
+        bool onGround = isOnGround();
+        bool touchingWater = isTouching(Material::WATER);
+
+        double vx = velocity_.getX();
+        double vy = velocity_.getY();
+        if(touchingWater){
+            if(vx<0) {
+                velocity_.setX(std::min(0.0,vx+0.01));
+            }
+            else if(vx>0){
+                velocity_.setX(std::max(0.0,vx-0.01));
+            }
+        }
+        else if(onGround && friction_){
+            if(vx<0) {
+                velocity_.setX(std::min(0.0,vx+0.1));
+            }
+            else if(vx>0){
+                velocity_.setX(std::max(0.0,vx-0.1));
+            }
+        }
+
+        if(!onGround) {
+            if(gravity_){
+                if(touchingWater){
+                    velocity_.setY(std::max(-0.1, vy - 0.005));
+                }
+                else{
+                    velocity_.setY(std::max(-1.0, vy - 0.025));
+                }
+            }
+        }
+        velocity_.adjust();
+        vx = velocity_.getX();
+        vy = velocity_.getY();
+        if(vx != 0)
+            setDirection({vx, direction_.getY()});
+        if(vy != 0)
+            setDirection({direction_.getX(), vy});
+
+        if(vx > 0 && isCollided(BoundingBox::Face::RIGHT)){
+            velocity_.setX(0);
+        }
+        if(vx < 0 && isCollided(BoundingBox::Face::LEFT)) velocity_.setX(0);
+        if(vy > 0 && isCollided(BoundingBox::Face::TOP)) velocity_.setY(0);
+        if(vy < 0 && onGround) velocity_.setY(0);
+        move();
+        run();
+    },0,0);
 }
 

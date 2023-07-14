@@ -42,12 +42,12 @@ public:
     void dropItem(const Vec2d& position, std::unique_ptr<ItemStack>&& itemStack);
     std::unique_ptr<RayTraceResult> rayTrace(const Vec2d& startPoint, const Vec2d& direction,
                                              double maxDistance, double xSize, double ySize, bool hitBackground = false,
-                                             const std::function<bool(Block*)>& blockFilter = [](Block* block){return MaterialHelper::isOccluded(block->getMaterial());},
-                                             const std::function<bool(Entity*)>& entityFilter = [](Entity*){return false;}) const;
+                                             const std::function<bool(const Block*)>& blockFilter = [](const Block* block){return MaterialHelper::isOccluded(block->getMaterial());},
+                                             const std::function<bool(const Entity*)>& entityFilter = [](const Entity*){return false;}) const;
     std::unique_ptr<RayTraceResult> rayTrace(const Location& location, const Vec2d& direction,
                                              double maxDistance, double xSize, double ySize, bool hitBackground,
-                                             const std::function<bool(Block*)>& blockFilter,
-                                             const std::function<bool(Entity*)>& entityFilter) const;
+                                             const std::function<bool(const Block*)>& blockFilter,
+                                             const std::function<bool(const Entity*)>& entityFilter) const;
 
 private:
     void init();

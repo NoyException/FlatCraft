@@ -28,6 +28,7 @@ public:
     [[nodiscard]] double getY() const;
     [[nodiscard]] int getBlockX() const;
     [[nodiscard]] int getBlockY() const;
+    [[nodiscard]] Vec2d toBlockPosition() const;
     void setX(double x);
     void setY(double y);
     void add(double x, double y);

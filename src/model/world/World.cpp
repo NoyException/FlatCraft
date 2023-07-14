@@ -211,8 +211,8 @@ void World::setWeather(Weather weather) {
 
 std::unique_ptr<RayTraceResult> World::rayTrace(const Vec2d& startPoint, const Vec2d &direction,
                                                 double maxDistance, double xSize, double ySize, bool hitBackground,
-                                                const std::function<bool(Block*)>& blockFilter,
-                                                const std::function<bool(Entity*)>& entityFilter) const {
+                                                const std::function<bool(const Block*)>& blockFilter,
+                                                const std::function<bool(const Entity*)>& entityFilter) const {
     if(direction.getX()==0 && direction.getY()==0) return nullptr;
     Vec2d dir = direction;
     dir.normalize();
@@ -314,8 +314,8 @@ std::unique_ptr<RayTraceResult> World::rayTrace(const Vec2d& startPoint, const V
 
 std::unique_ptr<RayTraceResult> World::rayTrace(const Location &location, const Vec2d &direction,
                                                 double maxDistance, double xSize, double ySize, bool hitBackground,
-                                                const std::function<bool(Block*)>& blockFilter,
-                                                const std::function<bool(Entity*)>& entityFilter) const {
+                                                const std::function<bool(const Block*)>& blockFilter,
+                                                const std::function<bool(const Entity*)>& entityFilter) const {
     return rayTrace(location.toVec2d(), direction, maxDistance, xSize, ySize, hitBackground, blockFilter, entityFilter);
 }
 

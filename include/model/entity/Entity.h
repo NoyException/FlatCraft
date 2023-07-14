@@ -35,6 +35,8 @@ public:
     [[nodiscard]] bool hasFriction() const;
     [[nodiscard]] bool hasGravity() const;
     [[nodiscard]] bool isOnGround() const;
+    [[nodiscard]] bool isStandingOn(Material blockMaterial) const;
+    [[nodiscard]] bool isTouching(Material blockMaterial) const;
     [[nodiscard]] bool isCollided(BoundingBox::Face face) const;
     [[nodiscard]] virtual BoundingBox getBoundingBox() const;
     [[nodiscard]] bool isSpawned() const;
@@ -51,6 +53,7 @@ protected:
     bool friction_;
     bool gravity_;
 private:
+    void startPhysicalTask();
     std::shared_ptr<Task> physicsTask_ = nullptr;
 };
 

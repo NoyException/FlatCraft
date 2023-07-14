@@ -69,6 +69,10 @@ int Vec2d::getBlockY() const {
     return std::floor(y_);
 }
 
+Vec2d Vec2d::toBlockPosition() const {
+    return {(double)getBlockX(),(double)getBlockY()};
+}
+
 void Vec2d::setX(double x) {
     x_ = x;
 }
@@ -172,6 +176,7 @@ void Vec2d::rotate(double angle, const Vec2d &center) {
 }
 
 const double Vec2d::epsilon = 0.000001;
+
 
 
 

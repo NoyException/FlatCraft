@@ -122,7 +122,11 @@ void PlayerViewModel::control() {
             notificationSneakingStateChanged_();
         }
     }
-    player->setSprinting(isPressed(Key::CTRL));
+    if(isPressed(Key::CTRL)){
+        if(!player->isSprinting()){
+            player->setSprinting(true);
+        }
+    }
     if(isPressed(Key::UP))
         player->jump();
     //挖掘
