@@ -6,7 +6,8 @@
 #include "model/FlatCraft.h"
 
 PlayerViewModel::PlayerViewModel(Player *player) : EntityViewModel(player), states_(), scrollY_(0),
-cursor_(player->cursor_==nullptr?MaterialStack():player->cursor_->toMaterialStack()), inventory_(){
+cursor_(player->cursor_==nullptr?MaterialStack():player->cursor_->toMaterialStack()), inventory_(),
+listener1_(nullptr), listener2_(nullptr){
     for (auto &item: states_){
         item = KeyState::UP;
     }
