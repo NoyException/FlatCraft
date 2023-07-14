@@ -19,6 +19,8 @@ public:
     void pickUpBy(Entity* entity);
     [[nodiscard]] BoundingBox getBoundingBox() const override;
     [[nodiscard]] EntityType getType() const override;
+
+    void remove() override;
 //    void notifyDisplayed() override;
 protected:
     void notifyJoinWorld(World *world) override;

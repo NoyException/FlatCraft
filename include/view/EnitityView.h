@@ -17,7 +17,7 @@ public:
 
     std::function<void()> getNotificationVelocityChanged();
 
-    std::function<void()> getNotificationLocationChanged();
+    std::function<void()> getNotificationPositionChanged();
 
     Vec2d* binderPosition_;
     Vec2d* binderDirection_;

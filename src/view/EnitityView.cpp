@@ -13,7 +13,7 @@ void EntityView::setBinderDirection(const std::function<void(RefPtr<Vec2d>)>& bi
     binder(binderDirection_);
 }
 
-std::function<void()> EntityView::getNotificationLocationChanged() {
+std::function<void()> EntityView::getNotificationPositionChanged() {
     return [&]() {
         //这里的代码将在Model通知该View玩家位置发生改变时被执行
 

@@ -11,6 +11,7 @@
 class PlayerViewModel : public EntityViewModel{
 public:
     explicit PlayerViewModel(Player* player);
+    ~PlayerViewModel() override;
     std::function<void(Key,KeyState)> getCommandChangeKeyState();
     std::function<void(double)> getCommandScrollMouseWheel();
     std::function<void(const Vec2d&)> getCommandChangeCursorPosition();
@@ -45,6 +46,7 @@ private:
     Vec2d breakingPosition_;
     MaterialStack cursor_;
     MaterialStack inventory_[46];
+    BaseListener *listener1_,*listener2_;
     std::function<void()> notificationCurrentSlotChanged_;
     std::function<void()> notificationSneakingStateChanged_;
     std::function<void()> notificationBreakingBlockChanged_;

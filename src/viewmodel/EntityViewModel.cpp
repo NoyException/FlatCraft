@@ -3,9 +3,8 @@
 //
 
 #include "EntityViewModel.h"
-#include "model/event/events.h"
 
-EntityViewModel::EntityViewModel(Entity *entity) : entity_(entity) {}
+EntityViewModel::EntityViewModel(Entity *entity) : entity_(entity), listener_(nullptr) {}
 
 std::function<void(RefPtr<Vec2d>)> EntityViewModel::getBinderPosition() {
     return [&](RefPtr<Vec2d> ptr){
@@ -25,8 +24,8 @@ std::function<void(RefPtr<Vec2d>)> EntityViewModel::getBinderVelocity() {
     };
 }
 
-void EntityViewModel::setNotificationLocationChanged(const std::function<void()> &notification) {
-    notificationLocationChanged_ = notification;
+void EntityViewModel::setNotificationPositionChanged(const std::function<void()> &notification) {
+    notificationPositionChanged_ = notification;
 }
 
 void EntityViewModel::setNotificationDirectionChanged(const std::function<void()> &notification) {
@@ -38,12 +37,12 @@ void EntityViewModel::setNotificationVelocityChanged(const std::function<void()>
 }
 
 void EntityViewModel::onBound() {
-    EventManager::registerListener<ValueChangedNotification<Entity>>(EventPriority::MONITOR, [&](auto *event) {
+    listener_ = EventManager::registerListener<ValueChangedNotification<Entity>>(EventPriority::MONITOR, [&](auto *event) {
         if (event != nullptr && event->getObject() == entity_) {
             switch (event->getField()) {
                 case Field::ENTITY_POSITION:
                     position_ = entity_->getLocation().toVec2d();
-                    notificationLocationChanged_();
+                    notificationPositionChanged_();
                     break;
                 case Field::ENTITY_DIRECTION:
                     notificationDirectionChanged_();
@@ -56,5 +55,11 @@ void EntityViewModel::onBound() {
             }
         }
     });
+}
+
+EntityViewModel::~EntityViewModel() {
+    if(listener_!=nullptr){
+        EventManager::unregisterListener(listener_);
+    }
 }
 

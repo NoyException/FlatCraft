@@ -18,7 +18,7 @@ void Binder::bindEntity(EntityView &view, EntityViewModel &viewModel) {
     view.setBinderPosition(viewModel.getBinderPosition());
     view.setBinderDirection(viewModel.getBinderDirection());
     view.setBinderVelocity(viewModel.getBinderVelocity());
-    viewModel.setNotificationLocationChanged(view.getNotificationLocationChanged());
+    viewModel.setNotificationPositionChanged(view.getNotificationPositionChanged());
     viewModel.setNotificationDirectionChanged(view.getNotificationDirectionChanged());
     viewModel.setNotificationVelocityChanged(view.getNotificationVelocityChanged());
 }

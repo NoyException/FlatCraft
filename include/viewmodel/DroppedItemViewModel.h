@@ -11,12 +11,13 @@
 class DroppedItemViewModel : public EntityViewModel {
 public:
     explicit DroppedItemViewModel(DroppedItem *droppedItem);
-    ~DroppedItemViewModel();
+    ~DroppedItemViewModel() override;
     std::function<void(RefPtr<MaterialStack>)> getBinderMaterialStack();
     void setNotificationMaterialStackChanged(const std::function<void()> &notification);
     void setNotificationPickedUp(const std::function<void()> &notification);
     void setNotificationDisappeared(const std::function<void()> &notification);
     [[nodiscard]] DroppedItem* getDroppedItem() const;
+
 protected:
     void onBound() override;
 

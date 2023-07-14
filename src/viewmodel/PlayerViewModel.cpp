@@ -132,7 +132,8 @@ void PlayerViewModel::control() {
     }
     else player->stopBreaking();
     if(progress!=player->getBreakingProgress()){
-        breakingPosition_ = player->lastBreaking_->getLocation().toVec2d();
+        if(player->lastBreaking_==nullptr) breakingPosition_ = {0,0};
+        else breakingPosition_ = player->lastBreaking_->getLocation().toVec2d();
         notificationBreakingBlockChanged_();
     }
     //放置
@@ -176,7 +177,7 @@ void PlayerViewModel::setNotificationInventoryChanged(const std::function<void(i
 void PlayerViewModel::onBound() {
     EntityViewModel::onBound();
 
-    EventManager::registerListener<ValueChangedNotification<Player>>(EventPriority::MONITOR, [&](auto *event) {
+    listener1_ = EventManager::registerListener<ValueChangedNotification<Player>>(EventPriority::MONITOR, [&](auto *event) {
         auto player = getPlayer();
         if(event!=nullptr && event->getObject()==player){
             switch(event->getField()){
@@ -194,7 +195,7 @@ void PlayerViewModel::onBound() {
         }
     });
 
-    EventManager::registerListener<ValueChangedNotification<PlayerInventory>>(EventPriority::MONITOR, [&](ValueChangedNotification<PlayerInventory> *event) {
+    listener2_ = EventManager::registerListener<ValueChangedNotification<PlayerInventory>>(EventPriority::MONITOR, [&](ValueChangedNotification<PlayerInventory> *event) {
         auto player = getPlayer();
         if(event!=nullptr && event->getObject()==player->getInventory()){
             switch(event->getField()){
@@ -226,4 +227,11 @@ void PlayerViewModel::onBound() {
         }while(isPaused_ && FlatCraft::getInstance()->getScheduler()->isRunning());
         control();
     },1,0);
+}
+
+PlayerViewModel::~PlayerViewModel() {
+    if(listener1_!=nullptr)
+        EventManager::unregisterListener(listener1_);
+    if(listener2_!=nullptr)
+        EventManager::unregisterListener(listener2_);
 }

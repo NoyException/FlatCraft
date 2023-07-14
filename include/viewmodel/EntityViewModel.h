@@ -8,16 +8,18 @@
 #include "common.h"
 #include "ViewModel.h"
 #include "model/entity/entities.h"
+#include "model/event/events.h"
 
 class EntityViewModel : public ViewModel {
 public:
     explicit EntityViewModel(Entity* entity);
+    virtual ~EntityViewModel();
 
     std::function<void(RefPtr<Vec2d>)> getBinderPosition();
     std::function<void(RefPtr<Vec2d>)> getBinderDirection();
     std::function<void(RefPtr<Vec2d>)> getBinderVelocity();
 
-    void setNotificationLocationChanged(const std::function<void()> &notification);
+    void setNotificationPositionChanged(const std::function<void()> &notification);
     void setNotificationDirectionChanged(const std::function<void()> &notification);
     void setNotificationVelocityChanged(const std::function<void()> &notification);
 
@@ -28,7 +30,8 @@ protected:
     Vec2d position_;
 
 private:
-    std::function<void()> notificationLocationChanged_;
+    BaseListener* listener_;
+    std::function<void()> notificationPositionChanged_;
     std::function<void()> notificationDirectionChanged_;
     std::function<void()> notificationVelocityChanged_;
 };

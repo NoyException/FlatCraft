@@ -11,8 +11,8 @@ class Console {
 public:
     void run();
     void stop();
+    [[nodiscard]] bool isRunning() const;
 private:
-    [[nodiscard]] static std::string readString() ;
     bool running_ = false;
 };
 

@@ -76,7 +76,9 @@ void DroppedItem::run() {
         amount += item->itemStack_->getAmount();
         if(amount<maxAmount) item->remove();
         else{//amount>=maxAmount
-            if(amount==maxAmount) item->remove();
+            if(amount==maxAmount){
+                item->remove();
+            }
             else{
                 item->getItemStack()->setAmount(amount-maxAmount);
                 item->notifyItemStackChanged();
@@ -116,6 +118,12 @@ BoundingBox DroppedItem::getBoundingBox() const {
 void DroppedItem::notifyItemStackChanged() {
     ValueChangedNotification notification(this,Field::DROPPED_ITEM_ITEMSTACK,&itemStack_);
     EventManager::callEvent(notification);
+}
+
+void DroppedItem::remove() {
+    ValueChangedNotification notification(this,Field::DROPPED_ITEM_STATE,3);
+    EventManager::callEvent(notification);
+    Entity::remove();
 }
 
 
