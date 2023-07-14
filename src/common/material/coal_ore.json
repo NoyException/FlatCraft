@@ -1,0 +1,8 @@
+{
+  "id": 16,
+  "flags": ["OCCLUDED","SOLID"],
+  "max_stacks": 64,
+  "hardness": 3.0,
+  "anti_explosion": 3.0,
+  "tools": ["PICKAXE"]
+}

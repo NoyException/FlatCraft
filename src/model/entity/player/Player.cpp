@@ -128,21 +128,35 @@ void Player::setSneaking(bool sneaking) {
     sneaking_ = sneaking;
 }
 
+bool Player::canTouch(const Vec2d &position) const {
+    auto world = getWorld();
+    auto block = world->getBlock(position, true);
+    Vec2d start = location_.toVec2d() + Vec2d(0,0.9);
+    static Vec2d D_POS[4] = {{0,0},{0,1},{1,0},{1,1}};
+    Vec2d blockPos = block->getLocation().toBlockLocation().toVec2d();
+    for (const auto & v : D_POS) {
+        Vec2d target = blockPos+v;
+        Vec2d direction = target - start;
+        //判断是否能挖到
+        auto res = world->rayTrace(start, direction, 6, 0, 0, false,
+                                   [](Block* block){return MaterialHelper::isOccluded(block->getMaterial());},
+                                   [&](Entity* entity){return entity!=this;});
+        if(res!=nullptr && res->getHitBlock()!=block &&
+        (res->getHitPoint()->toBlockLocation().toVec2d()-start).lengthSquared() <
+        (block->getLocation().toVec2d()-start).lengthSquared())
+            continue;
+        return true;
+    }
+    return false;
+}
+
 void Player::tryToBreak(const Vec2d &position) {
+    if(!canTouch(position)) return;
+
     auto world = getWorld();
     auto block = world->getBlock(position, true);
     Vec2d start = location_.toVec2d() + Vec2d(0,0.9);
     Vec2d direction = position - start;
-    //判断是否能挖到
-    auto res = world->rayTrace(start, direction, 6, 0, 0, false,
-                               [](Block* block){return MaterialHelper::isOccluded(block->getMaterial());},
-                               [&](Entity* entity){return entity!=this;});
-    if(res!=nullptr && res->getHitBlock()!=block && (res->getHitPoint()->toBlockLocation().toVec2d()-start).lengthSquared() <
-                               (block->getLocation().toVec2d()-start).lengthSquared()){
-        lastBreaking_ = nullptr;
-        breakingProgress_ = 0;
-        return;
-    }
 
     if (!block->isBreakable())
         block = world->getBlock(position, false);
@@ -171,6 +185,8 @@ void Player::tryToBreak(const Vec2d &position) {
 }
 
 void Player::tryToPlace(const Vec2d &position) {
+    if(!canTouch(position)) return;
+
     auto hand = getHand();
     if(ItemStackHelper::isAir(hand)) return;
 
@@ -277,5 +293,4 @@ void Player::onDie() {
     LivingEntity::onDie();
     respawn();
 }
-
 

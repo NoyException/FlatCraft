@@ -188,32 +188,32 @@ void WorldGenerator::generateMineral(double start, int width,double amplitude, i
                     if(sizeX==0){
                         zz=-1*zz;
                     }else if(sizeX==1){
-                        world.setBlock(xm,j+minY, true,Material::LOG);
-                        world.setBlock(xm,j+minY+z, true,Material::LOG);
-                        world.setBlock(xm+z,j+minY, true,Material::LOG);
+                        world.setBlock(xm,j+minY, true,Material::COAL_ORE);
+                        world.setBlock(xm,j+minY+z, true,Material::COAL_ORE);
+                        world.setBlock(xm+z,j+minY, true,Material::COAL_ORE);
                         z=-z;
                     } else if(sizeX==2){
-                        world.setBlock(xm,j+minY, true,Material::LOG);
-                        world.setBlock(xm+1,j+minY, true,Material::LOG);
-                        world.setBlock(xm-1,j+minY, true,Material::LOG);
-                        world.setBlock(xm,j+minY-1, true,Material::LOG);
-                        world.setBlock(xm,j+minY+1, true,Material::LOG);
-                        world.setBlock(xm+z,j+minY+zz, true,Material::LOG);
+                        world.setBlock(xm,j+minY, true,Material::COAL_ORE);
+                        world.setBlock(xm+1,j+minY, true,Material::COAL_ORE);
+                        world.setBlock(xm-1,j+minY, true,Material::COAL_ORE);
+                        world.setBlock(xm,j+minY-1, true,Material::COAL_ORE);
+                        world.setBlock(xm,j+minY+1, true,Material::COAL_ORE);
+                        world.setBlock(xm+z,j+minY+zz, true,Material::COAL_ORE);
                         zz=-1*zz;
                         z=-1*z;
                     }else if(sizeX==3){
-                        world.setBlock(xm,j+minY, true,Material::LOG);
-                        world.setBlock(xm+1,j+minY, true,Material::LOG);
-                        world.setBlock(xm-1,j+minY, true,Material::LOG);
-                        world.setBlock(xm,j+minY-1, true,Material::LOG);
-                        world.setBlock(xm,j+minY+1, true,Material::LOG);
-                        world.setBlock(xm+1,j+minY+1, true,Material::LOG);
-                        world.setBlock(xm+1,j+minY-1, true,Material::LOG);
-                        world.setBlock(xm-1,j+minY+1, true,Material::LOG);
-                        world.setBlock(xm-1,j+minY-1, true,Material::LOG);
-                        world.setBlock(xm+1,j+minY+1, true,Material::LOG);
-                        world.setBlock(xm+2,j+minY, true,Material::LOG);
-                        world.setBlock(xm-2,j+minY, true,Material::LOG);
+                        world.setBlock(xm,j+minY, true,Material::COAL_ORE);
+                        world.setBlock(xm+1,j+minY, true,Material::COAL_ORE);
+                        world.setBlock(xm-1,j+minY, true,Material::COAL_ORE);
+                        world.setBlock(xm,j+minY-1, true,Material::COAL_ORE);
+                        world.setBlock(xm,j+minY+1, true,Material::COAL_ORE);
+                        world.setBlock(xm+1,j+minY+1, true,Material::COAL_ORE);
+                        world.setBlock(xm+1,j+minY-1, true,Material::COAL_ORE);
+                        world.setBlock(xm-1,j+minY+1, true,Material::COAL_ORE);
+                        world.setBlock(xm-1,j+minY-1, true,Material::COAL_ORE);
+                        world.setBlock(xm+1,j+minY+1, true,Material::COAL_ORE);
+                        world.setBlock(xm+2,j+minY, true,Material::COAL_ORE);
+                        world.setBlock(xm-2,j+minY, true,Material::COAL_ORE);
                         world.setBlock(xm+2*zz*z,j+minY, true,Material::STONE);
                         z=-1*z;
                     }

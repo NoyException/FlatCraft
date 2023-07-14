@@ -52,6 +52,7 @@ void MaterialHelper::registerAllMaterials(){
     registerMaterial("grass");
     registerMaterial("water");
     registerMaterial("bedrock");
+    registerMaterial("coal_ore");
     registerMaterial("log");
     registerMaterial("leaves");
 }

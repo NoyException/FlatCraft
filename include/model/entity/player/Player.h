@@ -44,6 +44,8 @@ public:
 
     void jump();
 
+    [[nodiscard]] bool canTouch(const Vec2d& position) const;
+
     void tryToBreak(const Vec2d& position);
 
     void tryToPlace(const Vec2d& position);

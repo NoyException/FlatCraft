@@ -187,9 +187,8 @@ void FlatCraft::createSave(const std::string &name) {
     std::filesystem::create_directories(save_);
     std::filesystem::create_directories(save_+"/world");
     createWorld("main_world");
-    auto world = getWorld("main_world");
-
     player_ = createEntity<Player>();
+    player_->teleport(Location("main_world",0,256));
     player_->respawn();
 }
 

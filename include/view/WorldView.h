@@ -39,8 +39,8 @@ class BlockTexture {//store the texutre of some blocks to save time
 public:
 	BlockTexture(SDL_Renderer* renderer) : renderer(renderer) {
 		std::string tempString = TEXTURES_PATH;
+        SDL_Surface* pic = nullptr;
 		tempString.append("block/stone.png");
-		SDL_Surface* pic = nullptr;
 		pic = IMG_Load(tempString.c_str());
 		textures[Material::STONE] = SDL_CreateTextureFromSurface(renderer, pic);
 		SDL_FreeSurface(pic);
@@ -63,6 +63,11 @@ public:
 		tempString.append("block/bedrock.png");
 		pic = IMG_Load(tempString.c_str());
 		textures[Material::BED_ROCK] = SDL_CreateTextureFromSurface(renderer, pic);
+        SDL_FreeSurface(pic);
+        tempString = TEXTURES_PATH;
+        tempString.append("block/coal_ore.png");
+        pic = IMG_Load(tempString.c_str());
+        textures[Material::COAL_ORE] = SDL_CreateTextureFromSurface(renderer, pic);
 		SDL_FreeSurface(pic);
 		tempString = TEXTURES_PATH;
 		tempString.append("block/mywater.png");

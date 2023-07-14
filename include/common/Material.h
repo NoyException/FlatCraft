@@ -16,6 +16,7 @@ enum class Material : int {
     DIRT = 3,
     BED_ROCK = 7,
     WATER = 9,
+    COAL_ORE = 16,
     LOG = 17,
     LEAVES = 18
 };
