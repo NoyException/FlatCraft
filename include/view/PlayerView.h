@@ -27,6 +27,8 @@ public:
     void setBinderCursor(const std::function<void(RefPtr<MaterialStack>)>& binder);
 
     void setBinderInventory(const std::function<void(RefPtr<MaterialStack>)>& binder);
+
+    void setBinderBreakingBlock(const std::function<void(RefPtr<Vec2d>, RefPtr<double>)>& binder);
     
 
     std::function<void()> getNotificationCurrentSlotChanged();
@@ -41,6 +43,8 @@ public:
 
     std::function<void(int)> getNotificationInventoryChanged();
 
+    std::function<void()> getNotificationBreakingBlockChanged();
+
     std::function<void(const Vec2d&)> commandChangeCursorPosition_;
     std::function<void(Key, KeyState)> commandChangeKeyState_;
     std::function<void(double)> commandScrollMouseWheel_;
@@ -52,6 +56,7 @@ public:
     bool isDigging;
     MaterialStack* binderMaterialStack_;//46
     MaterialStack* binderCursor_;
+    Vec2d* binderCrackPosition_;
 };
 
 #endif

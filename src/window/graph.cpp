@@ -370,10 +370,15 @@ void Window::drawGame() {
 	if (playerView_.isDigging) {
 		if (*playerView_.binderBreakingProgress_ < 0.1)
 			playerView_.isDigging = false;
-		mouseBlockRect_.x = (worldView_.leftUpRect.x + (mx_- worldView_.leftUpRect.x)/32*32);
-		mouseBlockRect_.y = (worldView_.leftUpRect.y + (my_- worldView_.leftUpRect.y)/32*32);
-		mouseBlockRect_.w = mouseBlockRect_.h = 32;
-		worldView_.drawCrack(*playerView_.binderBreakingProgress_, &mouseBlockRect_);
+		/*mouseBlockRect_.x = (worldView_.leftUpRect.x + (mx_- worldView_.leftUpRect.x)/32*32);
+		mouseBlockRect_.y = (worldView_.leftUpRect.y + (my_- worldView_.leftUpRect.y)/32*32);*/
+		//mouseBlockRect_.w = mouseBlockRect_.h = 32;
+		SDL_Rect rect = worldView_.leftUpRect;
+		rect.w = rect.h = 32;
+		rect.x += (playerView_.binderCrackPosition_->getBlockX() - worldView_.leftUpPosition_.getBlockX()) * 32;
+		rect.y -= (playerView_.binderCrackPosition_->getBlockY() - worldView_.leftUpPosition_.getBlockY()) * 32;
+		rect.y -= 32;
+		worldView_.drawCrack(*playerView_.binderBreakingProgress_, &rect);
 	}
 	drawDroppedItems();
 	drawPlayer();
