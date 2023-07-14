@@ -21,6 +21,7 @@
 #include <functional>
 #include <optional>
 #include <thread>
+#include <future>
 #include <mutex>
 #include <shared_mutex>
 #include <random>

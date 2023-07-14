@@ -3,21 +3,30 @@
 //
 
 #include "app/Console.h"
-#include "common.h"
 #include "window/graph.h"
 
 void Console::run() {
     running_ = true;
-//    while(running_){
-//        std::string input;
-//        std::cin>>input;
-//        if(input=="stop"){
-//            running_ = false;
-//            graphFinish = false;
-//        }
-//    }
+    std::chrono::milliseconds timeout(10);
+    std::string input;
+    while(running_){
+        std::future<std::string> future = std::async(readString);
+        if (future.wait_for(timeout) == std::future_status::ready)
+            input = future.get();
+        else continue;
+        if(input=="stop"){
+            running_ = false;
+            graphFinish = false;
+        }
+    }
 }
 
 void Console::stop() {
     running_ = false;
+}
+
+std::string Console::readString() {
+    std::string s;
+    std::cin >> s;
+    return s;
 }
