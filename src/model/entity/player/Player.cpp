@@ -256,7 +256,9 @@ void Player::setHand(std::unique_ptr<ItemStack> &&hand) {
 }
 
 void Player::clickSlot(int slotIndex) {
-
+    auto slot = inventory_->remove(slotIndex);
+    inventory_->set(slotIndex,std::move(cursor_));
+    setCursor(std::move(slot));
 }
 
 void Player::respawn() {
