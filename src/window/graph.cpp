@@ -156,8 +156,10 @@ void Window::inventoryControl() {
 		if (inRegion(460, 460 + 8 * 41 + 32, 378 + 80 + 52, 372 + 80 + 52 + 32)) {
 			int k = (mx_ - 460) / 41 + 36;
 			playerView_.commandClickedSlot_(k);
-			std::cout << k << std::endl;
+			//std::cout << k << std::endl;
 		}
+		my_event_.key.keysym.sym = SDLK_l;
+		my_event_.type = SDL_MOUSEBUTTONDOWN;
 	}
 }
 
@@ -271,6 +273,13 @@ void Window::drawInventory() {
 			rect.y += 52;
 		}
 	}
+	rect.x = mx_-16;
+	rect.y = my_-16;
+	material = playerView_.binderCursor_->material_;
+	num = playerView_.binderCursor_->amount_;
+	texture = worldView_.blockTexture->getTexture(material);
+	SDL_RenderCopy(renderer_, texture, NULL, &rect);
+	drawDigit(num, &rect);
 }
 
 void Window::drawDroppedItems() {
