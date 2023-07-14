@@ -18,6 +18,7 @@ public:
     bool nextBool();
     float nextFloat();
     double nextDouble();
+    [[nodiscard]] unsigned long long getCurrentSeed() const;
 private:
     static constexpr unsigned long long MULTIPLIER = 0x5DEECE66DLL;
     static constexpr unsigned long long ADDEND = 0xBLL;

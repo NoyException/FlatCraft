@@ -43,11 +43,11 @@ void Scheduler::run(){
     if(sleep_>0) sleep_--;
     else{
         std::unique_lock<std::mutex> lock(mtx_);
-        tasks_.remove_if([](Task &task){return task.isExpired();});
+        tasks_.remove_if([](auto &task){return task->isExpired();});
         for (auto &task: tasks_){
             if(!running_) break;
-            if(task.isExpired()) continue;
-            task.run();
+            if(task->isExpired()) continue;
+            task->run();
         }
     }
 }
@@ -77,26 +77,28 @@ void Scheduler::sleep(long long int ticks) {
     sleep_ = std::max(sleep_,ticks);
 }
 
-Task* Scheduler::runTask(const RawTask& task) {
+std::shared_ptr<Task> Scheduler::runTask(const RawTask& task) {
     return runTaskFiniteTimer(task, 1, 0, 1);
 }
 
-Task* Scheduler::runTaskLater(const RawTask& task, int delay) {
+std::shared_ptr<Task> Scheduler::runTaskLater(const RawTask& task, int delay) {
     return runTaskFiniteTimer(task, delay, 0, 1);
 }
 
-Task* Scheduler::runTaskTimer(const RawTask& task, int delay, int interval) {
+std::shared_ptr<Task> Scheduler::runTaskTimer(const RawTask& task, int delay, int interval) {
     return runTaskFiniteTimer(task, delay, interval, Task::INFINITY_TIMES);
 }
 
-Task* Scheduler::runTaskFiniteTimer(const RawTask &task, int delay, int interval, int times) {
+std::shared_ptr<Task> Scheduler::runTaskFiniteTimer(const RawTask &task, int delay, int interval, int times) {
     if(thread_ != nullptr && std::this_thread::get_id()!=thread_->get_id()){
         std::unique_lock<std::mutex> lock(mtx_);
-        tasks_.emplace_back(task,delay,interval,times);
-        return &tasks_.back();
+        auto t = std::make_shared<Task>(task,delay,interval,times);
+        tasks_.emplace_back(t);
+        return t;
     }
-    tasks_.emplace_back(task,delay,interval,times);
-    return &tasks_.back();
+    auto t = std::make_shared<Task>(task,delay,interval,times);
+    tasks_.emplace_back(t);
+    return t;
 }
 
 bool Scheduler::isRunning() const {

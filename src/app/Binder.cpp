@@ -28,15 +28,15 @@ void Binder::bindPlayer(PlayerView &view, PlayerViewModel &viewModel) {
     view.setCommandChangeCursorPosition(viewModel.getCommandChangeCursorPosition());
     view.setCommandChangeKeyState(viewModel.getCommandChangeKeyState());
     view.setCommandScrollMouseWheel(viewModel.getCommandScrollMouseWheel());
-    ////view.setCommandClickedSlot();
+    view.setCommandClickedSlot(viewModel.getCommandClickedSlot());
     view.setBinderCurrentSlot(viewModel.getBinderCurrentSlot());
     view.setBinderSneaking(viewModel.getBinderSneaking());
-    view.setBinderBreakingProgress(viewModel.getBinderBreakingProgress());
+////    view.setBinderBreakingBlock(viewModel.getBinderBreakingBlock());
     view.setBinderCursor(viewModel.getBinderCursor());
     view.setBinderInventory(viewModel.getBinderInventory());
     viewModel.setNotificationCurrentSlotChanged(view.getNotificationCurrentSlotChanged());
     viewModel.setNotificationSneakingStateChanged(view.getNotificationSneakingStateChanged());
-    viewModel.setNotificationBreakingProgressChanged(view.getNotificationBreakingProgressChanged());
+////    viewModel.setNotificationBreakingBlockChanged(view.getNotificationBreakingBlockChanged());
     viewModel.setNotificationCursorChanged(view.getNotificationCursorChanged());
     viewModel.setNotificationInventoryChanged(view.getNotificationInventoryChanged());
     viewModel.notifyBound();

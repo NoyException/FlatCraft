@@ -15,6 +15,7 @@ public:
     virtual ~ItemMeta() = default;
     static std::unique_ptr<ItemMeta> ofDefault(Item* item);
     static std::unique_ptr<ItemMeta> ofDefault(Material material);
+    [[nodiscard]] std::unique_ptr<ItemMeta> clone() const;
     [[nodiscard]] bool equals(const ItemMeta* another) const;
 };
 

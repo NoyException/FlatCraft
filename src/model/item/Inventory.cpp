@@ -28,7 +28,7 @@ std::unique_ptr<nlohmann::json> Inventory::serialize() const {
             {"size",size_}});
     nlohmann::json contents;
     for (int i = 0; i < capacity_; ++i){
-        if(contents_[i]!=nullptr){
+        if(!ItemStackHelper::isAir(contents_[i])){
             contents.emplace(std::to_string(i),*contents_[i]->serialize());
         }
     }
@@ -55,30 +55,49 @@ std::unique_ptr<Inventory> Inventory::deserialize(const nlohmann::json &json) {
 
 bool Inventory::add(std::unique_ptr<ItemStack> &itemStack) {
     for(int i=0;i<capacity_;i++){
-        if(contents_[i]==nullptr){
+        auto& slot = contents_[i];
+        if(ItemStackHelper::isSimilar(itemStack,slot)){
+            int amount = slot->getAmount() + itemStack->getAmount();
+            int maxAmount = slot->getMaxAmount();
+            if(amount<=maxAmount){
+                itemStack->setAmount(0);
+                slot->setAmount(amount);
+                return true;
+            }
+            itemStack->setAmount(amount-maxAmount);
+            slot->setAmount(maxAmount);
+        }
+    }
+
+    for(int i=0;i<capacity_;i++) {
+        auto &slot = contents_[i];
+        if (ItemStackHelper::isAir(slot)) {
             size_++;
-            contents_[i] = std::move(itemStack);
+            slot = std::move(itemStack);
             return true;
         }
     }
+
     return false;
 }
 
 void Inventory::set(int index, std::unique_ptr<ItemStack> &&itemStack) {
     validateIndex(index);
-    if(contents_[index]==nullptr && itemStack!=nullptr) size_++;
-    if(contents_[index]!=nullptr && itemStack==nullptr) size_--;
+    bool aAir = ItemStackHelper::isAir(contents_[index]);
+    bool bAir = ItemStackHelper::isAir(itemStack);
+    if(aAir && !bAir) size_++;
+    if(!aAir && bAir) size_--;
     contents_[index] = std::move(itemStack);
 }
 
-ItemStack *Inventory::get(int index) const{
+const ItemStack *Inventory::get(int index) const{
     validateIndex(index);
     return contents_[index].get();
 }
 
 std::unique_ptr <ItemStack> Inventory::remove(int index) {
     validateIndex(index);
-    if(contents_[index]!=nullptr) size_--;
+    if(!ItemStackHelper::isAir(contents_[index])) size_--;
     return std::move(contents_[index]);
 }
 

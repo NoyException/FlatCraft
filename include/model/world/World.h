@@ -17,14 +17,14 @@ class World {
 public:
     friend class Entity;
     friend class WorldGenerator;
-    explicit World(const std::string& name);
+    World(const std::string& name, long long seed);
     explicit World(const nlohmann::json& json);
     [[nodiscard]] std::unique_ptr<nlohmann::json> serialize() const;
     static std::unique_ptr<World> deserialize(const nlohmann::json& json);
     void run();
     void stop();
     [[nodiscard]] bool isRunning() const;
-    [[nodiscard]] int getSeed() const;
+    [[nodiscard]] long long getSeed() const;
     [[nodiscard]] long long getTicks() const;
     [[nodiscard]] Weather getWeather() const;
     void setWeather(Weather weather);
@@ -54,11 +54,12 @@ private:
     void notifyEntityJoin(Entity* entity);
     void notifyEntityLeave(Entity* entity);
     void setBlock(int x, int y, bool front, Material material);
-    Task* task_ = nullptr;
-    int seed_;
+    bool validate() const;
+    std::shared_ptr<Task> task_ = nullptr;
+    long long seed_;
     long long ticks_;
     Weather weather_;
-    Random rand_{};
+    Random rand_;
     std::string name_;
     std::set<Entity*> entities_;
     std::unordered_map<int, std::unique_ptr<Block>> blocks_;

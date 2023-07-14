@@ -23,7 +23,6 @@
 #include <thread>
 #include <mutex>
 #include <shared_mutex>
-#include <conio.h>
 #include <random>
 
 #endif //FLATCRAFT_PRECOMP_H

@@ -43,7 +43,7 @@ bool Block::isFront() const {
 BoundingBox Block::getBoundingBox() const {
     double x = location_.getBlockX();
     double y = location_.getBlockY();
-    if(MaterialHelper::isAir(material_)) return {x,y,x,y};
+    if(isAir()) return {x,y,x,y};
     return {x,y,x+1,y+1};
 }
 
@@ -52,4 +52,16 @@ void Block::breakBy(Entity *entity) {
             location_.toBlockCenterLocation().toVec2d(),
             std::make_unique<ItemStack>(material_));
     setMaterial(Material::AIR);
+}
+
+bool Block::isAir() const {
+    return MaterialHelper::isAir(material_);
+}
+
+bool Block::isReplaceable() const {
+    return MaterialHelper::isAir(material_) || MaterialHelper::isLiquid(material_);
+}
+
+bool Block::isBreakable() const {
+    return !MaterialHelper::isAir(material_) && !MaterialHelper::isLiquid(material_);
 }

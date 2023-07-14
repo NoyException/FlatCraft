@@ -39,6 +39,12 @@ std::function<void(const Vec2d &)> PlayerViewModel::getCommandChangeCursorPositi
     };
 }
 
+std::function<void(int)> PlayerViewModel::getCommandClickedSlot() {
+    return [&](int slot){
+        getPlayer()->clickSlot(slot);
+    };
+}
+
 std::function<void(RefPtr<int>)> PlayerViewModel::getBinderCurrentSlot() {
     return [&](RefPtr<int> ptr) {
         ptr.pointTo(getPlayer()->currentSlot_);
@@ -51,9 +57,10 @@ std::function<void(RefPtr<bool>)> PlayerViewModel::getBinderSneaking() {
     };
 }
 
-std::function<void(RefPtr<double>)> PlayerViewModel::getBinderBreakingProgress() {
-    return [&](RefPtr<double> ptr) {
-        ptr.pointTo(getPlayer()->breakingProgress_);
+std::function<void(RefPtr<Vec2d>, RefPtr<double>)> PlayerViewModel::getBinderBreakingBlock() {
+    return [&](RefPtr<Vec2d> position, RefPtr<double> progress) {
+        position.pointTo(breakingPosition_);
+        progress.pointTo(getPlayer()->breakingProgress_);
     };
 }
 
@@ -118,14 +125,24 @@ void PlayerViewModel::control() {
     player->setSprinting(isPressed(Key::CTRL));
     if(isPressed(Key::UP))
         player->jump();
-    //挖掘与放置
+    //挖掘
     double progress = player->getBreakingProgress();
     if(isPressed(Key::LEFT_CLICK)){
         player->tryToBreak(cursorPosition_);
     }
     else player->stopBreaking();
-    if(progress!=player->getBreakingProgress())
-        notificationBreakingProgressChanged_();
+    if(progress!=player->getBreakingProgress()){
+        breakingPosition_ = player->lastBreaking_->getLocation().toVec2d();
+        notificationBreakingBlockChanged_();
+    }
+    //放置
+    if(isPressed(Key::RIGHT_CLICK)){
+        if(!isRightClickPressedLastTick_){
+            player->tryToPlace(cursorPosition_);
+            isRightClickPressedLastTick_ = true;
+        }
+    }
+    else isRightClickPressedLastTick_ = false;
     //滚轮滚动
     int oldSlot = player->getCurrentSlot();
     int slot = (int)std::round(-scrollY_)+oldSlot;
@@ -143,9 +160,9 @@ void PlayerViewModel::setNotificationSneakingStateChanged(const std::function<vo
     notificationSneakingStateChanged_ = notificationSneakingStateChanged;
 }
 
-void PlayerViewModel::setNotificationBreakingProgressChanged(
-        const std::function<void()> &notificationBreakingProgressChanged) {
-    notificationBreakingProgressChanged_ = notificationBreakingProgressChanged;
+void PlayerViewModel::setNotificationBreakingBlockChanged(
+        const std::function<void()> &notificationBreakingBlockChanged) {
+    notificationBreakingBlockChanged_ = notificationBreakingBlockChanged;
 }
 
 void PlayerViewModel::setNotificationCursorChanged(const std::function<void()> &notificationCursorChanged) {

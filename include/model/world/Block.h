@@ -32,6 +32,9 @@ public:
     [[nodiscard]] Location getLocation() const;
     [[nodiscard]] bool isFront() const;
     [[nodiscard]] BoundingBox getBoundingBox() const;
+    [[nodiscard]] bool isAir() const;
+    [[nodiscard]] bool isReplaceable() const;
+    [[nodiscard]] bool isBreakable() const;
 private:
     Material material_;
     Location location_;

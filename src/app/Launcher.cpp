@@ -54,8 +54,18 @@ void Launcher::start() {
         window_->start();
     });
 
+    consoleThread_ = new std::thread([&](){
+        console_.run();
+    });
+
     while(!graphFinish){
-        std::this_thread::sleep_for(std::chrono::milliseconds(20));
+//        std::string input;
+//        if(std::cin>>input){
+//            if(input=="stop"){
+//                graphFinish = true;
+//            }
+//        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 }
 
@@ -63,8 +73,13 @@ void Launcher::stop() {
     game_->save();
     viewThread_->join();
     game_->stop();
+    console_.stop();
+    if(consoleThread_->joinable())
+        consoleThread_->join();
     delete worldViewModel_;
     delete playerViewModel_;
+    delete viewThread_;
+    delete consoleThread_;
     for (auto &item: droppedItemViewModels_){
         delete item;
     }
