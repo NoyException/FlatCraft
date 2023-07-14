@@ -3,6 +3,7 @@
 //
 
 #include "WorldViewModel.h"
+#include "model/FlatCraft.h"
 
 WorldViewModel::WorldViewModel(Player *player) :
 player_(player), ticks_(getWorld()->getTicks()), weather_(getWorld()->getWeather()) {}
@@ -86,6 +87,19 @@ void WorldViewModel::onBound() {
             }
         }
     });
+}
+
+std::function<void(bool)> WorldViewModel::getCommandPause() {
+    return [&](bool pause){
+        isPaused_ = pause;
+        if(pause){
+            FlatCraft::getInstance()->getScheduler()->runTask([&](){
+                while(isPaused_ && FlatCraft::getInstance()->getScheduler()->isRunning()){
+                    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                }
+            });
+        }
+    };
 }
 
 //void WorldViewModel::setNotificationMaterialMatrixUpdated(const std::function<void()> &notificationMaterialMatrixUpdated) {

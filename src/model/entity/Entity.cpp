@@ -100,6 +100,7 @@ void Entity::move() {
 }
 
 void Entity::move(const Vec2d &v) {
+    if(location_.getY()<-32 && v.getY()<0) return;
     Vec2d dv = v;
     dv.adjust();
     auto aabb = getBoundingBox();

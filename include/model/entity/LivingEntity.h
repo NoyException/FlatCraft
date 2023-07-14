@@ -19,6 +19,9 @@ public:
     [[nodiscard]] bool isDead() const;
 
 protected:
+    void run() override;
+
+    virtual void onDie();
     double health_;
 };
 

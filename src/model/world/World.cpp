@@ -25,8 +25,10 @@ rand_(json.at("randomSeed").get<unsigned long long>()){
             for(int k = 0; k <= 1; k++) {
                 std::stringstream ss;
                 ss << i << "_" << j << "_" << k;
-                Block block = Block::deserialize(Location(name_, i, j),
-                                                 k,blocks.at(ss.str()));
+                std::string s = ss.str();
+                Block block = blocks.contains(s) ?
+                        Block::deserialize(Location(name_, i, j),k,blocks.at(ss.str())) :
+                        Block(Material::AIR,Location(name_,i,j),k);
                 int hash = (i << 11) ^ (j << 1) ^ k;
                 blocks_[hash] = std::make_unique<Block>(block);
             }
@@ -49,9 +51,11 @@ std::unique_ptr<nlohmann::json> World::serialize() const {
     for(int i=-128;i<=128;i++) {
         for (int j = 0; j < 256; j++) {
             for(int k = 0; k <= 1; k++){
+                auto block = getBlock(i,j,k);
+                if(block->isAir()) continue;
                 std::stringstream ss;
                 ss<<i<<"_"<<j<<"_"<<k;
-                blocks.emplace(ss.str(), getBlock(i,j,k)->serialize());
+                blocks.emplace(ss.str(), block->serialize());
             }
         }
     }
@@ -68,8 +72,9 @@ std::string World::getName() const {
 }
 
 Block* World::getBlock(int x, int y, bool front) const {
+    static Block VOID(Material::AIR,Location::INVALID_LOCATION,false);
     auto it = blocks_.find((x<<11)^(y<<1)^front);
-    if(it==blocks_.end()) return nullptr;
+    if(it==blocks_.end()) return &VOID;
     return it->second.get();
 }
 

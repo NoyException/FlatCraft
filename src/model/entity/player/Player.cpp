@@ -256,7 +256,26 @@ void Player::setHand(std::unique_ptr<ItemStack> &&hand) {
 }
 
 void Player::clickSlot(int slotIndex) {
+    auto slot = inventory_->remove(slotIndex);
+    inventory_->set(slotIndex,std::move(cursor_));
+    setCursor(std::move(slot));
+}
 
+void Player::respawn() {
+    setHealth(20);
+    auto world = getWorld();
+    for(int i=255;i>=0;i--){
+        if(MaterialHelper::isOccluded(world->getBlock(-1,i,true)->getMaterial()) ||
+           MaterialHelper::isOccluded(world->getBlock(0,i,true)->getMaterial())){
+            teleport(Location(*world,0,i+1));
+            return;
+        }
+    }
+}
+
+void Player::onDie() {
+    LivingEntity::onDie();
+    respawn();
 }
 
 

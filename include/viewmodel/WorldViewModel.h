@@ -14,6 +14,8 @@ class WorldViewModel : public ViewModel{
 public:
     explicit WorldViewModel(Player *player);
 
+    std::function<void(bool)> getCommandPause();
+
     std::function<void(RefPtr<Vec2d>)> getBinderCameraPosition();
     std::function<void(RefPtr<Vec2d>)> getBinderLeftUpPosition();
     std::function<void(RefPtr<MaterialMatrix>)> getBinderMaterialMatrix();
@@ -35,6 +37,7 @@ private:
     MaterialMatrix matrix_;
     long long ticks_;
     Weather weather_;
+    bool isPaused_ = false;
 
     std::function<void()> notificationWeatherChanged_;
 //    std::function<void()> notificationMaterialMatrixUpdated_;
