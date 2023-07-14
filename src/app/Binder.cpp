@@ -5,10 +5,10 @@
 #include "app/Binder.h"
 
 void Binder::bindWorld(WorldView &view, WorldViewModel &viewModel) {
+    view.setCommandPause(viewModel.getCommandPause());
     view.setBinderCameraPosition(viewModel.getBinderCameraPosition());
     view.setBinderLeftUpPosition(viewModel.getBinderLeftUpPosition());
     view.setBinderMaterialMatrix(viewModel.getBinderMaterialMatrix());
-    ////view.setCommandPause();
     view.setBinderTicks(viewModel.getBinderTicks());
     view.setBinderWeather(viewModel.getBinderWeather());
     viewModel.setNotificationWeatherChanged(view.getNotificationWeatherChanged());
