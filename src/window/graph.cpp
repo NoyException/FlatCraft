@@ -147,11 +147,16 @@ void Window::inventoryControl() {
 			playerView_.commandClickedSlot_(3);
 		}
 		if (inRegion(707, 269, 32)) {
-			playerView_.commandClickedSlot_(3);
+			playerView_.commandClickedSlot_(4);
 		}
 		if (inRegion(460, 460 + 8 * 41 + 32, 378, 378 + 80 + 32)) {
 			int k = (mx_ - 460) / 41 + 9 * ((my_ - 378) / 40) + 9;
 			playerView_.commandClickedSlot_(k);
+		}
+		if (inRegion(460, 460 + 8 * 41 + 32, 378 + 80 + 52, 372 + 80 + 52 + 32)) {
+			int k = (mx_ - 460) / 41 + 36;
+			playerView_.commandClickedSlot_(k);
+			std::cout << k << std::endl;
 		}
 	}
 }

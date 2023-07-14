@@ -45,7 +45,7 @@ public:
 		MYLOAD("digit/9.png", digits[9]);
 
 		MYLOAD("gui/pause.png", pause);
-		MYLOAD("gui/myInventory.png", inventory);
+		MYLOAD("gui/container/myInventory.png", inventory);
 	}
 	inline SDL_Texture* getItemsBar() {
 		return items_bar;
