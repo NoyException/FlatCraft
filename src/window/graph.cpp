@@ -252,7 +252,7 @@ void Window::drawInventory() {
 		//}
 		material = materialStacks[i].material_;
 		num = materialStacks[i].amount_;
-		material = Material::BED_ROCK;
+		//material = Material::BED_ROCK;
 		texture = worldView_.blockTexture->getTexture(material);
 		SDL_RenderCopy(renderer_, texture, NULL, &rect);
 		drawDigit(num, &rect);
