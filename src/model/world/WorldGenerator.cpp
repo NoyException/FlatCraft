@@ -282,14 +282,18 @@ void WorldGenerator::generateCave(double startX, double startY, int width, int h
     int yStart = std::floor(startY);
     for(int i=0;i<width;i++){
         for(int j=0;j<height;j++){
-            if(j>50){
-                rop=1.2;
+            double threshold = 0.15;
+            if(j>40){
+                threshold -= (j-40.0)/100.0;
+            }
+            if(j>40){
+                rop = 0.96+((j-40)/5.0);
             }else if(j>20){
                 rop=0.96;
             }else{
                 rop=1.08;
             }
-            if(rop*noiseArray[i][j]>-0.15&&rop*noiseArray[i][j]<0.15){
+            if(rop*noiseArray[i][j]>-threshold&&rop*noiseArray[i][j]<threshold){
                 if (world.getBlock(xStart+i,yStart+j, true)->getMaterial()!=Material::WATER){
                     world.setBlock(xStart+i,yStart+j, true,Material::AIR);
                 }
