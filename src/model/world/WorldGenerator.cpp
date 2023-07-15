@@ -86,17 +86,16 @@ void WorldGenerator::generateMaterial(double start,int width,int octaves, double
         noiseArray[i] = perlin(hash,x, octaves, persistence, amplitude, frequency, minY);
     }
     int startX = std::floor(start);
-    for(int i=0;i<=width;i++){
+    for(int i=0;i<width;i++){
         for(int j=0;j<noiseArray[i];j++){
             world.setBlock(startX+i,j, true,a);
             world.setBlock(startX+i,j, false,a);
         }
     }
     if(a==Material::STONE){
-        //double* newNoiseArray = new double[width];
-        double newNoiseArray[300];
+        double* newNoiseArray = new double[width];
         generateTree(start,width,treeSeed,world,noiseArray);
-        for(int i=0;i<=width;i++){
+        for(int i=0;i<width;i++){
             int noise = std::floor(noiseArray[i]);
             if(noise+1>61){
                 world.setBlock(startX+i,noise+1, true,Material::GRASS);
@@ -113,11 +112,14 @@ void WorldGenerator::generateMaterial(double start,int width,int octaves, double
                 world.setBlock(startX+i,noise-j, false,Material::DIRT);
             }
         }
-        //delete[] newNoiseArray;
+        delete[] newNoiseArray;
+        newNoiseArray= nullptr;
     }
 
     delete[] noiseArray;
+    noiseArray= nullptr;
     delete[] hash;
+    hash = nullptr;
 }
 void WorldGenerator::generateTree(double start,int width,int treeSeed,World& world,double *noise) {
     int startX = std::floor(start);
@@ -266,8 +268,9 @@ void WorldGenerator::generateCave(double startX, double startY, int width, int h
                                   double frequency, double amplitude, int minY, World &world,
                                   long long seed ){
     int *hash=generateHash(seed);
-    double noiseArray[256][128];
+    auto **noiseArray = new double*[width];
     for(int i=0;i<width;i++) {
+        noiseArray[i] = new double[height];
         double x = (double) i / 60.0;
         for(int j=0;j<height;j++){
             double y=(double) j/ 60.0;
@@ -277,7 +280,7 @@ void WorldGenerator::generateCave(double startX, double startY, int width, int h
     double rop=1.0;
     int xStart = std::floor(startX);
     int yStart = std::floor(startY);
-    for(int i=0;i<=width;i++){
+    for(int i=0;i<width;i++){
         for(int j=0;j<height;j++){
             if(j>50){
                 rop=1.2;
@@ -295,6 +298,10 @@ void WorldGenerator::generateCave(double startX, double startY, int width, int h
         }
     }
     delete[] hash;
+    for(int i=0;i<width;i++) {
+        delete[] noiseArray[i];
+    }
+    delete[] noiseArray;
 }
 
 
