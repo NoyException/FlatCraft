@@ -139,7 +139,8 @@ public:
 		SDL_FreeSurface(pic);
 		MYLOAD("behind/oak_log.png", textures[Material::LOG]);
 		MYLOAD("behind/azalea_leaves.png", textures[Material::LEAVES]);
-
+		MYLOAD("behind/oak_planks.png", textures[Material::PLANKS]);
+		MYLOAD("behind/coal_ore.png", textures[Material::COAL_ORE]);
 	}
 	inline SDL_Texture* getTexture(Material material) {
 		if (textures.find(material) == textures.end())
