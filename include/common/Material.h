@@ -14,6 +14,7 @@ enum class Material : int {
     STONE = 1,
     GRASS = 2,
     DIRT = 3,
+    PLANKS = 5,
     BED_ROCK = 7,
     WATER = 9,
     COAL_ORE = 16,
@@ -47,6 +48,7 @@ public:
     static void registerAllMaterials();
     static void getAllMaterials(std::vector<Material>& container);
     static MaterialInfo *getInfo(Material material);
+    static Material getByName(const std::string& name);
     static std::string getName(Material material);
     static bool containsFlag(Material material, MaterialFlag flag);
     static bool isOccluded(Material material);
@@ -56,6 +58,7 @@ public:
     static double getHardness(Material material);
 private:
     static std::unordered_map<int,MaterialInfo> byId;
+    static std::unordered_map<std::string,MaterialInfo> byName;
     static void registerMaterial(const std::string& name);
 };
 

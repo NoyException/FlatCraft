@@ -299,9 +299,39 @@ void Player::setHand(std::unique_ptr<ItemStack> &&hand) {
 }
 
 void Player::clickSlot(int slotIndex) {
-    auto slot = inventory_->remove(slotIndex);
-    inventory_->set(slotIndex,std::move(cursor_));
-    setCursor(std::move(slot));
+    if(slotIndex!=0){
+        auto slot = inventory_->remove(slotIndex);
+        inventory_->set(slotIndex,std::move(cursor_));
+        setCursor(std::move(slot));
+        if(slotIndex<=4){
+            //摆烂了，先不调用Recipe模块了，后续维护需要改进（如果有的话）
+            int logCnt = 0;
+            int airCnt = 0;
+            for (int i = 1; i <= 4; ++i) {
+                if(ItemStackHelper::is(inventory_->get(i),Material::LOG))
+                    logCnt++;
+                else if(ItemStackHelper::isAir(inventory_->get(i)))
+                    airCnt++;
+            }
+            if(logCnt==1 && airCnt==3){
+                inventory_->set(0,std::make_unique<ItemStack>(Material::PLANKS,4));
+            }
+            else{
+                inventory_->remove(0);
+            }
+        }
+    }
+    else{
+        if(!ItemStackHelper::isAir(inventory_->get(0)) && ItemStackHelper::isAir(cursor_)){
+            auto slot = inventory_->remove(0);
+            setCursor(std::move(slot));
+            for (int i = 1; i <= 4; ++i) {
+                auto item = inventory_->remove(i);
+                if(!ItemStackHelper::isAir(item)) item->setAmount(item->getAmount()-1);
+                inventory_->set(i,std::move(item));
+            }
+        }
+    }
 }
 
 void Player::respawn() {

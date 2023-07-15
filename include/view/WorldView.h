@@ -76,6 +76,7 @@ public:
 		SDL_FreeSurface(pic);
 		MYLOAD("block/oak_log.png", textures[Material::LOG]);
 		MYLOAD("block/azalea_leaves.png", textures[Material::LEAVES]);
+        MYLOAD("block/oak_planks.png", textures[Material::PLANKS]);
 		cracks.resize(10);
 		MYLOAD("block/destroy_stage_0.png", cracks[0]);
 		MYLOAD("block/destroy_stage_1.png", cracks[1]);

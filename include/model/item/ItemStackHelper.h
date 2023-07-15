@@ -10,9 +10,11 @@
 
 class ItemStackHelper {
 public:
-    static bool isAir(std::unique_ptr<ItemStack>& itemStack);
+    static bool is(const std::unique_ptr<ItemStack>& itemStack, Material material);
+    static bool is(const ItemStack* itemStack, Material material);
+    static bool isAir(const std::unique_ptr<ItemStack>& itemStack);
     static bool isAir(const ItemStack* itemStack);
-    static bool isSimilar(std::unique_ptr<ItemStack>& a, std::unique_ptr<ItemStack>& b);
+    static bool isSimilar(const std::unique_ptr<ItemStack>& a, std::unique_ptr<ItemStack>& b);
     static bool isSimilar(const ItemStack* a, ItemStack* b);
 };
 

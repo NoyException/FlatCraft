@@ -40,7 +40,8 @@ void MaterialHelper::registerMaterial(const std::string& name){
         in.close();
         if(!s.empty()){
             MaterialInfo info = MaterialInfo::deserialize(name, nlohmann::json::parse(s));
-            byId.emplace(info.id_,std::move(info));
+            byId.emplace(info.id_,info);
+            byName.emplace(name,info);
         }
     }
 }
@@ -49,6 +50,7 @@ void MaterialHelper::registerAllMaterials(){
     registerMaterial("air");
     registerMaterial("stone");
     registerMaterial("dirt");
+    registerMaterial("planks");
     registerMaterial("grass");
     registerMaterial("water");
     registerMaterial("bedrock");
@@ -127,4 +129,11 @@ void MaterialHelper::getAllMaterials(std::vector<Material> &container) {
     }
 }
 
+Material MaterialHelper::getByName(const std::string &name) {
+    auto it = byName.find(name);
+    if(it==byName.end()) return Material::AIR;
+    return static_cast<Material>(it->second.id_);
+}
+
 std::unordered_map<int,MaterialInfo> MaterialHelper::byId;
+std::unordered_map<std::string,MaterialInfo> MaterialHelper::byName;

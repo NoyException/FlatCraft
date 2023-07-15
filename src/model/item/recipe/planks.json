@@ -1,0 +1,7 @@
+{
+  "result": "planks",
+  "shape": ["A"],
+  "mapping": {
+    "A": "log"
+  }
+}
